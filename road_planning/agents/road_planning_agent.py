@@ -274,6 +274,11 @@ class RoadPlanningAgent(AgentPPO):
         t0 = time.time()
         num_samples = self.cfg.num_episodes_per_iteration * self.cfg.max_sequence_length
         batch, log = self.sample(num_samples)
+
+        print ("batch", batch)
+        print ("log",log)
+        t0 + log + self.update_params()
+
         """update networks"""
         t1 = time.time()
         self.update_params(batch, iteration)
@@ -470,7 +475,7 @@ class RoadPlanningAgent(AgentPPO):
                              iteration)
 
         tb_logger.add_scalar('eval/eval_R_eps_avg',
-                             log_eval.avg_episode_reward + self.reward_offset,
+                             log_eval.avg_episode_reward + self.reward_offset,   #avag_episode_reward
                              iteration)
         tb_logger.add_scalar('eval/eval_R_eps_dis',
                              log_eval.dis_episode_reward + self.reward_offset,

@@ -1,0 +1,17 @@
+in "road-planning-for-slums\khrylib\utils\load_save.py"
+add   elif hostname == 'DESKTOP-9JGI75U':
+        file_path = os.path.join(cwd, file_path)
+------------------------------------------------------
+
+in "pretreament\my_graph.py and my_graph_helpers.py "
+match the version of my_graph in env
+
+
+------------------------------------------------------
+in "road-planning-for-slums\road_planning\envs\my_graph.py"
+ def save_step_data(self):
+add path
+
+
+define_interior_parcels:
+self.inner_facelist:  #   interior_parcels  replaced by czb

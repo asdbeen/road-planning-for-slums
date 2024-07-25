@@ -1,3 +1,6 @@
+import sys
+sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
+
 import numpy as np
 from matplotlib import pyplot as plt
 import networkx as nx
@@ -7,66 +10,17 @@ import warnings
 import json
 import pretreatment.my_graph_helpers as mgh
 from pretreatment.lazy_property import lazy_property
-
+import pandas as pd
+from typing import Tuple, Dict, List, Text, Callable
 import random,time
+
+
+from matplotlib.lines import Line2D
+from matplotlib.collections import LineCollection
+
+
 #import plotly.plotly as py
 #from plotly.graph_objs import *
-"""
-This my_graph.py file includes three classes:  MyNode, MyEdge, MyFace,
-and MyGraph.
-
-
-MyNode
-
-MyNode is a class that represents nodes. Floating point geometric inputs are
-rounded to two decimal places*.  MyNodes are hashable.
-
-*In practice, if the map's base unit is decimal degrees, the two decimal place
-rounding would be about 1.1 km at the equator, which could be problematic.
-reprojecting the map to meters or km would solve this problem, or changing
-significant_fig to 5 would solve this.
-
-
-MyEdge
-
-MyEdge keeps track of pairs of nodes as an edge in a graph.  Edges are
-undirected. The geometric length is calculated if called. Also has T/F
-properties for being a road or barrier. Hashable.
-
-
-MyFace
-
-A myface is essentially a simple polygon, that makes up part of a planar graph.
-Has area, a centroid, and a list of nodes and edges.  Not hashable.
-
-MyGraph
-
-MyGraph is the bulk of the work here.  It's a wrapper around networkx graphs,
-to be explicitly spatial.  Nodes must by MyNodes, and so located in space,
-and edges must by MyEdges.
-
-All networkx functions are availble through myG.G
-
-In addition, explicitly spatial functions for myG are:
-1) cleaning up bad geometery
-2) find dual graphs
-3) define roads (connected component bounding edges) and interior parcels,
-as well as properties to define what nodes and edges are on roads.
-
-Finally, the last code section can "break" the geomotery of the graph to build
-in roads, rather than just defining roads as a property of some edges.  I don't
-use this module, but it might be useful someday.
-
-Several plotting and example functions are also included:
-
-myG.plot()  takes normal networkx.draw() keywords
-
-myG.plot_roads specficially plots roads, interior parcels, and barriers.
-
-myG.plot__weak_duals plots the nexted dual graphs.
-
-"""
-
 
 class MyNode(object):
     """ rounds float nodes to (2!) decimal places, defines equality """
@@ -84,6 +38,14 @@ class MyNode(object):
         self.interior = False
         self.barrier = False
         self.name = name
+
+        ##########################
+        # Summarize added features
+        self.onBoundary:bool = None
+        self.external:bool = None
+        self.internal = None
+        self.isPOI = None
+
 
     def __repr__(self):
         if self.name:
@@ -115,6 +77,17 @@ class MyEdge(object):
         self.interior = False
         self.road = False
         self.barrier = False
+        
+        ##########################
+        # Summarize added features
+        self.external:bool = None
+        self.internal:bool = None
+        self.onBoundary:bool = None
+        self.isRoad:bool = None
+        self.isConstraint:bool = None
+        self.isPOI:bool = None
+        self.fake:bool = None
+
 
     @lazy_property
     def length(self):
@@ -139,24 +112,6 @@ class MyEdge(object):
 
     def __hash__(self):
         return hash(self.nodes)
-
-    def geoJSON(self, rezero, rescale):
-        return {
-            "type": "Feature",
-            "geometry": {
-                "type":
-                "LineString",
-                "coordinates": [
-                    list([(n.x + rezero[0]) / rescale[0],
-                          (n.y + rezero[1]) / rescale[1]]) for n in self.nodes
-                ]
-            },
-            "properties": {
-                "road": str(self.road).lower(),
-                "interior": str(self.interior).lower(),
-                "barrier": str(self.barrier).lower()
-            }
-        }
 
 
 class MyFace(object):
@@ -235,28 +190,80 @@ class MyFace(object):
 class MyGraph(object):
 
     def __init__(self, G=None, name="S0"):
-        """ MyGraph is a regular networkx graph where nodes are stored
-        as MyNodes and edges have the attribute myedge = MyEdge.
-
-        The extra function weak_dual() finds the weak dual
-        (http://en.wikipedia.org/wiki/Dual_graph#Weak_dual) of the
-        graph based on the locations of each node.  Each node in the
-        dual graph corresponds to a face in G, the position of each
-        node in the dual is caluclated as the mean of the nodes
-        composing the corresponding face in G."""
-
         self.name = name
-        self.cleaned = False
-        self.roads_update = True
+        self.roads_update = True                    # Pending
         self.rezero_vector = np.array([0, 0])
         self.rescale_vector = np.array([1, 1])
         self.td_dict = {}
 
+        ##########################
+        # Summarize added features
+        self.node_list: list[MyNode] = [] 
+        self.edge_list: list[MyEdge] = []
+        self.stage2edges: list[MyEdge] = []
+        self.full_connected_road_num: int = 0
+
+        self.f2f_data: list[float] = []
+        self.cost_data: list[float] = []
+        self.parcels_data: list[int] = []
+
+        self.road_nodes: list[MyNode] = [] 
+        self.road_nodes_idx: list[int] = []
+        self.road_edges: list[MyNode] = [] 
+
+        self.max_road_cost: float = 0
+        self.total_road_cost: float = 0
+
+        self.roads_update: bool = True
+
+        self.build_road_num: int = 0
+        self.max_road_num: int = 0
+
+        ##########################
+        # Summarize added features
+        # self.inner_facelist: list[MyFace] = [] # lazy property
+        # self.outerface: MyFace = None
+
+        self.interior_parcels: list[MyFace] = [] 
+        self.interior_nodes: list[MyNode] = [] 
+
+        self.max_interior_parcels: int = 0
+        self.max_del_interior_parcels: int = 0
+
+        ##########################
+        # Summarize added features
+        # RoadG
+        self.td_dict: dict[int, dict[int, float]] = {}
+        self.td_dict_face: dict[MyFace, dict[MyFace, float]] = {}
+        self.f2f_avg:float = 0 # this is ave for the graph
+
+        # MinG
+        self.td_dict_min: dict[MyNode, float] = {}   # this is ave
+        self.td_dict_face_min: dict[MyFace, dict[MyFace, float]] = {}
+        self.td_face_min: dict[MyFace, float] = {}   # this is ave
+        self.f2f_avg_min = 0 # this is ave for the graph
+
+        ##########################
+        # Summarize added features
+        self.POIInfo: dict[MyEdge,list[MyNode]] = {}
+        self.POIEdges: list[MyEdge] = []
+        self.POINodes: list[MyNode] = []
+        self.inner_facelist_True: list[MyFace] = [] 
+
+        ##########################
+        # Summarize added features
+        self.td_dict_nodeToPOInode: dict[MyNode, dict[MyNode, float]] = {}
+        self.td_dict_nodeToPOIEdge: dict[MyNode, dict[MyEdge, float]] = {}
+        self.td_dict_faceToPOIEdge: dict[MyFace, dict[MyEdge, float]] = {}
+        self.td_dict_ave_faceToPOIEdge: dict[MyFace, float] = {}
+
+
         if G is None:
             self.G = nx.Graph()
+
         else:
             self.G = G
-
+     
     def __repr__(self):
         return "Graph (%s) with %d nodes" % (self.name,
                                              self.G.number_of_nodes())
@@ -264,7 +271,7 @@ class MyGraph(object):
     def add_node(self, n):
         self.G.add_node(n)
 
-    def add_edge(self, e, weight=None):
+    def add_edge(self, e, weight=None):               
         assert isinstance(e, MyEdge)
         if weight is None:
             w = e.length
@@ -276,9 +283,6 @@ class MyGraph(object):
         newedge = MyEdge((centroid, mynode))
         newedge.length = 0
         self.add_edge(newedge)
-
-    def add_fake_edges(self, p):
-        [self._fake_edge(p.centroid, n) for n in p.nodes]
 
     def location_dict(self):
         return dict((n, n.loc) for n in self.G.nodes())
@@ -297,10 +301,7 @@ class MyGraph(object):
     def myweight(self):
         return [self.G[e[0]][e[1]]["weight"] for e in self.G.edges()]
 
-    def remove_myedges_from(self, myedges):
-        myedge_tups = [(e.nodes[0], e.nodes[1]) for e in myedges]
-        self.G.remove_edges_from(myedge_tups)
-
+    # Be careful, only the graph itself is a DeepCopy
     def copy(self):
         """  Relies fundamentally on nx.copy function.  This creates a copy of
         the nx graph, where the nodes and edges retain their properties.
@@ -313,7 +314,13 @@ class MyGraph(object):
         copy.name = self.name
         copy.rezero_vector = self.rezero_vector
         copy.rescale_vector = self.rescale_vector
-        copy.td_dict = self.td_dict
+        copy.td_dict = self.td_dict    # this is not deepcopy
+
+        copy.total_road_cost = self.total_road_cost 
+        copy.f2f_data = [value for value in self.f2f_data] 
+        copy.full_connected_road_num = self.full_connected_road_num
+        copy.build_road_num  = self.build_road_num
+        copy.stage2edges = [e for e in copy.myedges() if e in self.stage2edges]
         # outerface is a side effect of the creation of inner_facelist
         # so we operate on that in order to not CALL inner_facelist for every
         # copy.
@@ -327,185 +334,273 @@ class MyGraph(object):
         if hasattr(self, 'road_edges'):
             copy.road_edges = [e for e in copy.myedges() if e.road]
 
+        if hasattr(self, 'edge_list'):
+            copy.edge_list = [e for e in copy.myedges() if e in self.edge_list]
+
+        if hasattr(self, 'node_list'):
+            copy.node_list = [n for n in copy.G.nodes() if n in self.node_list]
+
         if hasattr(self, 'interior_parcels'):
             copy.define_interior_parcels()
 
+  
         return copy
-
+    
     @lazy_property
     def inner_facelist(self):
         inner_facelist = self.__trace_faces()
         # print "inner_facelist called for graph {}".format(self)
         return inner_facelist
 
-    def myedges_geoJSON(self):
-        return json.dumps({
-            "type":
-            "FeatureCollection",
-            "features": [
-                e.geoJSON(self.rezero_vector, self.rescale_vector)
-                for e in self.myedges()
-            ]
-        })
+
+############################
+# FEATURE FUNCTIONS
+############################
+
+    def _cal_node_degree_and_isroad(self):
+        self.node_degree_total = {}
+        self.node_degree_road = {}
+        self.node_isroad = {}
+
+        for n in self.node_list:
+            self.node_degree_total[n] = len(list(self.G.neighbors(n)))
+            self.node_degree_road[n] = 0
+            self.node_isroad[n] = 0
+
+        for e in self.road_edges:
+            for n in e.nodes:
+                self.node_degree_road[n] += 1
+                self.node_isroad[n] = 1
+
+    def _cal_graph_centrality(self):
+        self.degree_cen = nx.degree_centrality(self.G)
+        self.betweenness_cen = nx.betweenness_centrality(self.G,
+                                                         weight='weight')
+        self.eigenvector_cen = nx.eigenvector_centrality_numpy(self.G,
+                                                               weight='weight')
+        self.closeness_cen = nx.closeness_centrality(self.G, distance='weight')
+
+    def _cal_edge_index_and_length(self):
+        self.edge_index = []
+        self.edge_length = []
+
+        for e in self.edge_list:
+            idx1 = self.node_list.index(e.nodes[0])
+            idx2 = self.node_list.index(e.nodes[1])
+            self.edge_index.append([idx1, idx2])
+            self.edge_length.append(self.G[e.nodes[0]][e.nodes[1]]['weight'])
+
+    def _cal_edge_face_index(self):
+        self.edge_face_index = []
+        for e in self.edge_list:
+            pair = []
+            for f in self.inner_facelist:
+                if len(set(e.nodes).intersection(set(f.nodes))) == 2:
+                    pair.append(f)
+                if len(pair) == 2:
+                    break
+            self.edge_face_index.append(pair)
+
+    def _cal_graph_node_feature(self):
+        self.graph_node_feature = {}
+        for n in self.node_list:
+            self.graph_node_feature[n] = self._get_node_loc(
+                n) + self._get_node_centrality(n)
+
+    def feature_init(self):
+        self._cal_graph_centrality()
+        self._cal_graph_node_feature()
+        self._cal_edge_index_and_length()
+        self._cal_node_degree_and_isroad()
+        self._cal_edge_face_index()
+
+    def get_obs(self):
+        numerical = self._get_numerical()
+        node_feature = np.concatenate(
+            [[self._get_node_feature(n) for n in self.node_list]], axis=1)
+        # node_feature = np.zeros_like(node_feature)
+
+        edge_part_feature = self._get_edge_part_feature()
+        # edge_part_feature = np.zeros_like(edge_part_feature)
+        edge_index = self.edge_index
+        edge_mask = self._get_edge_mask()
+
+        return numerical, node_feature, edge_part_feature, edge_index, edge_mask
+
+    # ok
+    def _get_edge_part_feature(self):
+        edge_isroad = np.array(self._get_edge_isroad()).reshape(-1, 1)
+        edge_length = np.array(self.edge_length).reshape(-1, 1)
+
+        edge_face_interior = np.array(self._get_edge_face_interior()).reshape(-1, 1)
+        # edge_face_interior = np.zeros_like(edge_face_interior)
+        edge_avg_dis = np.array(self._get_edge_avg_dis()).reshape(-1, 1)
+        # edge_avg_dis = np.zeros_like(edge_avg_dis)
+        # edge_outerface_dis = np.array(self._get_edge_outerface_dis()).reshape(-1, 1)
+        edge_ration_dis = np.array(self._get_edge_ration_dis()).reshape(-1, 1)
+        # edge_ration_dis = np.zeros_like(edge_ration_dis)
+
+        edge_part_feature = np.concatenate(
+            [edge_isroad, edge_length, edge_face_interior ,edge_avg_dis, edge_ration_dis], axis=1)
+
+        return edge_part_feature
+
+    def _get_edge_mask(self):
+        edge_mask = []
+        interior_del_able = False
+        for e in self.edge_list:
+            if (e not in self.road_edges) and set(e.nodes).intersection(set(self.road_nodes)):
+                if len(self.interior_parcels):
+                    if set(e.nodes).intersection(set(self.interior_nodes)):
+                        edge_mask.append(2)
+                        interior_del_able = True
+                    else:
+                        edge_mask.append(1)
+                else:
+                    edge_mask.append(1)
+            else:
+                edge_mask.append(0)
+
+        if interior_del_able:
+            index_equ2 = np.argwhere(np.array(edge_mask) == 2)
+            edge_mask = np.zeros(len(edge_mask))
+            edge_mask[index_equ2] = 1
+
+        return edge_mask
+    
+    # ok
+    def _get_edge_face_interior(self):
+        edge_face_interior=[]
+        for pair in self.edge_face_index:
+            if len(pair) == 1:
+                edge_face_interior.append(0)
+            elif len(pair) == 2:
+                f1 = pair[0]
+                f2 = pair[1]
+                inter=0
+                if f1 in self.interior_parcels:
+                    inter += 1
+                if f2 in self.interior_parcels:
+                    inter += 1
+                
+                edge_face_interior.append(inter/2)
+
+            elif len(pair) == 0:  # new case
+                edge_face_interior.append(0)
+        # return np.zeros_like(edge_face_interior)
+        return edge_face_interior
+    
+    # ok
+    def _get_edge_ration_dis(self):
+        edge_dis_ration=[]
+        for idx in range(len(self.edge_list)):
+            idx1 = self.edge_index[idx][0]
+            idx2 = self.edge_index[idx][1]
+            if self.td_dict[idx1][idx2] == 10000:
+                ration = 0.8
+            else:
+                ration = self.edge_length[idx]/self.td_dict[idx1][idx2] 
+            edge_dis_ration.append(ration) 
+        # return np.zeros_like(edge_dis_ration)
+        return edge_dis_ration
+
+    # ok
+    def _get_edge_avg_dis(self):
+        edge_dis = []
+        face_mean_dis = {}
+        for f1 in self.inner_facelist:
+            dis=0
+            count=0
+            for f2 in self.inner_facelist:
+                dis += self.td_dict_face[f1][f2]
+                count += 1
+
+            face_mean_dis[f1] = self.td_face_min[f1]/(dis/(count-1))
+
+        for pair in self.edge_face_index:
+            if len(pair) == 1:
+                f = pair[0]
+                mean_dis = face_mean_dis[f]
+            elif len(pair) == 2:
+                f1 = pair[0]
+                f2 = pair[1]
+                mean_dis = (face_mean_dis[f1] + face_mean_dis[f2]) / 2
+            elif len(pair) == 0:
+                mean_dis = 10000
+            edge_dis.append(mean_dis)
+
+        return edge_dis
+
+    # ok
+    def _get_edge_isroad(self):
+        edge_isroad = []
+        for e in self.edge_list:
+            if e in self.road_edges:
+                edge_isroad.append(1)
+            else:
+                edge_isroad.append(0)
+        # return np.zeros_like(edge_isroad)
+        return edge_isroad
+
+    # ok - double check
+    def get_numerical_feature_size(self):
+        return 4
+
+    # what is 0.5 used for
+    def _get_numerical(self):
+        if self.full_connected_road_num == 0:
+            stage1_num = self.build_road_num
+            stage2_num = 0
+        else:
+            stage1_num = self.full_connected_road_num
+            stage2_num = self.build_road_num - self.full_connected_road_num
+        stage1_ration = stage1_num / self.max_road_num
+        stage2_ration = stage2_num / self.max_road_num
+        interior_ration = len(
+            self.interior_parcels) / self.max_interior_parcels
+        # print(stage1_ration, stage2_ration, interior_ration)
+        return [0.5, stage1_ration, stage2_ration, interior_ration]
+
+    # ok
+    def _get_full_connected_road_num(self):
+        return self.full_connected_road_num
+    # ok
+    def _get_node_feature(self, node: MyNode):
+        return self.graph_node_feature[node] + self._get_node_degree_ration(
+            node) + self._get_node_isroad(node)  + self._get_node_interior(node) + self._get_node_dis(node)
+    # ok
+    def _get_node_loc(self, node: MyNode):
+        return [node.x, node.y]
+    # ok
+    def _get_node_degree_ration(self, node: MyNode):
+        return [self.node_degree_road[node]/self.node_degree_total[node]]
+    # ok
+    def _get_node_isroad(self, node: MyNode):
+        return [self.node_isroad[node]]
+    # ok
+    def _get_node_interior(self,node:MyNode):
+        # return [0]
+        if node in self.interior_nodes:
+            return [1]
+        else: 
+            return [0]
+    # ok
+    def _get_node_dis(self, node: MyNode):
+        idx = self.node_list.index(node)
+        # return [0]
+        return [self.td_dict_min[self.node_list[idx]]/np.mean(self.td_dict[idx])]
+    # ok
+    def _get_node_centrality(self, node: MyNode):
+        return [
+            self.degree_cen[node], self.betweenness_cen[node],
+            self.eigenvector_cen[node], self.closeness_cen[node]
+        ]
+
 
 ############################
 # GEOMETRY CLEAN UP FUNCTIONS
 ############################
 
-    def __merge_line_nodes(self, err):
-        for n in list(self.G.nodes()):
-
-            def angle(b):
-                dx = b.x - n.x
-                dy = b.y - n.y
-                return np.arctan2(dx, dy)
-
-            def is_line(nlist, err):
-                err = err
-                an1 = abs(angle(nlist[0]) - angle(nlist[1]))
-                an2 = abs(angle(nlist[0]) + angle(nlist[1]))
-                if abs(an1 - np.pi) < err or an1 < err:
-                    return True
-                else:
-                    return False
-
-            ng = list(self.G.neighbors(n))
-
-            if len(ng) == 2:
-                w1 = self.G[ng[0]][n]['weight']
-                w2 = self.G[ng[1]][n]['weight']
-                self.G.remove_node(n)
-                self.G.add_edge(ng[0],
-                                ng[1],
-                                myedge=MyEdge((ng[0], ng[1])),
-                                weight=w1 + w2)
-
-            elif len(ng) < 2:
-                self.G.remove_node(n)
-
-
-
-
-    def __combine_near_nodes(self, threshold):
-        """takes a connected component MyGraph, finds all nodes that are
-        within a threshold distance of each other, drops one and keeps the
-        other, and reconnects all the nodes that were connected to the first
-        node to the second node.  """
-
-        nlist = self.G.nodes()
-        for i, j in itertools.combinations(nlist, 2):
-            if j in self.G and i in self.G:
-                if mgh.distance_squared(i, j) < threshold**2:
-                    drop = j
-                    keep = i
-                    neighbors_drop = self.G.neighbors(drop)
-                    neighbors_keep = self.G.neighbors(keep)
-                    edges_to_add = (set(neighbors_drop) - set([keep]) -
-                                    set(neighbors_keep))
-                    self.G.remove_node(drop)
-                    for k in edges_to_add:
-                        newedge = MyEdge((keep, k))
-                        self.add_edge(newedge)
-
-    def __find_bad_edges(self, threshold):
-        """ finds nodes that are within the threshold distance of an edge
-        that does not contain it. Does not pair node V to edge UV.
-
-        Returns a dict with edges as keys, and the node that is too close as
-        the value.  This might cause trouble, if there are nodes that just
-        should be collapsed together, rather than the edge being split in
-        order to get that node connected. """
-
-        node_list = self.G.nodes()
-        edge_tup_list = self.G.edges(data=True)
-        edge_list = [e[2]['myedge'] for e in edge_tup_list]
-        bad_edge_dict = {}
-        for i in node_list:
-            for e in edge_list:
-                if i != e.nodes[0] and i != e.nodes[1]:
-                    # print "{} IS NOT on {}".format(i,e)
-                    node_dist_sq = mgh.sq_distance_point_to_segment(i, e)
-                    if node_dist_sq < threshold**2:
-                        # print "{} is too close to {}".format(i, e)
-                        if e in bad_edge_dict:
-                            bad_edge_dict[e].append(i)
-                        else:
-                            bad_edge_dict[e] = list([i])
-        self.bad_edge_dict = bad_edge_dict
-        return
-
-    def __remove_bad_edges(self, bad_edge_dict):
-        """ From the dict of bad edges:  call edge (dict key) UV and the node
-        (dict value) J. Then, drop edge UV and ensure that there is an edge
-        UJ and JV.
-        """
-
-        dropped_edges = 0
-        for edge, node_list in bad_edge_dict.items():
-            # print "dropping edge {}".format((edge.nodes[0],edge.nodes[1]))
-            self.G.remove_edge(edge.nodes[0], edge.nodes[1])
-            dropped_edges = dropped_edges + 1
-            if len(node_list) == 1:
-                for j in [0, 1]:
-                    if not self.G.has_edge(node_list[0], edge.nodes[j]):
-                        self.add_edge(MyEdge((node_list[0], edge.nodes[j])))
-            else:
-                node_list.sort(
-                    key=lambda node: mgh.distance(node, edge.nodes[0]))
-                if not self.G.has_edge(node_list[0], edge.nodes[0]):
-                    self.add_edge(MyEdge((node_list[0], edge.nodes[0])))
-                for i in range(1, len(node_list)):
-                    if not self.G.has_edge(node_list[i], node_list[i - 1]):
-                        self.add_edge(MyEdge((node_list[i], node_list[i - 1])))
-                if not self.G.has_edge(node_list[-1], edge.nodes[1]):
-                    self.add_edge(MyEdge((node_list[-1], edge.nodes[1])))
-
-        return dropped_edges
-
-    def clean_up_geometry(self, threshold, err=0.2, byblock=True):
-        """ function cleans up geometry, and returns a _copy_  of the graph,
-        cleaned up nicely. Does not change original graph. connected considers
-        graph by connected components only for clean up.
-        """
-
-        Gs = []
-
-        i = self.copy()
-        i.G.remove_edges_from(nx.selfloop_edges(i.G))
-        i.__combine_near_nodes(threshold)
-        # i.__find_bad_edges(threshold)
-        # i.__remove_bad_edges(i.bad_edge_dict)
-        # i.__merge_line_nodes(err)
-        # i.__merge_line_nodes(err)
-        Gs.append(i.G)
-
-        nxG = nx.compose_all(Gs)
-        newG = MyGraph(nxG, name=self.name)
-        newG.cleaned = True
-
-        return newG
-
-    def clean_up_geometry_single_CC(self, threshold):
-        """ function cleans up geometry, and returns a _copy_  of the graph,
-        cleaned up nicely. Does not change original graph.
-        """
-
-        Gs = self.copy()
-
-        Gs.G.remove_edges_from(nx.selfloop_edges(Gs))
-        Gs.__combine_near_nodes(threshold)
-        Gs.__find_bad_edges(threshold)
-        Gs.__remove_bad_edges(Gs.bad_edge_dict)
-
-        Gs.name = self.name
-
-        Gs.cleaned = True
-
-        return Gs
-
-    def save_graph(self, file_path):
-        print(file_path)
-        nx.write_shp(self.G, file_path)
 ##########################################
 #    WEAK DUAL CALCULATION FUNCTIONS
 ########################################
@@ -571,6 +666,7 @@ class MyGraph(object):
             iface.edges = [self.G[e[1]][e[0]]["myedge"] for e in face]
             inner_facelist.append(iface)
             iface.down1_node = iface.centroid
+
         return inner_facelist
 
     def weak_dual(self):
@@ -579,9 +675,9 @@ class MyGraph(object):
         the dual graph corresponds to a face in G. The position of each
         node in the dual is caluclated as the mean of the nodes composing
         the corresponding face in G."""
-
+        #print (self.G)
         try:
-            assert len(list(self.G.subgraph(g) for g in nx.connected_components(self.G))) <= 1
+            assert len(list(nx.connected_components(self.G))) <= 1
         except AssertionError:
             raise RuntimeError("weak_dual() can only be called on" +
                                " graphs which are fully connected.")
@@ -732,35 +828,59 @@ class MyGraph(object):
 #############################################
 #  DEFINING ROADS AND INTERIOR PARCELS
 #############################################
-
-    def define_roads(self):
+    
+    def define_roads(self) : 
         """ finds which edges and nodes in the connected component are on
         the roads, and updates thier properties (node.road, edge.road) """
+        self.node_list = []
+        for n in self.G.nodes():
+            self.node_list.append(n)
+        self.edge_list = self.myedges()
+        self.stage2edges = []
+        self.full_connected_road_num = 0
+
+        self.f2f_data=[]
+        self.cost_data=[]
+        self.parcels_data=[]
 
         road_nodes = []
+        road_nodes_idx = []
         road_edges = []
+                
         # check for empty graph
         if self.G.number_of_nodes() < 2:
             return []
 
         # self.trace_faces()
         self.inner_facelist
+        print ("745!!!",self.outerface)
         of = self.outerface
+
         for e in of.edges:
             e.road = True
             road_edges.append(e)
         for n in of.nodes:
             n.road = True
             road_nodes.append(n)
+            road_nodes_idx.append(self.node_list.index(n))
+
+        self.max_road_cost = max([
+            self.G[e.nodes[0]][e.nodes[1]]['weight'] for e in self.myedges()
+            if not e.road
+        ])
+        self.total_road_cost = 0
+
         self.roads_update = True
         self.road_nodes = road_nodes
+        self.road_nodes_idx = road_nodes_idx
         self.road_edges = road_edges
-        print('nodes:',len(self.G.nodes),'edges:',len(self.G.edges))
-        
+
+        self.build_road_num = 0
+        self.max_road_num = len(self.edge_list) - len(self.road_edges)
 
         # print "define roads called"
 
-    def define_interior_parcels(self):
+    def define_interior_parcels(self): 
         """defines what parcels are on the interior based on
            whether their nodes are on roads.  Relies on self.inner_facelist
            and self.road_nodes being updated. Writes to self.interior_parcels
@@ -776,6 +896,9 @@ class MyGraph(object):
             mgh.is_roadnode(n, self)
 
         self.road_nodes = [n for n in self.G.nodes() if n.road]
+        self.road_nodes_idx = [
+            self.node_list.index(n) for n in self.road_nodes
+        ]
 
         # rewrites all edge properties as not being interior.This needs
         # to happen BEFORE we define the edge properties for parcels
@@ -783,7 +906,7 @@ class MyGraph(object):
         for e in self.myedges():
             e.interior = False
 
-        for f in self.inner_facelist:
+        for f in self.inner_facelist:  #   interior_parcels  replaced by czb
             if len(set(f.nodes).intersection(set(self.road_nodes))) == 0:
                 f.on_road = False
                 interior_parcels.append(f)
@@ -802,15 +925,24 @@ class MyGraph(object):
         self.interior_parcels = interior_parcels
         self.interior_nodes = [n for n in self.G.nodes() if n.interior]
 
+        #if not hasattr(self, 'max_interior_parcels'):
+        self.max_interior_parcels = len(self.interior_parcels)
+        self.max_del_interior_parcels = 0
+        for n in self.G.nodes:
+            self.max_del_interior_parcels = max(
+                len(list(self.G.neighbors(n))),
+                self.max_del_interior_parcels)
+        self.max_del_interior_parcels = self.max_del_interior_parcels - 2
+
         self.td_dict_init()
         # print "define interior parcels called"
 
-    def update_node_properties(self):
+    def update_node_properties(self): 
         for n in self.G.nodes():
             mgh.is_roadnode(n, self)
             mgh.is_interiornode(n, self)
-            mgh.is_barriernode(n, self)
 
+    # ok 
     def find_interior_edges(self):
         """ finds and returns the pairs of nodes (not the myEdge) for all edges that
         are not on roads."""
@@ -823,372 +955,918 @@ class MyGraph(object):
 
         return interior_etup
 
+    # ok 
+    def build_road_from_action(self, action: List):
+        e = self.edge_list[int(action)]
+        self.add_road_segment(e)
+
+    # ok 
     def road_update(self, edge):
         self.G[edge.nodes[0]][edge.nodes[1]]['road'] = self.G[edge.nodes[0]][
             edge.nodes[1]]['weight']
-
-    def add_road_segment(self, edge):
+    
+    # ok 
+    def add_road_segment(self, edge: MyEdge,POIVersionTag = False):
         """ Updates properties of graph to make edge a road. """
+        edge = self.G[edge.nodes[0]][edge.nodes[1]]['myedge']
+        # self.myw = self.G[edge.nodes[0]][edge.nodes[1]]['weight']
+
+        if POIVersionTag == False:
+            self.td_dict_update(edge)
+        elif POIVersionTag == True:
+            self.td_dict_update_ForPOI(edge)
+
+
+
         edge.road = True
+        if edge in self.road_edges:
+            print (edge)
+            raise ValueError("[!]Already in ")
+        # if len(set(edge.nodes).intersection(set(self.road_nodes))) == 0:
+        #     raise ValueError("Invalid edge")
 
         if hasattr(self, 'road_edges'):
             self.road_edges.append(edge)
         else:
             self.road_edges = [edge]
+        
+        if self.full_connected_road_num:
+            self.stage2edges.append(edge)
 
         if hasattr(self, 'road_nodes'):
             rn = self.road_nodes
+            rn_idx = self.road_nodes_idx
         else:
             rn = []
+            rn_idx = []
 
         for n in edge.nodes:
             n.road = True
-            rn.append(n)
+
+            self.node_degree_road[n] += 1
+            self.node_isroad[n] = 1
+            idx = self.node_list.index(n)
+            if idx not in rn_idx:
+                rn_idx.append(idx)
+                rn.append(n)
 
         self.roads_update = False
         self.road_nodes = rn
-        self.define_interior_parcels()
-        # self.road_update(edge)
-        # t1 = time.perf_counter()
-        # self.interior_parcels_update(edge)
-        # self.td_dict_update(edge)
-        # self.interior_parcels_update(edge)
-        # print(time.perf_counter() -t1)
+        self.road_nodes_idx = rn_idx
+        self.build_road_num += 1
+        self.interior_parcels_update()
 
-    def remove_road_segment(self, edge):
-        """ Updates properties of graph to remove a road. """
-        assert isinstance(edge, MyEdge)
-        edge.road = False
-        for n in edge.nodes:
-            onroad = False
-            for neighbor in self.G[n]:
-                neighboredge = self.G[n][neighbor]['myedge']
-                if neighboredge.road:
-                    onroad = True
+    # ok 
+    def add_all_road(self):
+        for e in self.myedges():
+            if not e.road:
+                self.add_road_segment(e)
 
-            n.road = onroad
-            if not n.road:
-                if n in self.road_nodes:
-                    self.road_nodes.remove(n)
 
-        self.define_interior_parcels()
-        return
+#############################################
+#  DEFINING ROADS AND INTERIOR PARCELS
+#############################################
+    def define_roads_FirstTime(self):
+        """ finds which edges and nodes in the connected component are on
+        the roads, and updates thier properties (node.road, edge.road) """
 
-    def road_length(self):
-        """finds total length of roads in self """
-        eroad = [e for e in self.myedges() if e.road]
-        length = sum([e.length for e in eroad])
-        return length
+        self.node_list = []
+        for n in self.G.nodes():
+            self.node_list.append(n)
+        self.edge_list = self.myedges()
+        self.stage2edges = []
+        self.full_connected_road_num = 0
 
-    def road_cost(self):
-        """finds total length of roads in self """
-        eroad = [e for e in self.myedges() if e.road]
-        length = sum([self.G[e[0]][e[1]]['weight'] for e in eroad])
-        return length
+        self.f2f_data=[]
+        self.cost_data=[]
+        self.parcels_data=[]
 
-    def travel_distance(self):
-        return self._td_reward / self._td_reward_count
+        road_nodes = []
+        road_nodes_idx = []
+        road_edges = []
+                
+        # check for empty graph
+        if self.G.number_of_nodes() < 2:
+            return  ################
 
-    def td_dict_init(self):
-        roadG = MyGraph()
-        for e in self.road_edges:
-            roadG.add_edge(e)
-        roadf = [f for f in self.inner_facelist if f.on_road]
-        for f in roadf:
-            roadG.add_fake_edges(f)
+        for e in self.myedges():
+            if e.isRoad == True:
+                e.road = True
+                road_edges.append(e)
+                for n in e.nodes:
+                    n.road = True
+                    road_nodes.append(n)
+                    road_nodes_idx.append(self.node_list.index(n))
 
-        td_dict = dict(nx.shortest_path_length(roadG.G, weight="weight"))
-        self.td_dict = {}
-        for i in roadG.G.nodes():
-            self.td_dict[i] = {}
-            for j in roadf:
-                self.td_dict[i][j] = td_dict[i][j.centroid]
 
-    def td_dict_update(self, edge):
-        n1 = edge.nodes[0]
-        n2 = edge.nodes[1]
-        road_length = self.G[n1][n2]['weight']
-        self._td_reward = 0
-        self._td_reward_count = 0
-        print (len(self.td_dict[n1]) , len(self.td_dict[n2]))
-        if n1 not in self.td_dict:
-            if n2 not in self.td_dict:
-                raise ValueError('road is not connected to original graph')
-            else:
-                self.td_dict[n1] = {}
-                for f in self.inner_facelist:
-                    if n1 in set(f.nodes):
-                        if f in self.td_dict[n2]:
-                            self.td_dict[n2][f] = min(self.td_dict[n2][f],
-                                                      road_length)
-                        else:
-                            self.td_dict[n2][f] = self.G[n1][n2]['weight']
+        self.max_road_cost = max([
+            self.G[e.nodes[0]][e.nodes[1]]['weight'] for e in self.myedges()
+            if not e.road
+        ])
+        self.total_road_cost = 0
 
-                        for ff in self.td_dict[n2]:
-                            self.td_dict[n1][
-                                ff] = self.td_dict[n2][ff] + road_length
-                self._td_reward = 1 / len(self.inner_facelist)
+        self.roads_update = True
+        self.road_nodes = road_nodes
+        self.road_nodes_idx = road_nodes_idx
+        self.road_edges = road_edges
 
-        elif n2 not in self.td_dict:
-            if n1 not in self.td_dict:
-                raise ValueError('road is not connected to original graph')
-            else:
-                self.td_dict[n2] = {}
-                for f in self.td_dict[n1]:
-                    if n1 in set(f.nodes):
-                        if f in self.td_dict[n1]:
-                            self.td_dict[n1][f] = min(self.td_dict[n1][f],
-                                                      road_length)
-                        else:
-                            self.td_dict[n1][f] = self.G[n1][n2]['weight']
+        self.build_road_num = 0
+        self.max_road_num = len(self.edge_list) - len(self.road_edges)
 
-                        for ff in self.td_dict[n1]:
-                            self.td_dict[n2][
-                                ff] = self.td_dict[n1][ff] + road_length
-                self._td_reward = 1 / len(self.inner_facelist)
 
-        else:
-            for f in self.td_dict[n1]:
-                tmp = self.td_dict[n1][f]
-                if tmp != 0:
-                    self.td_dict[n1][f] = min(
-                        self.td_dict[n1][f], self.td_dict[n2][f] + road_length)
-                    self._td_reward += (tmp - self.td_dict[n1][f]) / tmp
-                    self._td_reward_count += 1
-            for f in self.td_dict[n2]:
-                tmp = self.td_dict[n2][f]
-                if tmp != 0:
-                    self.td_dict[n2][f] = min(
-                        self.td_dict[n2][f], self.td_dict[n1][f] + road_length)
-                    self._td_reward += (tmp - self.td_dict[n1][f]) / tmp
-                    self._td_reward_count += 1
-        print (len(self.td_dict[n1]) , len(self.td_dict[n2]))
 
-        
-    def interior_parcels_update(self, edge):
-        for f in self.interior_parcels:
-            if set(edge.nodes).intersection(set(f.nodes)):
-                self.interior_parcels.remove(f)
-                print('del')
+
 
 #############################################
 #   GEOMETRY AROUND BUILDING A GIVEN ROAD SEGMENT - c/(sh?)ould be deleted.
 #############################################
 
-    def __find_nodes_curbs(self, edge):
-        """ finds curbs and nodes for a given edge that ends on a road.
-        """
+############################
+# REWARD FUNCTIONS
+############################
+    def save_step_data(self,path=r'C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\road_planning\data\data.csv'):
+        data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])
+        data.to_csv(path,encoding='gbk')
 
-        if edge.nodes[0].road == edge.nodes[1].road:
-            raise Exception("{} does not end on a curb".format(edge))
+    def road_cost(self):
+        self.cost_data.append(self.total_road_cost)
+        return self.current_road_cost / self.max_road_cost
 
-        [b] = [n for n in edge.nodes if n.road]
-        [a] = [n for n in edge.nodes if not n.road]
+    # ok  
+    def total_cost(self):
+        return self.total_road_cost
 
-        b_neighbors = self.G.neighbors(b)
-
-        curb_nodes = [n for n in b_neighbors if self.G[b][n]["myedge"].road]
-
-        if len(curb_nodes) != 2:
-            raise Exception("Trouble!  " +
-                            "Something is weird about the road geometery.")
-
-        [c1, c2] = curb_nodes
-
-        return a, b, c1, c2
-
-    def __find_d_connections(self, a, b, c1, c2, d1, d2):
-        """ nodes d1 and d2 are added to graph, and figures
-            out how a, c1 and c2 are connected  """
-
-        for n in [d1, d2]:
-            self.add_edge(MyEdge((n, b)))
-
-        emb = self.get_embedding()
-
-        Bfilter = [n for n in emb[b] if n in [a, c1, c2, d1, d2]]
-
-        if len(Bfilter) != 5:
-            raise Exception(
-                "Bfilter is not set up correctly. \n {}".format(Bfilter))
-
-        Aindex = Bfilter.index(a)
-
-        while Aindex != 2:
-            mgh.myRoll(Bfilter)
-            Aindex = Bfilter.index(a)
-
-        newedges = []
-        newedges.append(MyEdge((a, d1)))
-        newedges.append(MyEdge((a, d2)))
-        newedges.append(MyEdge((Bfilter[0], Bfilter[1])))
-        newedges.append(MyEdge((Bfilter[3], Bfilter[4])))
-
-        return newedges
-
-    def __find_e_connections(self, a, b, c1, c2, d1, d2):
-        """ of nodes connected to b that are not existing curbs (c1 and c2)
-        and a, the endpoint of the new road segment, figures out how to
-        connect each one to d1 or d2 (the new curbs).   """
-
-        emb = self.get_embedding()
-        Bfilter = [n for n in emb[b] if n not in [d1, d2]]
-
-        # if c1 and c2 are the first two elements, roll so they are the
-        # first and last
-        if ((Bfilter[0] == c1 or Bfilter[0] == c2)
-                and (Bfilter[1] == c1 or Bfilter[1] == c2)):
-            mgh.myRoll(Bfilter)
-
-        # roll until c1 or c2 is first.  the other should then be the
-        # last element in the list.
-        while Bfilter[0] != c1 and Bfilter[0] != c2:
-            mgh.myRoll(Bfilter)
-
-        # check that after rolling, c1 and c2 are first and last elements
-        if Bfilter[-1] != c1 and Bfilter[-1] != c2:
-            raise Exception("There is an edge in my road." +
-                            "Something is wrong with the geometry.")
-
-        # d1 connected to c1 or c2?
-        if c1 in self.G[d1]:
-            c1_to_d1 = True
+    # ok  
+    def travel_distance(self) -> float:
+        # if self._reward_count == 0:
+        #     return 0
+        # return 10*self._td_reward / self._reward_count
+        if len(self.interior_parcels) or self.del_parcel_num:
+            before = self.face2face_avg()
+            return 0
         else:
-            c1_to_d1 = False
+            before = self.f2f_avg
+            now = self.face2face_avg()
+            return  (before-now)/(before-self.f2f_avg_min)
 
-        if Bfilter[0] == c1:
-            if c1_to_d1:
-                dorder = [d1, d2]
-            else:
-                dorder = [d2, d1]
-        elif Bfilter[0] == c2:
-            if c1_to_d1:
-                dorder = [d2, d1]
-            else:
-                dorder = [d1, d2]
+    # ok  
+    def face2face_avg(self):
+        sum = 0
+        for i in self.inner_facelist:
+                for j in self.inner_facelist:
+                    sum += self.td_dict_face[i][j]
+        self.f2f_avg = sum / (len(self.inner_facelist)*(len(self.inner_facelist)-1))
+
+        sum=0
+        count=0
+        for i in self.inner_facelist:
+                for j in self.inner_facelist:
+                    if self.td_dict_face[i][j] != 10000:
+                        sum += self.td_dict_face[i][j]
+                        count+=1
+                count -= 1 
+        tmp = sum / (count)
+        self.f2f_data.append(tmp)
+
+        return self.f2f_avg
+
+    # ok  
+    def connected_ration(self):
+        self.parcels_data.append(len(self.interior_parcels))
+        if self.del_parcel_num == 0 and len(self.interior_parcels) != 0:
+            return -1/self.max_del_interior_parcels
         else:
-            raise Exception("Bfilter is set up wrong")
+            return self.del_parcel_num / self.max_del_interior_parcels
 
-        Aindex = Bfilter.index(a)
+    def td_dict_init(self): 
+        roadG = MyGraph()
+        for idx in range(len(self.road_edges)):
+            e = self.road_edges[idx]
+            roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
+        td_dict = dict(nx.shortest_path_length(roadG.G, weight="weight"))
+### init_td_dict
+        node_length = len(self.node_list)
+        # print('node:', node_length, 'edge:', len(self.edge_list))
+        self.td_dict = [[a for a in range(node_length)]
+                        for _ in range(node_length)]
+        for n in range(node_length):
+            for nn in range(node_length):
+                if n == nn:
+                    self.td_dict[n][nn] = 0
+                else:
+                    self.td_dict[n][nn] = 10000
+        for i in td_dict:
+            idx1 = self.node_list.index(i)
+            for j in td_dict:
+                idx2 = self.node_list.index(j)
+                self.td_dict[idx1][idx2] = td_dict[i][j]
+### init_face_dis
+        self.td_dict_face = {}
+        for f1 in self.inner_facelist:
+            self.td_dict_face[f1] = {}
+            for f2 in self.inner_facelist:
+                if f1.centroid == f2.centroid:
+                    self.td_dict_face[f1][f2] = 0
+                else:
+                    self.td_dict_face[f1][f2] = 10000
+        for f1 in set(self.inner_facelist).difference(
+                set(self.interior_parcels)):
+            for f2 in set(self.inner_facelist).difference(
+                    set(self.interior_parcels)):
+                if self.td_dict_face[f1][f2] == 0:
+                    continue
+                else:
+                    for n1 in f1.nodes:
+                        idx1 = self.node_list.index(n1)
+                        for n2 in f2.nodes:
+                            idx2 = self.node_list.index(n2)
+                            if idx1 != idx2 or (idx1 in self.road_nodes_idx):
+                                self.td_dict_face[f1][f2] = self.td_dict_face[
+                                    f2][f1] = min(self.td_dict_face[f1][f2],
+                                                  self.td_dict[idx1][idx2])
+### init_outface_dis
+        self.td_dict_face[self.outerface]={}
+        for f in self.inner_facelist:
+            self.td_dict_face[self.outerface][f] = 0
+        for f in self.interior_parcels:
+            self.td_dict_face[self.outerface][f] = 10000
+### cal_face_dis_min
+        td_dict_min = dict(nx.shortest_path_length(self.G, weight="weight"))
+        self.td_dict_min={}
+        for n1 in self.node_list:
+            dis=0
+            count=0
+            for n2 in self.node_list:
+                dis += td_dict_min[n1][n2]
+                count += 1
+            self.td_dict_min[n1] = dis/(count-1)
+                
+        self.td_dict_face_min = {}
+        self.td_face_min={}
+        for f1 in self.inner_facelist:
+            self.td_dict_face_min[f1] = {}
+            for f2 in self.inner_facelist:
+                self.td_dict_face_min[f1][f2] = 10000
+                for n1 in f1.nodes:
+                    for n2 in f2.nodes:
+                        self.td_dict_face_min[f1][f2] = min(
+                            self.td_dict_face_min[f1][f2], td_dict_min[n1][n2])
+                        if self.td_dict_face_min[f1][f2] == 0:
+                            break
+                            
+        for f1 in self.inner_facelist:
+            dis=0
+            count=0
+            for f2 in self.inner_facelist:
+                dis += self.td_dict_face_min[f1][f2]
+                count += 1
+            self.td_face_min[f1] = dis/(count-1)
 
-        newedges1 = [MyEdge((dorder[0], n)) for n in Bfilter[1:Aindex]]
-        newedges2 = [MyEdge((dorder[1], n)) for n in Bfilter[Aindex + 1:]]
+        self.face2face_avg()
+        sum = 0
+        for i in self.td_dict_face_min:
+            for j in self.td_dict_face_min[i]:
+                sum += self.td_dict_face_min[i][j]
+        self.f2f_avg_min = sum / (len(self.inner_facelist)*(len(self.inner_facelist)-1))
 
-        edges = newedges1 + newedges2
+        print('td_init')
 
-        return edges
+    # update node2node & face2face distace
+    # update node2node & face2face distace
+    def td_dict_update(self, edge):
+        n1 = edge.nodes[0]
+        n2 = edge.nodes[1]
+        idx1 = self.node_list.index(n1)
+        idx2 = self.node_list.index(n2)
+        self.current_road_cost = self.G[n1][n2]['weight']
+        self.total_road_cost += self.current_road_cost
+        change_two = False
+        change_node = []
 
-    def add_road_segment_geo(self, edge, radius=1, epsilon=0.2):
+        ### update node2node shortest distance
+        if n1 not in self.road_nodes:
+            if n2 not in self.road_nodes:
+                change_node.append([idx1, idx2])
+                self.td_dict[idx1][idx2] = self.td_dict[idx1][idx2] = self.G[n1][n2]['weight']
+            else:
+                change_node.append([idx1, idx1])
+                for i in self.road_nodes_idx:
+                    self.td_dict[i][idx1] = self.td_dict[idx1][
+                        i] = self.td_dict[i][idx2] + self.G[n1][n2]['weight']
+                    change_node.append([idx1, i])
 
-        a, b, c1, c2 = self.__find_nodes_curbs(edge)
-        m = mgh.bisect_angle(c1, b, c2, epsilon, radius=1)
-        d1 = mgh.bisect_angle(a, b, m, epsilon, radius=radius)
-        d2 = mgh.find_negative(d1, b)
+        elif n2 not in self.road_nodes:
+            if n1 not in self.road_nodes:
+                change_node.append([idx1, idx2])
+                self.td_dict[idx1][idx2] = self.td_dict[idx1][idx2] = self.G[n1][n2]['weight']
+            else:
+                change_node.append([idx2, idx2])
+                for i in self.road_nodes_idx:
+                    self.td_dict[i][idx2] = self.td_dict[idx2][
+                        i] = self.td_dict[i][idx1] + self.G[n1][n2]['weight']
+                    change_node.append([idx2, i])
 
-        # figure out how the existing curb nodes connect to the new nodes
-        new_d_edges = self.__find_d_connections(a, b, c1, c2, d1, d2)
+        else:
+            change_two = True
+            for i in self.road_nodes_idx:
+                for j in self.road_nodes_idx:
+                    before = self.td_dict[i][j]
+                    self.td_dict[i][j] = self.td_dict[j][i] = min(
+                        self.td_dict[i][j],
+                        (min(self.td_dict[i][idx1] + self.td_dict[idx2][j],
+                             self.td_dict[i][idx2] + self.td_dict[idx1][j]) +
+                         self.G[n1][n2]['weight']))
+                    if self.td_dict[i][j] < before:
+                        change_node.append([i, j])
 
-        for e in new_d_edges:
-            self.add_edge(e)
+        # update face2face distance
+        if change_two:
+            for pair in change_node:
+                idx1 = pair[0]
+                idx2 = pair[1]
+                n1 = self.node_list[idx1]
+                n2 = self.node_list[idx2]
+                for f1 in [f for f in self.inner_facelist if n1 in f.nodes]:
+                    for f2 in [
+                            f for f in self.inner_facelist if n2 in f.nodes
+                    ]:
+                        before = self.td_dict_face[f1][f2]
+                        if before == self.td_dict_face_min[f1][f2]:
+                            continue
+                        else:
+                            self.td_dict_face[f1][f2] = self.td_dict_face[f2][
+                                f1] = min(self.td_dict_face[f1][f2],
+                                          self.td_dict[idx1][idx2])
 
-        # figure out how other involved parcels connect to the new nodes
-        new_e_edges = self.__find_e_connections(a, b, c1, c2, d1, d2)
+        else:
+            idx1 = change_node[0][0]
+            n1 = self.node_list[idx1]
+            for f1 in [f for f in self.inner_facelist if n1 in f.nodes]:
+                for pair in change_node:
+                    idx2 = pair[1]
+                    n2 = self.node_list[idx2]
+                    for f2 in [
+                            f for f in self.inner_facelist if n2 in f.nodes
+                    ]:
+                        before = self.td_dict_face[f1][f2]
+                        if before == self.td_dict_face_min[f1][f2]:
+                            continue
+                        else:
+                            self.td_dict_face[f1][f2] = self.td_dict_face[f2][
+                                f1] = min(self.td_dict_face[f1][f2],
+                                          self.td_dict[idx1][idx2])
 
-        for e in new_e_edges:
-            self.add_edge(e)
+        for pair in change_node:
+            idx1 = pair[0]
+            idx2 = pair[1]
+            n1 = self.node_list[idx1]
+            n2 = self.node_list[idx2]
+            if n1 in self.outerface.nodes:
+                for f2 in [f for f in self.inner_facelist if n2 in f.nodes]:
+                    self.td_dict_face[self.outerface][f2] = min(self.td_dict_face[self.outerface][f2], self.td_dict[idx1][idx2])
+            elif n2 in self.outerface.nodes:
+                for f1 in [f for f in self.inner_facelist if n1 in f.nodes]:
+                    self.td_dict_face[self.outerface][f1] = min(self.td_dict_face[self.outerface][f1], self.td_dict[idx1][idx2])
+                
+    def td_dict_update_ForPOI(self,edge):
+        #print ("td_dict_update_ForPOI")
+        
+        n1 = edge.nodes[0]
+        n2 = edge.nodes[1]
+        idx1 = self.node_list.index(n1)
+        idx2 = self.node_list.index(n2)
+        self.current_road_cost = self.G[n1][n2]['weight']
+        self.total_road_cost += self.current_road_cost
+        change_two = False
+        change_node = []
 
-        self.G.remove_node(b)
-        self.roads_update = False
+        #print ("n1:", self.node_list.index(n1), "n2:", self.node_list.index(n2))
+        #print ("n1 in self.road_nodes",n1 in self.road_nodes,"n2 in self.road_nodes",n2 in self.road_nodes)
+        # if (self.node_list.index(n1) == 146 and self.node_list.index(n2)==147) or (self.node_list.index(n1)== 147 and self.node_list.index(n2) ==146):
+        #     print ("catch!!!")
 
-        return
+        ### update node2POInode shortest distance
+        if n1 not in self.road_nodes:
+            if n2 not in self.road_nodes:
+                change_node.append([idx1, idx2])
+                self.td_dict[idx1][idx2] = self.td_dict[idx1][idx2] = self.G[n1][n2]['weight']
+                # For POI: In this case, no need to update node to POI
+
+            else:
+                change_node.append([idx1, idx1])
+                for i in self.road_nodes_idx:
+                    self.td_dict[i][idx1] = self.td_dict[idx1][
+                        i] = self.td_dict[i][idx2] + self.G[n1][n2]['weight']
+                    change_node.append([idx1, i])
+
+                # For POI: In this case, n1 is the new node added in the network
+                for POINode in self.POINodes: 
+                    self.td_dict_nodeToPOInode[n1][POINode] = self.td_dict[idx1][
+                        self.node_list.index(POINode)] = self.td_dict[i][idx2] + self.G[n1][n2]['weight']
+
+                for POIEdge in self.POIEdges: 
+                    if self.td_dict_nodeToPOInode[n1][POIEdge.nodes[0]] <  self.td_dict_nodeToPOInode[n1][POIEdge.nodes[1]]:
+                        self.td_dict_nodeToPOIEdge[n1][POIEdge]["POINode": POIEdge.nodes[0]]
+                        self.td_dict_nodeToPOIEdge[n1][POIEdge]["Dist": self.td_dict_nodeToPOInode[n1][POIEdge.nodes[0]]]
+                    elif self.td_dict_nodeToPOInode[n1][POIEdge.nodes[0]] >  self.td_dict_nodeToPOInode[n1][POIEdge.nodes[1]]:
+                        self.td_dict_nodeToPOIEdge[n1][POIEdge]["POINode": POIEdge.nodes[1]]
+                        self.td_dict_nodeToPOIEdge[n1][POIEdge]["Dist": self.td_dict_nodeToPOInode[n1][POIEdge.nodes[1]]]
+
+                if self.td_dict_nodeToPOIEdge[n1][POIEdge]["Dist"] - 1.266 <0.1:
+                    tag = "catch 1"
+                      
+
+        elif n2 not in self.road_nodes:
+            if n1 not in self.road_nodes:
+                change_node.append([idx1, idx2])
+                self.td_dict[idx1][idx2] = self.td_dict[idx1][idx2] = self.G[n1][n2]['weight']
+                # In this case, no need to update node to POI
+
+            else:
+                change_node.append([idx2, idx2])
+                for i in self.road_nodes_idx:
+                    self.td_dict[i][idx2] = self.td_dict[idx2][
+                        i] = self.td_dict[i][idx1] + self.G[n1][n2]['weight']
+                    change_node.append([idx2, i])
+
+                # For POI: In this case, n2 is the new node added in the network
+                for POINode in self.POINodes: 
+                    self.td_dict_nodeToPOInode[n2][POINode] = self.td_dict[idx2][
+                        self.node_list.index(POINode)] = self.td_dict[i][idx1] + self.G[n1][n2]['weight']
+                    
+                for POIEdge in self.POIEdges: 
+                    if self.td_dict_nodeToPOInode[n2][POIEdge.nodes[0]] <  self.td_dict_nodeToPOInode[n2][POIEdge.nodes[1]]:
+                        self.td_dict_nodeToPOIEdge[n2][POIEdge]["POINode": POIEdge.nodes[0]]
+                        self.td_dict_nodeToPOIEdge[n2][POIEdge]["Dist": self.td_dict_nodeToPOInode[n2][POIEdge.nodes[0]]]
+                    elif self.td_dict_nodeToPOInode[n2][POIEdge.nodes[0]] >  self.td_dict_nodeToPOInode[n2][POIEdge.nodes[1]]:
+                        self.td_dict_nodeToPOIEdge[n2][POIEdge]["POINode": POIEdge.nodes[1]]
+                        self.td_dict_nodeToPOIEdge[n2][POIEdge]["Dist": self.td_dict_nodeToPOInode[n2][POIEdge.nodes[1]]]
+                    
+                if self.td_dict_nodeToPOIEdge[n2][POIEdge]["Dist"] - 1.266 <0.1:
+                    tag = "catch 2"
+
+        else:
+            change_two = True   # to indicate 2 nodes now are connected, need to update td
+            for i in self.road_nodes_idx:
+                for j in self.road_nodes_idx:
+                    before = self.td_dict[i][j]
+                    self.td_dict[i][j] = self.td_dict[j][i] = min(
+                        self.td_dict[i][j],
+                        (min(self.td_dict[i][idx1] + self.td_dict[idx2][j],
+                             self.td_dict[i][idx2] + self.td_dict[idx1][j]) +
+                         self.G[n1][n2]['weight']))
+                    if self.td_dict[i][j] < before:
+                        change_node.append([i, j])
+
+            # For POI: Need to update all
+            for node in self.inner_nodelist_True:
+                for POINode in self.POINodes: 
+                    self.td_dict_nodeToPOInode[node][POINode] = self.td_dict[self.node_list.index(node)][self.node_list.index(POINode)]
+            
+            for node in self.inner_nodelist_True:
+                for POIEdge in self.POIEdges: 
+                    if self.td_dict_nodeToPOInode[node][POIEdge.nodes[0]] <  self.td_dict_nodeToPOInode[node][POIEdge.nodes[1]]:
+                        self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"] = POIEdge.nodes[0]
+                        self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"] =  self.td_dict_nodeToPOInode[node][POIEdge.nodes[0]]
+                    elif self.td_dict_nodeToPOInode[node][POIEdge.nodes[0]] >  self.td_dict_nodeToPOInode[node][POIEdge.nodes[1]]:
+                        self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"] = POIEdge.nodes[1]
+                        self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"] = self.td_dict_nodeToPOInode[node][POIEdge.nodes[1]]
 
 
-# ###################################
+
+
+        # update face2face distance
+        if change_two:
+            for pair in change_node:
+                idx1 = pair[0]
+                idx2 = pair[1]
+                n1 = self.node_list[idx1]
+                n2 = self.node_list[idx2]
+                for f1 in [f for f in self.inner_facelist if n1 in f.nodes]:
+                    for f2 in [
+                            f for f in self.inner_facelist if n2 in f.nodes
+                    ]:
+                        before = self.td_dict_face[f1][f2]
+                        if before == self.td_dict_face_min[f1][f2]:
+                            continue
+                        else:
+                            self.td_dict_face[f1][f2] = self.td_dict_face[f2][
+                                f1] = min(self.td_dict_face[f1][f2],
+                                          self.td_dict[idx1][idx2])
+                
+                
+                # if self.node_list.index(n1) == 36 and self.node_list.index(n2) == 149:
+                #     print ("before")
+                #     for node in self.inner_nodelist_True:
+                #         if self.node_list.index(node) == 152:
+                #             for POIEdge in self.POIEdges: 
+                #                 if self.node_list.index(POIEdge.nodes[0]) in [48,49]:
+                #                     print (self.node_list.index(POIEdge.nodes[0]))
+                #                     print  (self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"])
+                # For POI: 
+                for changeNode in [n1, n2]:
+                    for face in [f for f in self.inner_facelist_True if changeNode in f.nodes]:
+                        for POIEdge in self.POIEdges:
+                            allRecord = [self.td_dict_nodeToPOIEdge[node][POIEdge] for node in face.nodes]
+                            allDist = [record["Dist"] for record in allRecord]
+                            minDist = min(allDist)
+                            selectedIndex = allDist.index(minDist)
+                            self.td_dict_faceToPOIEdge[face][POIEdge]["Dist"] = minDist
+                            self.td_dict_faceToPOIEdge[face][POIEdge]["POINode"] = allRecord[selectedIndex]["POINode"]
+                            self.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge]["POINode"] = allRecord[selectedIndex]["POINode"]
+                            self.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge]["node"] = face.nodes[selectedIndex]
+
+
+
+  
+
+        else:
+            idx1 = change_node[0][0]        # This is the new added one
+            n1 = self.node_list[idx1]
+            for f1 in [f for f in self.inner_facelist if n1 in f.nodes]:
+                for pair in change_node:
+                    idx2 = pair[1]
+                    n2 = self.node_list[idx2]
+                    for f2 in [
+                            f for f in self.inner_facelist if n2 in f.nodes
+                    ]:
+                        before = self.td_dict_face[f1][f2]
+                        if before == self.td_dict_face_min[f1][f2]:
+                            continue
+                        else:
+                            self.td_dict_face[f1][f2] = self.td_dict_face[f2][
+                                f1] = min(self.td_dict_face[f1][f2],
+                                          self.td_dict[idx1][idx2])
+
+            # For POI: 
+            for face in [f for f in self.inner_facelist_True if n1 in f.nodes]:
+                for POIEdge in self.POIEdges:
+                    allRecord = [self.td_dict_nodeToPOIEdge[node][POIEdge]for node in face.nodes]
+                    allDist = [record["Dist"] for record in allRecord]
+                    minDist = min(allDist)
+                    selectedIndex = allDist.index(minDist)
+                    self.td_dict_faceToPOIEdge[face][POIEdge]["Dist"] = minDist
+                    self.td_dict_faceToPOIEdge[face][POIEdge]["POINode"] = allRecord[selectedIndex]["POINode"]
+                    self.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge]["POINode"] = allRecord[selectedIndex]["POINode"]
+                    self.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge]["node"] = face.nodes[selectedIndex]
+
+       
+        # print ("wwww!!!!!")
+        # for node in self.inner_nodelist_True:
+        #     if self.node_list.index(node) == 152:
+        #         for POIEdge in self.POIEdges: 
+        #             if self.node_list.index(POIEdge.nodes[0]) in [48,49]:
+        #                 print (self.node_list.index(POIEdge.nodes[0]))
+        #                 print  (self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"])
+
+    # ok             
+    def interior_parcels_update(self):
+        # print (" -----in interior_parcels_update-----")
+
+        parcels = len(self.interior_parcels)
+        # print ("parcels",parcels)
+        self.interior_parcels=[]
+        for f in self.inner_facelist:
+            if self.td_dict_face[self.outerface][f] == 10000:
+                    self.interior_parcels.append(f)
+                    # print ("add F", f,self.td_dict_face[self.outerface][f])
+
+        for e in self.myedges():
+            e.interior = False
+        for p in self.interior_parcels:
+            for e in p.edges:
+                e.interior = True
+        for n in self.G.nodes():
+            mgh.is_interiornode(n, self)
+        self.interior_nodes = [n for n in self.G.nodes() if n.interior]
+
+        self.del_parcel_num = parcels - len(self.interior_parcels)
+        # print ("self.interior_parcels",len(self.interior_parcels))
+        # print ("del_parcel_num",self.del_parcel_num)
+
+        # debug_interior_parcels = []
+        # for f in self.inner_facelist:  #   interior_parcels  replaced by czb
+        #     if len(set(f.nodes).intersection(set(self.road_nodes))) == 0:
+        #         f.on_road = False
+        #         debug_interior_parcels.append(f)
+        #     else:
+        #         f.on_road = True
+        #         for n in f.nodes:
+        #             n.interior = False
+        # print ("debug_interior_parcels",len(debug_interior_parcels))
+
+        # for parcel in self.interior_parcels:
+        #     if parcel not in debug_interior_parcels:
+        #         print (parcel)
+
+        # if self.del_parcel_num == 0:
+        #     self.plot(self.del_parcel_num)  # for debug
+       
+        if len(self.interior_parcels) == 0 and self.del_parcel_num != 0:
+            self.full_connected_road_num = self.build_road_num
+
+
+############################
+# REWARD FUNCTIONS _ NEW FOR POI
+############################
+###
+# The first collection: using road graph
+###
+# The dict records each node to POI node; This is the base, all other caculations depend on it
+
+    def td_dict_nodeToPOInode_init(self,infiniteDist = 10000):
+        # Create a current road graph
+        roadG = MyGraph()
+        for idx in range(len(self.road_edges)):
+            e = self.road_edges[idx]
+            roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
+
+
+        ### init_td_dict_nodeToPOI
+        td_dict_nodeToPOInode = {}
+        for node in self.inner_nodelist_True:
+            td_dict_nodeToPOInode[node] = {}
+            for nodePOI in self.POINodes:   
+                if node in roadG.G:
+                    length = nx.shortest_path_length(roadG.G,source=node, target=nodePOI, weight="weight")
+                else:
+                    length = infiniteDist
+                td_dict_nodeToPOInode[node][nodePOI] = length
+
+        self.td_dict_nodeToPOInode = td_dict_nodeToPOInode
+
+    # The dict records each node's ave distance to all POI nodes - [it seems useless]
+
+    def td_dict_ave_nodeToPOInode_init(self):
+        self.td_dict_ave_nodeToPOI = {}
+        for n1 in self.inner_nodelist_True:
+            dis=0
+            count=0
+            for n2 in self.POINodes:
+                if n1 == n2:                # Dont need to minus (check again)
+                    continue
+                else:
+                    dis += self.td_dict_nodeToPOInode[n1][n2]
+                    count += 1
+            self.td_dict_ave_nodeToPOI[n1] = dis/count     
+
+    # The dict records each node to POI egde
+    def td_dict_nodeToPOIEdge_init(self):
+        ### init_td_dict_nodeToPOIEdge
+        self.td_dict_nodeToPOIEdge = {}
+        for node in self.inner_nodelist_True:
+            self.td_dict_nodeToPOIEdge[node] = {}
+            for POIEdge in self.POIEdges:
+                POINode_A = POIEdge.nodes[0]
+                POINode_B = POIEdge.nodes[1]
+                
+                if self.td_dict_nodeToPOInode[node][POINode_A] <= self.td_dict_nodeToPOInode[node][POINode_B]:
+                    self.td_dict_nodeToPOIEdge[node][POIEdge] = {"POINode": POINode_A, "Dist":self.td_dict_nodeToPOInode[node][POINode_A]}
+                else:
+                    self.td_dict_nodeToPOIEdge[node][POIEdge] = {"POINode": POINode_B, "Dist":self.td_dict_nodeToPOInode[node][POINode_B]}
+
+
+    # The dict records each face's distance to all POI Edges
+    def td_dict_faceToPOIEdge_init(self,infiniteDist = 10000):
+        self.td_dict_faceToPOIEdge = {}
+        self.td_dict_faceToPOIEdge_TheNodePair = {} #[node on face, node on POIEdge]
+        for f1 in self.inner_facelist_True:
+            self.td_dict_faceToPOIEdge[f1] = {} 
+            self.td_dict_faceToPOIEdge_TheNodePair[f1] = {}
+            for POIEdge in self.POIEdges:
+                self.td_dict_faceToPOIEdge[f1][POIEdge] = {"POINode": None, "Dist":infiniteDist}
+                self.td_dict_faceToPOIEdge_TheNodePair[f1][POIEdge] = {"POINode":None,"node":None}
+                for node in f1.nodes:
+                    if self.td_dict_faceToPOIEdge[f1][POIEdge]["Dist"] > self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"]:  
+                        self.td_dict_faceToPOIEdge[f1][POIEdge] = {"POINode":self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"], "Dist":self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"] }  
+                        self.td_dict_faceToPOIEdge_TheNodePair[f1][POIEdge] = {"POINode": self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"],"node":node}
+        
+    # The dict records each face's ave distance to all POI Edges
+    def td_dict_ave_faceToPOIEdge_init(self):
+        self.td_dict_ave_faceToPOIEdge = {}
+        for f1 in self.inner_facelist_True:
+            sumDist = 0
+            for POIEdge in self.POIEdges:
+                sumDist += self.td_dict_faceToPOIEdge[f1][POIEdge]["Dist"]
+            ave = sumDist/len(self.POIEdges)    
+            self.td_dict_ave_faceToPOIEdge[f1] = ave
+
+
+    ###
+    # The second collection: assume all edge it is possible 
+    ###
+    def td_dict_nodeToPOInode_min_init(self,infiniteDist = 10000):
+        ### init_td_dict_nodeToPOI
+        td_dict_nodeToPOInode_min = {}
+        for node in self.inner_nodelist_True:
+            td_dict_nodeToPOInode_min[node] = {}
+            for nodePOI in self.POINodes:   
+                if node in self.G:
+                    length = nx.shortest_path_length(self.G,source=node, target=nodePOI, weight="weight")
+                else:
+                    length = infiniteDist
+                td_dict_nodeToPOInode_min[node][nodePOI] = length
+
+        self.td_dict_nodeToPOInode_min = td_dict_nodeToPOInode_min
+
+
+    def td_dict_ave_nodeToPOInode_min_init(self):
+        self.td_dict_ave_nodeToPOI_min = {}
+        for n1 in self.inner_nodelist_True:
+            dis=0
+            count=0
+            for n2 in self.POINodes:
+                if n1 == n2:                # Dont need to minus (check again)
+                    continue
+                else:
+                    dis += self.td_dict_nodeToPOInode_min[n1][n2]
+                    count += 1
+            self.td_dict_ave_nodeToPOI_min[n1] = dis/count     
+
+
+    def td_dict_nodeToPOIEdge_min_init(self):
+        ### init_td_dict_nodeToPOIEdge
+        self.td_dict_nodeToPOIEdge_min = {}
+        for node in self.inner_nodelist_True:
+            self.td_dict_nodeToPOIEdge[node] = {}
+            for POIEdge in self.POIEdges:
+                POINode_A = POIEdge.nodes[0]
+                POINode_B = POIEdge.nodes[1]
+                
+                if self.td_dict_nodeToPOInode[node][POINode_A] <= self.td_dict_nodeToPOInode[node][POINode_B]:
+                    self.td_dict_nodeToPOIEdge[node][POIEdge] = {"POINode": POINode_A, "Dist":self.td_dict_nodeToPOInode[node][POINode_A]}
+                else:
+                    self.td_dict_nodeToPOIEdge[node][POIEdge] = {"POINode": POINode_B, "Dist":self.td_dict_nodeToPOInode[node][POINode_B]}
+
+    def td_dict_faceToPOIEdge_min_init(self,infiniteDist = 10000):
+        self.td_dict_faceToPOIEdge_min = {}
+        self.td_dict_faceToPOIEdge_TheNodePair_min = {} #[node on face, node on POIEdge]
+        for f1 in self.inner_facelist_True:
+            self.td_dict_faceToPOIEdge_min[f1] = {} 
+            self.td_dict_faceToPOIEdge_TheNodePair_min[f1] = {}
+            for POIEdge in self.POIEdges:
+                self.td_dict_faceToPOIEdge_min[f1][POIEdge] = {"POINode": None, "Dist":infiniteDist}
+                self.td_dict_faceToPOIEdge_TheNodePair_min[f1][POIEdge] = {"POINode":None,"node":None}
+                for node in f1.nodes:
+                    if self.td_dict_faceToPOIEdge_min[f1][POIEdge]["Dist"] > self.td_dict_nodeToPOIEdge_min[node][POIEdge]["Dist"]:  
+                        self.td_dict_faceToPOIEdge_min[f1][POIEdge] = self.td_dict_nodeToPOIEdge_min[node][POIEdge]
+                        self.td_dict_faceToPOIEdge_TheNodePair_min[f1][POIEdge] = {"POINode": self.td_dict_nodeToPOIEdge_min[node][POIEdge]["POINode"],"node":node}
+
+    @staticmethod     
+    def td_dict_ave_faceToPOIEdge_min_init(self):
+        self.td_dict_ave_faceToPOIEdge_min = {}
+        for f1 in self.inner_facelist_True:
+            sumDist = 0
+            for POIEdge in self.POIEdges:
+                sumDist += self.td_dict_faceToPOIEdge_min[f1][POIEdge]["Dist"]
+            ave = sumDist/len(self.POIEdges)    
+            self.td_dict_ave_faceToPOIEdge_min[f1] = ave
+
+
+    # The overall function
+    def td_dict_POI_Related_init(self):
+        self.td_dict_nodeToPOInode_init()
+        # td_dict_ave_nodeToPOInode_init(self)
+        self.td_dict_nodeToPOIEdge_init()
+        self.td_dict_faceToPOIEdge_init()
+        self.td_dict_ave_faceToPOIEdge_init()
+
+
+
+
+    def face2POI_avg(self):
+        ave = sum(self.td_dict_ave_faceToPOIEdge[f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg = ave
+        # self.f2POI_data.append(ave)  Pending to decide what to record
+        return ave
+
+    def face2POI_avg_min(self):
+        ave = sum(self.td_dict_ave_faceToPOIEdge_min[f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg = ave
+        return ave
+
+    def travel_distance_forPOI(self) -> float:
+        if len(self.interior_parcels) or self.del_parcel_num:
+            before = self.face2POI_avg()
+            return 0
+        else:
+            before = self.f2POI_avg
+            now = self.face2POI_avg()
+            return  (before-now)/(before-self.f2POI_avg_min)
+
+    def CheckCuldesacNum(self):
+        roadG = MyGraph()
+        for idx in range(len(self.road_edges)):
+            e = self.road_edges[idx]
+            roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
+
+        single_neighbor_nodes = [node for node in roadG.nodes() if len(list(roadG.neighbors(node))) == 1]
+        num_single_neighbor_nodes = len(single_neighbor_nodes)
+        return num_single_neighbor_nodes
+
+
+
+
+
+###################################
 #      PLOTTING FUNCTIONS
-# ##################################
+###################################
 
-    def plot(self, **kwargs):
+    def plot(self, **kwargs): # New to replace
+
         plt.axes().set_aspect(aspect=1)
         plt.axis('off')
         edge_kwargs = kwargs.copy()
         nlocs = self.location_dict()
         edge_kwargs['label'] = "_nolegend"
         edge_kwargs['pos'] = nlocs
-        nx.draw_networkx_edges(self.G, **edge_kwargs)
+
+        pos = nx.spring_layout(self.G)
+        nx.draw_networkx_edges(self.G, pos,edge_color='g',width=3)
         node_kwargs = kwargs.copy()
         node_kwargs['label'] = self.name
         node_kwargs['pos'] = nlocs
-        nodes = nx.draw_networkx_nodes(self.G, **node_kwargs)
+        nodes = nx.draw_networkx_nodes(self.G, pos,node_color='g')
         nodes.set_edgecolor('None')
 
     def plot_roads(self,
-                   master=None,
-                   update=False,
-                   parcel_labels=False,
-                   title="",
-                   new_plot=True,
-                   new_road_color="blue",
-                   new_road_width=1.5,
-                   old_node_size=25,
-                   old_road_width=6,
-                   barriers=True,
-                   base_width=1,
-                   stage=0):
+                    master=None,
+                    update=False,
+                    parcel_labels=False,
+                    title="",
+                    new_plot=True,
+                    new_road_color="blue",
+                    new_road_width=1.5,
+                    old_node_size=25,
+                    old_road_width=6,
+                    barriers=True,
+                    base_width=1,
+                    stage=0):
+            
+            plt.figure(figsize=(10, 10))  
+            plt.axes().set_aspect(aspect=1)
+            plt.axis('off')
 
-        nlocs = self.location_dict()
+            nlocs = self.location_dict()
 
-        if update:
-            self.define_roads()
-            self.define_interior_parcels()
+            if update:
+                # self.define_roads()
+                # self.define_interior_parcels()
+                pass
 
-        if new_plot:
-            plt.figure()
+            # if new_plot:
+            #     plt.figure()
 
-        edge_colors = [
-            'blue' if e.road else
-            'green' if e.barrier else 'red' if e.interior else 'black'
-            for e in self.myedges()
-        ]
+            edge_colors = [
+                'blue' if e in self.road_edges and e not in self.stage2edges 
+                else 'orange' if e in self.stage2edges 
+                else 'red' if e.interior 
+                else 'green'
+                for e in self.myedges()
+            ]
 
-        edge_width = [new_road_width * 2 if e.road
-                      else 0.7*new_road_width if e.barrier
-                      else 1.4*new_road_width if e.interior
-                      else 1 for e in self.myedges()]
+            edge_width = [
+                1.5 * new_road_width if e.road else 1.5 *
+                new_road_width if e.barrier else 1.5 *
+                new_road_width if e.interior else 1 for e in self.myedges()
+            ]
 
-        node_colors = ['#008000' for n in self.G.nodes()]
+            node_colors = [
+                'blue' if n.road else
+                'green' if n.barrier else 'red' if n.interior else 'black'
+                for n in self.G.nodes()
+            ]
 
-        node_sizes = [1.4 for n in self.G.nodes()]
+            node_sizes = [
+                1.4
+                for n in self.G.nodes()
+            ]
 
-        # plot current graph
-        nx.draw(self.G,
-                         pos=nlocs,
-                         with_labels=False,
-                         node_size=node_sizes,
-                        #  node_color=node_colors,
-                         edge_color=edge_colors,
-                         width=edge_width)
+            # plot current graph
+            nx.draw(self.G,
+                            pos=nlocs,
+                            with_labels=False,
+                            node_size=node_sizes,
+                            #  node_color=node_colors,
+                            edge_color=edge_colors,
+                            width=edge_width)
+        
+            # plot original roads
+            if master:
+                copy = master.copy()
+                noffroad = [n for n in copy.G.nodes() if not n.road]
+                for n in noffroad:
+                    copy.G.remove_node(n)
+                eoffroad = [e for e in copy.myedges() if not e.road]
+                for e in eoffroad:
+                    copy.G.remove_edge(e.nodes[0], e.nodes[1])
 
-        # plot original roads
-        if master:
-            copy = master.copy()
-            noffroad = [n for n in copy.G.nodes() if not n.road]
-            for n in noffroad:
-                copy.G.remove_node(n)
-            eoffroad = [e for e in copy.myedges() if not e.road]
-            for e in eoffroad:
-                copy.G.remove_edge(e.nodes[0], e.nodes[1])
-
-            # nx.draw_networkx(copy.G, pos=nlocs, with_labels=False,
-            #                  node_size=old_node_size, node_color='black',
-            #                  edge_color='black', width=old_road_width)
-
-        # if stage==0:
-        #     path='/data1/suhongyuan/road_planning/code/before.svg'
-        # else:
-        #     path='/data1/suhongyuan/road_planning/code/after.svg'
-        # plt.savefig(path,format='svg',transparent=True)
-        # plt.close()
-
+                # nx.draw_networkx(copy.G, pos=nlocs, with_labels=False,
+                #                  node_size=old_node_size, node_color='black',
+                #                  edge_color='black', width=old_road_width)
+            
+            plt.show()
+            
     def plot_all_paths(self, all_paths, update=False):
         """ plots the shortest paths from all interior parcels to the road.
         Optional to update road geometery based on changes in network geometry.
@@ -1255,20 +1933,143 @@ class MyGraph(object):
         plt.axes().set_aspect(aspect=1)
         plt.axis('off')
 
+    def snapshot(self):
+            return self.G
+
+
+###################################
+#      PLOTTING FUNCTIONS _ NEW
+###################################
+    def PlotMyGraph(myG,showInternal = False):
+        plt.figure(figsize=(10, 10))
+        plt.axes().set_aspect(aspect=1)
+        plt.axis('off')
+
+        nlocs = myG.location_dict()
+
+        ### basic layer
+        edge_colors = []
+        edges_to_draw = []
+        for edge in myG.myedges():
+            if edge.fake!=True:
+                edge_colors.append('grey')
+                edges_to_draw.append((edge.nodes[0], edge.nodes[1]))
+
+        nx.draw_networkx_edges(myG.G, nlocs,edgelist=edges_to_draw, edge_color=edge_colors, width=1)
+        nx.draw_networkx_nodes(myG.G, nlocs, node_color='black', node_size=1)
+
+        edge_colors = []
+        edges_to_draw = []
+        for edge in myG.myedges():
+            if edge.fake==True:
+                edge_colors.append('grey')
+                edges_to_draw.append((edge.nodes[0], edge.nodes[1]))
+
+        dash_lines = []
+        for edge, color in zip(edges_to_draw, edge_colors):
+            line = [(nlocs[edge[0]][0], nlocs[edge[0]][1]), (nlocs[edge[1]][0], nlocs[edge[1]][1])]
+            dash_lines.append(line)
+
+        lc = LineCollection(dash_lines, linestyle='dashed', linewidth=1.5, colors=edge_colors)
+        plt.gca().add_collection(lc)
+
+        ### inaccessible layer
+        edge_colors = []
+        edges_to_draw = []
+
+        ### internal layer  
+        if showInternal == True:
+            if hasattr(myG, 'interior_parcels'):
+                for face in myG.interior_parcels:
+                    for edge in face.edges:
+                        edge_colors.append('red')
+                        edges_to_draw.append((edge.nodes[0], edge.nodes[1]))
+                nx.draw_networkx_edges(myG.G, nlocs,edgelist=edges_to_draw, edge_color=edge_colors, width=1)
+
+        
+
+        ### info layer
+        edge_colors = []
+        edges_to_draw = []
+        for edge in myG.myedges():
+            if edge.isRoad and edge.isPOI!=True and edge.fake!=True:
+                edge_colors.append('blue')
+                edges_to_draw.append((edge.nodes[0], edge.nodes[1]))
+            elif edge.isConstraint:
+                edge_colors.append('red')
+                edges_to_draw.append((edge.nodes[0], edge.nodes[1]))
+            elif edge.isPOI:
+                edge_colors.append('purple')
+                edges_to_draw.append((edge.nodes[0], edge.nodes[1]))
+            else:
+                pass
+
+        nx.draw_networkx_edges(myG.G, nlocs,edgelist=edges_to_draw, edge_color=edge_colors, width=1)
+        plt.show()
+
+    def PlotF2FDist(myG,vmin = 0,vmax = 10):
+        n = len(myG.inner_facelist_True)
+        matrix = np.zeros((n, n))
+
+        for i, face_i in enumerate(myG.inner_facelist_True):
+            for j, face_j in enumerate(myG.inner_facelist_True):
+                matrix[i, j] = myG.td_dict_face[face_i][face_j]
+
+        plt.imshow(matrix, cmap='jet', aspect='auto', vmin=vmin, vmax=vmax)
+        plt.colorbar(label='Distance (m)')
+        plt.show()
+
+    def PlotF2POIDist(myG,vmin = 0,vmax = 10):
+        m = len(myG.POIEdges)
+        n = len(myG.inner_facelist_True)
+        matrix = np.zeros((m, n))
+        
+        for i, POI_i in enumerate(myG.POIEdges):
+            for j, face_j in enumerate(myG.inner_facelist_True):
+                matrix[i, j] = myG.td_dict_faceToPOIEdge[face_j][POI_i]["Dist"]
+
+        plt.xticks(ticks=np.arange(n), labels=[str(face) for face in myG.inner_facelist_True], rotation=90,fontsize=3)
+        plt.yticks(ticks=np.arange(m), labels=[str(poi) for poi in myG.POIEdges],fontsize=3)
+
+        plt.imshow(matrix, cmap='jet', aspect='auto', vmin=vmin, vmax=vmax)
+        plt.colorbar(label='Distance (m)')
+        plt.show()
+
+
+###################################
+#      PRINT GEO INFO
+###################################
+    def PrintInnerFaceGeo(myG):
+        allEdgeNodes = []
+        for face in myG.inner_facelist:
+            for edge in face.edges:
+                allEdgeNodes.append(edge.nodes)
+        print (allEdgeNodes)
+
+##########
+## Debug
+##########
+
+    def Debug_CheckRepeatedEdges(myG,myEdgeDict):
+        edgeIDList = list(myEdgeDict.keys())
+        edgeValueList = list(myEdgeDict.values())
+
+        existIDs = []
+        for edge in myG.myedges():
+            existIDs.append(edgeIDList[edgeValueList.index(edge)])
+
+    
+
 if __name__ == "__main__":
     master = mgh.testGraphLattice(4)
-
     S0 = master.copy()
-
     S0.define_roads()
     S0.define_interior_parcels()
 
-    road_edge = S0.myedges()[1]
-
-    S0.add_road_segment(road_edge)
-
-    S0.define_interior_parcels()
+    ##### A example of add a road and update interior parcels ##### 
+    # road_edge = S0.myedges()[1]
+    # S0.add_road_segment(road_edge)
+    # S0.define_interior_parcels()
 
     mgh.test_dual(S0)
-
     plt.show()

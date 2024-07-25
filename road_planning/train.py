@@ -1,3 +1,5 @@
+import sys
+sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
 import os
 import setproctitle
 
@@ -18,10 +20,14 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
 flags.DEFINE_string('slum_name', 'Epworth_Demo', 'data_dir')
-flags.DEFINE_string('cfg', 'demo', 'Configuration file of rl training.')
+# flags.DEFINE_string('cfg', 'demo', 'Configuration file of rl training.')
+# flags.DEFINE_string('slum_name', 'tengha_sim', 'data_dir')
+flags.DEFINE_string('cfg', 'tengha_sim', 'Configuration file of rl training.')
+
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
-flags.DEFINE_bool('visualize', False, 'visualize plan.')
+# flags.DEFINE_bool('visualize', False, 'visualize plan.')
+flags.DEFINE_bool('visualize', True, 'visualize plan.')
 flags.DEFINE_enum('agent', 'rl-ngnn',
                   ['rl-sgnn', 'rl-ngnn', 'rl-mlp', 'rl-rmlp',
                    'random', 'road-cost'],
@@ -65,6 +71,7 @@ def main_loop(_):
     torch.manual_seed(cfg.seed)
 
     checkpoint = int(FLAGS.iteration) if FLAGS.iteration.isnumeric() else FLAGS.iteration
+    #checkpoint = "best"
 
     """create agent"""
     agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
@@ -72,6 +79,7 @@ def main_loop(_):
     
     if FLAGS.infer:
         agent.infer(visualize=FLAGS.visualize)
+        print ("infer")
     else:
 
         start_iteration = agent.start_iteration
@@ -79,10 +87,12 @@ def main_loop(_):
             train_one_iteration(agent, iteration)
 
     agent.logger.info('training done!')
-
+ 
 
 if __name__ == '__main__':
     # flags.mark_flags_as_required([
     #   'cfg'
     # ])
+
+    # print (FLAGS.iteration)
     app.run(main_loop)

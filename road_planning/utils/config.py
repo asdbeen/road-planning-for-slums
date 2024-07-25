@@ -7,6 +7,7 @@ class Config:
 
     def __init__(self, cfg: Text, slum_name: Text, global_seed: int, tmp: bool, root_dir: Text,
                  agent: Text = 'random', cfg_dict: Dict = None):
+  
         self.id = cfg
         self.slum = slum_name
         self.seed = global_seed
@@ -14,11 +15,13 @@ class Config:
             cfg = cfg_dict
         else:
             cwd = os.getcwd()
-            file_path = os.path.join(cwd,'road_planning/cfg/demo.yaml')
+            #file_path = os.path.join(cwd,'road_planning/cfg/punggol.yaml')   # change to punggol.yaml
+            file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
             cfg = load_yaml(file_path)
+         
         # create dirs
         self.root_dir = os.path.join(cwd,'tmp') if tmp else root_dir
-        self.data_dir = 'data/Epworth_Before'
+        self.data_dir = os.path.join("data",self.slum)                  #* Change
         self.cfg_dir = os.path.join(self.root_dir, self.slum, agent,self.id, str(self.seed))
         self.model_dir = os.path.join(self.cfg_dir, 'models')
         self.log_dir = os.path.join(self.cfg_dir, 'log')

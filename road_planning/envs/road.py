@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from road_planning.envs.my_graph import MyGraph
 from road_planning.utils.config import Config
 
+import os
 
 class InfeasibleActionError(ValueError):
     """An infeasible action were passed to the env."""
@@ -37,13 +38,35 @@ class InfeasibleActionError(ValueError):
 
 
 def load_graph(slum):
+    ## Check path
+    file_path = "data/{}.mg".format(slum)
+    full_path = os.path.abspath(file_path)
+    print(f"Loading graph from: {full_path}")
+
     with open("data/{}.mg".format(slum), 'rb') as mgfile:
         mg = pickle.loads(mgfile.read())
-        mg.define_roads()
-        mg.define_interior_parcels()
-        mg.td_dict_init()
-        mg.feature_init()
+        #### This loaded file has been proceessed 
+        
+        # mg.define_roads()
+        # mg.define_interior_parcels()
+        # mg.td_dict_init()
+        # mg.feature_init()
     return mg
+
+###### The Original One
+# def load_graph(slum):
+#     ## Check path
+#     file_path = "data/{}.mg".format(slum)
+#     full_path = os.path.abspath(file_path)
+#     print(f"Loading graph from: {full_path}")
+
+#     with open("data/{}.mg".format(slum), 'rb') as mgfile:
+#         mg = pickle.loads(mgfile.read())
+#         mg.define_roads()
+#         mg.define_interior_parcels()
+#         mg.td_dict_init()
+#         mg.feature_init()
+#     return mg
 
 def reward_info_function(mg: MyGraph, name: Text,
                          travel_distance_weight: float,

@@ -1,3 +1,6 @@
+import sys
+sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
+
 from matplotlib import pyplot as plt
 
 import my_graph_helpers as mgh
@@ -51,11 +54,11 @@ def define_capetown_barriers(myG):
 
 if __name__ == "__main__":
 
-    # filename = "data/CapeTown"
-    # place = "cape"
+    filename = "data/CapeTown"
+    place = "cape"
 
-    filename = "data/epworth_demo"
-    place = "ep"
+    # filename = "data/epworth_demo"
+    # place = "ep"
 
     original = mgh.import_and_setup(filename,
                                     threshold=1,
@@ -64,8 +67,8 @@ if __name__ == "__main__":
     original.define_roads()
     original.define_interior_parcels()
 
-    # barriers = define_capetown_barriers(original)
-    barriers = define_epworth_barriers(original)
+    barriers = define_capetown_barriers(original)
+    #barriers = define_epworth_barriers(original)
     mgh.build_barriers(barriers)
 
     original.plot_roads()

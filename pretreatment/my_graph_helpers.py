@@ -1,3 +1,6 @@
+import sys
+sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
+
 import numpy as np
 from matplotlib import pyplot as plt
 import shapefile
@@ -34,14 +37,15 @@ testGraphLattice which is a lattice.
 
 
 # myG geometry functions
+# ok
 def distance(mynode0, mynode1):
     return np.sqrt(distance_squared(mynode0, mynode1))
 
-
+# ok
 def distance_squared(mynode0, mynode1):
     return (mynode0.x - mynode1.x)**2 + (mynode0.y - mynode1.y)**2
 
-
+# ok
 def sq_distance_point_to_segment(target, myedge):
     """returns the square of the minimum distance between mynode
     target and myedge.   """
@@ -70,7 +74,7 @@ def sq_distance_point_to_segment(target, myedge):
         sq_dist = (dx * dx + dy * dy)
     return sq_dist
 
-
+# ok
 def intersect(e1, e2):
     """ returns true if myedges e1 and e2 intersect """
 
@@ -85,7 +89,7 @@ def intersect(e1, e2):
 
     return ccw(a, c, d) != ccw(b, c, d) and ccw(a, b, c) != ccw(a, b, d)
 
-
+# ok
 def are_parallel(e1, e2):
     """ returns true if myedges e1 and e2 are parallel """
     a = e1.nodes[0]
@@ -107,7 +111,7 @@ def are_parallel(e1, e2):
         parallel = False
     return parallel
 
-
+# ok
 def segment_distance_sq(e1, e2):
     """returns the square of the minimum distance between myedges e1 and e2."""
     # check different
@@ -127,7 +131,7 @@ def segment_distance_sq(e1, e2):
 
     return sq_distance
 
-
+# ok
 # vector math
 def bisect_angle(a, b, c, epsilon=0.2, radius=1):
     """ finds point d such that bd bisects the lines ab and bc."""
@@ -159,7 +163,7 @@ def bisect_angle(a, b, c, epsilon=0.2, radius=1):
 
     return d
 
-
+# ok
 def find_negative(d, b):
     """finds the vector -d when b is origen """
     negx = -1 * (d.x - b.x) + b.x
@@ -167,7 +171,7 @@ def find_negative(d, b):
     dneg = mg.MyNode((negx, negy))
     return dneg
 
-
+# ok
 # clean up and probability functions
 def WeightedPick(d):
     """picks an item out of the dictionary d, with probability proportional to
@@ -182,7 +186,7 @@ def WeightedPick(d):
             return k
     return k
 
-
+# ok
 def mat_reorder(matrix, order):
     """sorts a square matrix so both rows and columns are
     ordered by order. """
@@ -192,7 +196,7 @@ def mat_reorder(matrix, order):
 
     return Dcol
 
-
+# ok
 def myRoll(mylist):
     """rolls a list, putting the last element into the first slot. """
 
@@ -205,16 +209,15 @@ def myRoll(mylist):
 # DUALS HElPER
 #######################
 
-
 def form_equivalence_classes(myG, only_k_max=True,duals=None, verbose=False):
-
+    
     try:
         for f in myG.inner_facelist:
             f.even_nodes = {}
             f.odd_node = {}
     except:
         pass
-
+       
     if not duals:
         duals = myG.stacked_duals()
 
@@ -224,10 +227,12 @@ def form_equivalence_classes(myG, only_k_max=True,duals=None, verbose=False):
 
     depth = 1
     result = {}
-
+   
     myG.S1_nodes()
+ 
     result[depth] = [f for f in myG.inner_facelist if f.odd_node[depth]]
-
+    
+    
     if verbose:
         # print("Graph S{} has {} parcels".format(depth, len(result[depth])))
         pass
@@ -237,14 +242,29 @@ def form_equivalence_classes(myG, only_k_max=True,duals=None, verbose=False):
     if verbose:
         test_interior_is_inner(myG)
 
+    #print ("only_k_max",only_k_max)
+    #print ("stacked_duals",len(duals))
+    #print ("depth",depth,"len(duals)",len(duals))
     while depth < len(duals):
         duals, depth, result = myG.formClass(duals, depth, result)
-        if verbose:
-            # md = max(result.keys())
-            # print("Graph S{} has {} parcels".format(md, len(result[md])))
-            # print("current depth {} just finished".format(depth))
-            # test_interior_is_inner(myG)
-            pass
+        # print ("duals",duals)
+        #print ("depth",depth)
+        #print ("result",result)
+        #if verbose:
+        md = max(result.keys())
+        
+        #print("Graph S{} has {} parcels".format(md, len(result[md])))
+        #print("current depth {} just finished".format(depth))
+        test_interior_is_inner(myG)
+        
+        for list in result.values():
+            edges = []
+            for face in list:
+                for edge in face.edges:
+                    edges.append(edge.nodes)
+    
+        
+        pass
 
     return result, depth
 
@@ -253,7 +273,7 @@ def form_equivalence_classes(myG, only_k_max=True,duals=None, verbose=False):
 # DEALING WITH PATHS
 #######################
 
-
+# ok
 def ptup_to_mypath(myG, ptup):
     mypath = []
 
@@ -263,7 +283,7 @@ def ptup_to_mypath(myG, ptup):
 
     return mypath
 
-
+# ok
 def path_length(path):
     """finds the geometric path length for a path that consists of a list of
     MyNodes. """
@@ -272,12 +292,7 @@ def path_length(path):
         length += distance(path[i - 1], path[i])
     return length
 
-
-# def path_length_npy(path):
-#    xy = np.array([n.x,n.y for n in path])
-#    return np.linalg.norm(xy[1:] - xy[:-1],2,1).sum()
-
-
+# ok 
 def shorten_path(ptup):
     """ all the paths found in my pathfinding algorithm start at the fake
     road side, and go towards the interior of the parcel.  This method drops
@@ -289,7 +304,7 @@ def shorten_path(ptup):
         ptup.pop(0)
     return ptup
 
-
+# ok
 def segment_near_path(myG, segment, pathlist, threshold):
     """returns True if the segment is within (geometric) distance threshold
     of all the segments contained in path is stored as a list of nodes that
@@ -306,20 +321,20 @@ def segment_near_path(myG, segment, pathlist, threshold):
 
     return False
 
-
+# ok
 def _fake_edge(myA, centroid, mynode):
     newedge = mg.MyEdge((centroid, mynode))
     newedge.length = 0
     myA.add_edge(newedge)
 
-
+# ok
 def __add_fake_edges(myA, p, roads_only=False):
     if roads_only:
         [_fake_edge(myA, p.centroid, n) for n in p.nodes if n.road]
     else:
         [_fake_edge(myA, p.centroid, n) for n in p.nodes]
 
-
+# ok  fake_road_origin  is like a final destination
 def shortest_path_setup(myA, p, roads_only=False):
     """ sets up graph to be ready to find the shortest path from a
     parcel to the road. if roads_only is True, only put fake edges for the
@@ -336,7 +351,7 @@ def shortest_path_setup(myA, p, roads_only=False):
             _fake_edge(myA, fake_road_origin, i)
     return fake_interior, fake_road_origin
 
-
+# ok
 def shortest_path_p2p(myA, p1, p2):
     """finds the shortest path along fencelines from a given interior parcel
     p1 to another parcel p2"""
@@ -352,7 +367,7 @@ def shortest_path_p2p(myA, p1, p2):
 
     return path[1:-1], length
 
-
+# ok
 def find_short_paths(myA, parcel, barriers=True, shortest_only=False):
     """ finds short paths from an interior parcel,
     returns them and stores in parcel.paths  """
@@ -361,13 +376,13 @@ def find_short_paths(myA, parcel, barriers=True, shortest_only=False):
     if len(rb) > 0:
         raise AssertionError("parcel %s is on a road") % (str(parcel))
 
-    if barriers:
-        barrier_edges = [e for e in myA.myedges() if e.barrier]
-        if len(barrier_edges) > 0:
-            myA.remove_myedges_from(barrier_edges)
-        else:
-            print("no barriers found. Did you expect them?")
-        # myA.plot_roads(title = "myA no barriers")
+    # if barriers:
+    #     barrier_edges = [e for e in myA.myedges() if e.barrier]
+    #     if len(barrier_edges) > 0:
+    #         myA.remove_myedges_from(barrier_edges)
+    #     else:
+    #         print("no barriers found. Did you expect them?")
+    #     # myA.plot_roads(title = "myA no barriers")
 
     interior, road = shortest_path_setup(myA, parcel)
 
@@ -387,15 +402,15 @@ def find_short_paths(myA, parcel, barriers=True, shortest_only=False):
 
     myA.G.remove_node(road)
     myA.G.remove_node(interior)
-    if barriers:
-        for e in barrier_edges:
-            myA.add_edge(e)
+    # if barriers:
+    #     for e in barrier_edges:
+    #         myA.add_edge(e)
 
     parcel.paths = paths
 
     return paths
 
-
+# when there is one more edge added, the shortest path of other parcel will change
 def find_short_paths_all_parcels(myA,
                                  flist=None,
                                  full_path=None,
@@ -459,16 +474,16 @@ def find_short_paths_all_parcels(myA,
     if quiet is False:
         pass
         # print("Shortest paths found for {} parcels".format(counter))
-
+ 
     return all_paths
 
-
+# ok
 def build_path(myG, start, finish):
     ptup = nx.shortest_path(myG.G, start, finish, weight="weight")
-
     ptup = shorten_path(ptup)
     ptup.reverse()
     ptup = shorten_path(ptup)
+
 
     mypath = ptup_to_mypath(myG, ptup)
 
@@ -481,11 +496,12 @@ def build_path(myG, start, finish):
 #############################################
 #  PATH SELECTION AND CONSTRUCTION
 #############################################
+# ok
 def find_all_one_road(myG):
     elist=[e for e in myG.G.edges() if ((e[0].road and not e[1].road) or (e[1].road and not e[0].road))]
 
     return elist
-
+# ok
 def choose_path(myG, paths, alpha, random_road=False, strict_greedy=False):
     """ chooses the path segment, choosing paths of shorter
     length more frequently  """
@@ -500,21 +516,11 @@ def choose_path(myG, paths, alpha, random_road=False, strict_greedy=False):
 
     mypath = ptup_to_mypath(myG, target_path)
 
+    # print ("mypath",mypath)
     return target_path, mypath
 
 
-#        if outsidein:
-#            result, depth = form_equivalence_classes(myG)
-#            while len(flist) < 1:
-#                md = max(result.keys())
-#                flist = flist + result.pop(md)
-#        elif outsidein == False:
-#            flist = myG.interior_parcels
-#            ## alternate option:
-#            # result, depth = form_equivalence_classes(myG)
-#            # flist = result[3]
-
-
+# for now, the road number only control the max of random
 def build_all_roads(myG,
                     master=None,
                     alpha=8,
@@ -534,7 +540,7 @@ def build_all_roads(myG,
     """builds roads using the probablistic greedy alg, until all
     interior parcels are connected, and returns the total length of
     road built. """
-
+ 
     if vquiet is True:
         quiet = True
 
@@ -562,18 +568,20 @@ def build_all_roads(myG,
     # before the max depth (md) is calculated, just assume it's very large in
     # in order ensure we find the equivalence classes at least once.
     md = 100
-    flag=True
+    flag=True   ### The save action will execute
     road_num=0
 
     k_time=[]
     total_time=[]
 
+    
     while (myG.interior_parcels and road_max):
+  
         if road_max:
             if road_num>=road_max:
                 break
     
-        if not myG.interior_parcels and flag or road_num==10:
+        if (not myG.interior_parcels and flag) or (road_num == 10):
             myG.plot_roads(master, update=False)
             plt.savefig("Int_Step" + str(road_num) + ".pdf", format='pdf')
             plotnum += 1
@@ -589,28 +597,39 @@ def build_all_roads(myG,
         # print("depth:%s"%depth)
         # print("k_time: %s" % (end - start))
 
+     
         if not random_road:
         # flist from result!
             flist = []
-
+            
             if md == 3:
                 flist = myG.interior_parcels
+       
             elif md > 3:
                 if outsidein is False:
                     result, depth = form_equivalence_classes(myG,only_k_max=random_road)
                     while len(flist) < 1:
                         md = max(result.keys())
                         flist = flist + result.pop(md)
+
                 elif outsidein is True:
                     result, depth = form_equivalence_classes(myG,only_k_max=random_road)
                     md = max(result.keys())
+    
                     if len(result[md]) == 0:
                         md = md - 2
+          
                     flist = list(set(result[3]) - set(result.get(5, [])))
-
-        if quiet is False:
-            pass
-
+    
+            fEdges = []
+            for f in flist:
+                for edge in f.edges:
+                    fEdges.append(edge.nodes)
+       
+     
+            if quiet is False:
+                pass
+             
         if random_road is True:
             all_paths = find_all_one_road(myG)
             road_num +=1
@@ -623,7 +642,7 @@ def build_all_roads(myG,
                                                     quiet=quiet,
                                                     shortest_only=shortest_only)
             # choose and build one
-
+            
         target_ptup, target_mypath = choose_path(myG,
                                                 all_paths,
                                                 alpha,
@@ -637,15 +656,14 @@ def build_all_roads(myG,
         if wholepath is True:
             for e in target_mypath:
                 added_road_length += e.length
+                 
                 myG.add_road_segment(e)
-
         myG.define_interior_parcels()
 
         if plot_intermediate:
             myG.plot_roads(master, update=False)
             plt.savefig("Int_Step" + str(plotnum) + ".pdf", format='pdf')
             plotnum += 1
-
         remain = len(myG.interior_parcels)
         # end_w = time.clock()
         # total_time.append(end_w-start_w)
@@ -660,6 +678,7 @@ def build_all_roads(myG,
     # update the properties of nodes & edges to reflect new geometry.
     # print("avr_k_time:%s"%(sum(k_time)/len(k_time)))
     # print("avr_total_time:%s"%(sum(total_time)/len(total_time)))
+
     myG.added_roads = added_road_length
     return added_road_length
 
@@ -670,17 +689,72 @@ def bisecting_road(myG):
 
     start, finish = bisecting_path_endpoints(myG)
     ptup, myedges = build_path(myG, start, finish)
+
     bisecting_roads = path_length(ptup)
 
     myG.added_roads = myG.added_roads + bisecting_roads
     return bisecting_roads
 
 
+#############################################
+#  PATH SELECTION AND CONSTRUCTION _ Add road to improve POI Statistic 
+#############################################
+### bisecting_road_forPOI
+def bisecting_path_endpoints_forPOI(myG):
+    roads_only = myG.copy()
+    etup_drop = roads_only.find_interior_edges()
+    roads_only.G.remove_edges_from(etup_drop)
+    __road_connections_through_culdesac(roads_only)
+
+    # Exclude some nodes that are external
+    road_nodes_Excluded = []
+    for node in myG.road_nodes:
+        if node.external == None:
+            road_nodes_Excluded.append(node)
+
+    # find the max ave dist of "face2POIEdge"
+    maxFace =  max(myG.td_dict_ave_faceToPOIEdge, key=lambda k: myG.td_dict_ave_faceToPOIEdge[k])
+
+    maxPOINode = None
+    maxStart = None
+    maxPOIEdge = None
+    maxDist = 0
+
+    for POIEdge in myG.POIEdges:
+        if myG.td_dict_faceToPOIEdge_TheNodePair[maxFace][POIEdge]["node"] != None and myG.td_dict_faceToPOIEdge_TheNodePair[maxFace][POIEdge]["POINode"] != None:
+            if myG.td_dict_faceToPOIEdge[maxFace][POIEdge]["Dist"] > maxDist:
+                maxPOIEdge = POIEdge
+                maxPOINode = myG.td_dict_faceToPOIEdge[maxFace][POIEdge]["POINode"] 
+                maxStart = myG.td_dict_faceToPOIEdge_TheNodePair[maxFace][POIEdge]["node"]
+                maxDist = myG.td_dict_faceToPOIEdge[maxFace][POIEdge]["Dist"] 
+        else:
+            continue
+   
+    return maxStart,maxPOINode,maxPOIEdge
+
+def bisecting_road_forPOI(myG,POIVersionTag = True):
+    # once done getting all interior parcels connected, have option to bisect
+    start, finish, POIedge = bisecting_path_endpoints_forPOI(myG)
+    ptup = nx.shortest_path(myG.G, start, finish, weight="weight")
+    mypath = ptup_to_mypath(myG, ptup)
+
+    bisecting_roads_forPOI = 0
+    for e in mypath:
+        if e.road!=True:
+            myG.add_road_segment(e,POIVersionTag)
+            bisecting_roads_forPOI += distance(e.nodes[0],e.nodes[1])
+    myG.added_roads = myG.added_roads + bisecting_roads_forPOI
+
+    return bisecting_roads_forPOI
+
+
+
+
 ############################
 # connectivity optimization
 ############################
 
-
+# ok
 def __road_connections_through_culdesac(myG, threshold=5):
     """connects all nodes on a road that are within threshold = 5 meters of
     each other.  This means that paths can cross a culdesac instead of needing
@@ -699,7 +773,7 @@ def __road_connections_through_culdesac(myG, threshold=5):
 
     return etup_drop
 
-
+# ok
 def shortest_path_p2p_matrix(myG, full=False, travelcost=False):
     """option if full is false, removes all interior edges, so that travel
     occurs only along a road.  If full is true, keeps interior edges.  If
@@ -756,7 +830,7 @@ def shortest_path_p2p_matrix(myG, full=False, travelcost=False):
 
     return path_len_mat, meantravel
 
-
+# ok
 def difference_roads_to_fences(myG, travelcost=False):
     fullpath_len, tc = shortest_path_p2p_matrix(myG, full=True)
     path_len, tc = shortest_path_p2p_matrix(myG, full=False)
@@ -780,7 +854,7 @@ def difference_roads_to_fences(myG, travelcost=False):
 
     return diff, fullpath_len, path_len, meantravel
 
-
+# ok
 def bisecting_path_endpoints(myG):
     roads_only = myG.copy()
     etup_drop = roads_only.find_interior_edges()
@@ -790,8 +864,15 @@ def bisecting_path_endpoints(myG):
     # roads_only.G.remove_nodes_from(nodes_drop)
 
     distdict = {}
+    
+    # Exclude some nodes
+    road_nodes_Excluded = []
+    for node in myG.road_nodes:
+        if node.external == None:
+            road_nodes_Excluded.append(node)
 
-    for i, j in itertools.combinations(myG.road_nodes, 2):
+
+    for i, j in itertools.combinations(road_nodes_Excluded, 2):  # was myG.road_nodes 
         geodist_sq = distance_squared(i, j)
         onroad_dist = nx.shortest_path_length(roads_only.G,
                                               i,
@@ -799,7 +880,7 @@ def bisecting_path_endpoints(myG):
                                               weight='weight')
         dist_diff = onroad_dist**2 / geodist_sq
         distdict[(i, j)] = dist_diff
-    (i, j) = max(distdict.iteritems(), key=operator.itemgetter(1))[0]
+    (i, j) = max(distdict.items(), key=operator.itemgetter(1))[0]
 
     return i, j
 
@@ -808,14 +889,18 @@ def bisecting_path_endpoints(myG):
 # GRAPH INSTANTIATION
 ###################
 
-
+# ok
 def graphFromMyEdges(elist, name=None):
     myG = mg.MyGraph(name=name)
+
+    #print ("myG",myG.inner_facelist)
     for e in elist:
         myG.add_edge(e)
+    
+
     return myG
 
-
+# ok
 def graphFromMyFaces(flist, name=None):
     myG = mg.MyGraph(name=name)
     for f in flist:
@@ -823,7 +908,7 @@ def graphFromMyFaces(flist, name=None):
             myG.add_edge(e)
     return myG
 
-
+# ok
 def graphFromShapes(shapes, name, rezero=np.array([0, 0])):
     nodedict = dict()
     plist = []
@@ -850,7 +935,7 @@ def graphFromShapes(shapes, name, rezero=np.array([0, 0])):
 
     return myG
 
-
+# ok
 def is_roadnode(node, graph):
     """defines a node as a road node if any connected edges are road edges.
     returns true or false and updates the properties of the node. """
@@ -863,7 +948,7 @@ def is_roadnode(node, graph):
             return node.road
     return node.road
 
-
+# ok
 def is_interiornode(node, graph):
     """defines a node as an interior node if any connected edges are interior
     edges. returns true or false and updates the properties of the node. """
@@ -876,201 +961,6 @@ def is_interiornode(node, graph):
             return node.interior
     return node.interior
 
-
-def is_barriernode(node, graph):
-    """defines a node as a road node if any connected edges are barrier edges.
-    returns true or false and updates the properties of the node. """
-    graph.G[node].keys()
-    node.barrier = False
-    for k in graph.G[node].keys():
-        edge = graph.G[node][k]['myedge']
-        if edge.barrier is True:
-            node.barrier = True
-            return node.barrier
-    return node.barrier
-
-
-def graphFromJSON(jsonobj):
-    """returns a new mygraph from a json object.  calculates interior node
-    and graph properties from the properties of the edges.
-    """
-
-    edgelist = []
-    # read all the edges from json
-    for feature in jsonobj['features']:
-        # check that there are exactly 2 nodes
-        numnodes = len(feature['geometry']['coordinates'])
-        if numnodes != 2:
-            raise AssertionError("JSON line feature has {} "
-                                 "coordinates instead of 2".format(numnodes))
-
-        c0 = feature['geometry']['coordinates'][0]
-        c1 = feature['geometry']['coordinates'][1]
-
-        isinterior = feature['properties']['interior']
-        isroad = feature['properties']['road']
-        isbarrier = feature['properties']['barrier']
-
-        n0 = mg.MyNode(c0)
-        n1 = mg.MyNode(c1)
-
-        edge = mg.MyEdge((n0, n1))
-        edge.road = json.loads(isroad)
-        edge.interior = json.loads(isinterior)
-        edge.barrier = json.loads(isbarrier)
-        edgelist.append(edge)
-
-    # create a new graph from the edge list, and calculate
-    # necessary graph properties from the road
-    new = graphFromMyEdges(edgelist)
-    new.road_edges = [e for e in new.myedges() if e.road]
-    new.road_nodes = [n for n in new.G.nodes() if is_roadnode(n, new)]
-    new.interior_nodes = [n for n in new.G.nodes() if is_interiornode(n, new)]
-    new.barrier_nodes = [n for n in new.G.nodes() if is_barriernode(n, new)]
-
-    # defines all the faces in the graph
-    new.inner_facelist
-    # defines all the faces with no road nodes in the graph as interior parcels
-    new.define_interior_parcels()
-
-    return new, edgelist
-
-
-####################
-# PLOTTING FUNCTIONS
-####################
-
-# ==============================================================================
-# def plot_cluster_mat(clustering_data, plotting_data, title, dmax,
-#                      plot_dendro=True):
-#     """from http://nbviewer.ipython.org/github/OxanaSachenkova/
-#     hclust-python/blob/master/hclust.ipynb  First input matrix is used to
-#     define clustering order, second is the data that is plotted."""
-#
-#     fig = plt.figure(figsize=(8, 8))
-#     # x ywidth height
-#
-#     ax1 = fig.add_axes([0.05, 0.1, 0.2, 0.6])
-#     Y = linkage(clustering_data, method='single')
-#     Z1 = dendrogram(Y, orientation='right')  # adding/removing the axes
-#     ax1.set_xticks([])
-#     # ax1.set_yticks([])
-#
-# # Compute and plot second dendrogram.
-#     ax2 = fig.add_axes([0.3, 0.75, 0.6, 0.1])
-#     Z2 = dendrogram(Y)
-#     # ax2.set_xticks([])
-#     ax2.set_yticks([])
-#
-#     # set up custom color map
-#     c = mcolors.ColorConverter().to_rgb
-#     seq = [c('navy'), c('mediumblue'), .1, c('mediumblue'),
-#            c('darkcyan'), .2, c('darkcyan'), c('darkgreen'), .3,
-#            c('darkgreen'), c('lawngreen'), .4,c('lawngreen'),c('yellow'),.5,
-#            c('yellow'), c('orange'), .7, c('orange'), c('red')]
-#     custommap = make_colormap(seq)
-#
-#     # Compute and plot the heatmap
-#     axmatrix = fig.add_axes([0.3, 0.1, 0.6, 0.6])
-#
-#     if not plot_dendro:
-#         fig = plt.figure(figsize=(8, 8))
-#         axmatrix = fig.add_axes([0.05, 0.1, 0.85, 0.8])
-#
-#     idx1 = Z1['leaves']
-#     D = mat_reorder(plotting_data, idx1)
-#     im = axmatrix.matshow(D, aspect='auto', origin='lower', cmap=custommap,
-#                           vmin=0, vmax=dmax)
-#     axmatrix.set_xticks([])
-#     axmatrix.set_yticks([])
-#
-#     # Plot colorbar.
-#     h = 0.6
-#     if not plot_dendro:
-#         h = 0.8
-#     axcolor = fig.add_axes([0.91, 0.1, 0.02, h])
-#     plt.colorbar(im, cax=axcolor)
-#     ax2.set_title(title)
-#     if not plot_dendro:
-#         axmatrix.set_title(title)
-#
-#
-# def make_colormap(seq):
-#     """Return a LinearSegmentedColormap
-#     seq: a sequence of floats and RGB-tuples. The floats should be increasing
-#     and in the interval (0,1).
-#     """
-#     seq = [(None,) * 3, 0.0] + list(seq) + [1.0, (None,) * 3]
-#     cdict = {'red': [], 'green': [], 'blue': []}
-#     for i, item in enumerate(seq):
-#         if isinstance(item, float):
-#             r1, g1, b1 = seq[i - 1]
-#             r2, g2, b2 = seq[i + 1]
-#             cdict['red'].append([item, r1, r2])
-#             cdict['green'].append([item, g1, g2])
-#             cdict['blue'].append([item, b1, b2])
-#     return mcolors.LinearSegmentedColormap('CustomMap', cdict)
-# ==============================================================================
-
-# ==============================================================================
-# def plotly_traces(myG):
-#     """myGraph to plotly trace   """
-#
-#     # add the edges as disconnected lines in a trace
-#     edge_trace = Scatter(x=[], y=[], mode='lines',
-#                          name='Parcel Boundaries',
-#                          line=Line(color='grey', width=0.5))
-#     road_trace = Scatter(x=[], y=[], mode='lines',
-#                          name='Road Boundaries',
-#                          line=Line(color='black', width=2))
-#     interior_trace = Scatter(x=[], y=[], mode='lines',
-#                              name='Interior Parcels',
-#                              line=Line(color='red', width=2.5))
-#     barrier_trace = Scatter(x=[], y=[], mode='lines',
-#                             name='Barriers',
-#                             line=Line(color='green', width=0.75))
-#
-#     for i in myG.connected_components():
-#         for edge in i.myedges():
-#             x0, y0 = edge.nodes[0].loc
-#             x1, y1 = edge.nodes[1].loc
-#             edge_trace['x'] += [x0, x1, None]
-#             edge_trace['y'] += [y0, y1, None]
-#             if edge.road:
-#                 road_trace['x'] += [x0, x1, None]
-#                 road_trace['y'] += [y0, y1, None]
-#             if edge.interior:
-#                 interior_trace['x'] += [x0, x1, None]
-#                 interior_trace['y'] += [y0, y1, None]
-#             if edge.barrier:
-#                 barrier_trace['x'] += [x0, x1, None]
-#                 barrier_trace['y'] += [y0, y1, None]
-#
-#     return [edge_trace, road_trace, interior_trace, barrier_trace]
-#
-#
-# def plotly_graph(traces, filename=None, title=None):
-#
-#     """ use ply.iplot(fig,filename) after this function in ipython notebok to
-#     show the resulting plotly figure inline, or url=ply.plot(fig,filename) to
-#     just get url of resulting fig and not plot inline. """
-#
-#     if filename is None:
-#         filename = "plotly_graph"
-#     fig = Figure(data=Data(traces),
-#                  layout=Layout(title=title, plot_bgcolor="rgb(217,217,217)",
-#                                showlegend=True,
-#                                xaxis=XAxis(showgrid=False, zeroline=False,
-#                                            showticklabels=False),
-#                                yaxis=YAxis(showgrid=False, zeroline=False,
-#                                            showticklabels=False)))
-#
-#     # ply.iplot(fig, filename=filename)
-#     # py.iplot(fig, filename=filename)
-#
-#     return fig, filename
-#
-# ==============================================================================
 
 ######################
 #  IMPORT & Running FUNCTIONS #
@@ -1110,11 +1000,11 @@ def import_and_setup(filename,
 
     print("shape file loaded")
 
-    myG1 = myG1.clean_up_geometry(threshold, err, byblock)
+    #myG1 = myG1.clean_up_geometry(threshold, err, byblock)
     # myG1 = myG1.clean_up_geometry(threshold, err, byblock)
     
 
-    print("geometery cleaned up")
+   # print("geometery cleaned up")
 
     xxmin = min([n.x for n in myG1.G.nodes()])
     yymin = min([n.y for n in myG1.G.nodes()])
@@ -1159,14 +1049,146 @@ def rescale_mygraph(myG, rezero=np.array([0, 0]), rescale=np.array([1, 1]),xmin=
     return scaleG
 
 
-def build_barriers(barriers):
+######################
+#  IMPORT _ New From JSON
+#####################
+def remap(value:float, old_min:float, old_max:float, new_min:float, new_max:float) -> float:
+    # Map value from old range to new range
+    return ((value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
 
-    for b in barriers:
-        b.barrier = True
-        b.road = False
-        for n in b.nodes:
-            n.barrier = True
-            n.road = False
+
+def GraphFromJSON_Customized(jsonPath,scaleTag = True,rezero=np.array([0, 0]),name="None",new_min = 0,new_max = 2):
+    with open(jsonPath, 'r') as file:
+        data = json.load(file)
+        ptCoordDict = data["ptCoordDict"]
+        edgeDict = data["edgeDict"]
+        parcelEdgeIDs = data["parcelEdgeIDs"]
+
+    allCoords = []
+    for key in ptCoordDict.keys():
+        allCoords.append(ptCoordDict[key][0])
+        allCoords.append(ptCoordDict[key][1])
+
+    old_min = min(allCoords)
+    old_max = max(allCoords)
+
+    ### Initialize the graph
+    myG = mg.MyGraph(name="name")
+    rezero=np.array([0, 0])
+
+    ### Build the myNodeDict
+    myNodeDict = dict()
+    for nID in ptCoordDict.keys():
+        coords =  ptCoordDict[nID]
+        coords = coords - rezero
+        if scaleTag == True:
+            coords_New = [remap(coords[0],old_min,old_max,new_min,new_max),remap(coords[1],old_min,old_max,new_min,new_max)]
+            myN = mg.MyNode(coords_New)
+        else:
+            myN = mg.MyNode(coords)
+
+        myNodeDict[int(nID)] = myN
+
+    ### Build the myEdgeDict
+    myEdgeDict = dict()
+    for edgeID in edgeDict.keys():
+        thisEdge = edgeDict[str(edgeID)]
+        startNode = myNodeDict[thisEdge["start"]]
+        endNode = myNodeDict[thisEdge["end"]]   
+        myEdge = mg.MyEdge((startNode,endNode))
+        myEdgeDict[edgeID] = myEdge
+        myG.add_edge(myEdge)
+
+    ### Add edge property
+    for edgeID in myEdgeDict:
+        myEdgeDict[edgeID].external = edgeDict[str(edgeID)]["external"]               # overlap with isPOI, isRoad, fake
+        myEdgeDict[edgeID].internal = edgeDict[str(edgeID)]["internal"]               # overlap with isPOI  
+        myEdgeDict[edgeID].onBoundary = edgeDict[str(edgeID)]["onBoundary"]           # overlap with isRoad, isConstraint  
+        myEdgeDict[edgeID].isRoad = edgeDict[str(edgeID)]["isRoad"]                   # overlap with internal, onBoundary
+        myEdgeDict[edgeID].isConstraint = edgeDict[str(edgeID)]["isConstraint"]       # overlap with onBoundary  
+        myEdgeDict[edgeID].isPOI = edgeDict[str(edgeID)]["isPOI"]                     # overlap with internal,external  
+        myEdgeDict[edgeID].fake = edgeDict[str(edgeID)]["fake"]                       # overlap with external
+
+    ### Record the types of edges for easy info 
+    myG.externalEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].external]
+    myG.internalEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].internal]
+    myG.onBoundaryEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].onBoundary]
+    myG.isRoadEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isRoad]
+    myG.isConstraintEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isConstraint]
+    myG.isPOIEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isPOI]
+    myG.fakeEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].fake]
+
+    ### Add node property
+    # Initialize so later it can be overwrited
+    for edgeID, edge in myEdgeDict.items():
+        for node in edge.nodes:
+            node.onBoundary = None
+            node.external = None
+            node.internal = None
+
+    # Assign
+    for edgeID, edge in myEdgeDict.items():
+        if edge.external == True:
+            for node in edge.nodes:
+                node.external = True
+
+        if edge.internal == True:
+            for node in edge.nodes:
+                node.internal = True
+
+        if edge.onBoundary == True:    # onBoundary is last assignment so that it can overwrite the properties 
+            for node in edge.nodes:
+                node.onBoundary = True
+
+    # Initialize so later it can be overwrited
+    for edgeID, edge in myEdgeDict.items(): 
+        for node in edge.nodes:
+            node.isPOI = None
+
+    # Assign
+    for edgeID, edge in myEdgeDict.items():
+        if edge.isPOI == True:
+            for node in edge.nodes:
+                node.isPOI = True
+
+    ### Record global POI info
+    POIInfo = {}                                # {Edge:[node0,node1]}
+    for edgeID, edge in myEdgeDict.items():
+        if edge.isPOI == True:
+            POIInfo[edge] = edge.nodes
+
+    POIEdges = list(POIInfo.keys())
+    POINodes = []
+    for value in POIInfo.values():
+        POINodes.extend(value)
+
+    POINodes= list(set(POINodes))  # in case overlapping
+    
+    myG.POIInfo = POIInfo
+    myG.POIEdges = POIEdges
+    myG.POINodes = POINodes 
+
+    ### Record the faces and nodes that truly inside 
+    inner_facelist_True = []
+    for face in myG.inner_facelist:
+        tag = True
+        for node in face.nodes:
+            if node.external == True:
+                tag = False
+                break
+        if tag == True:
+            inner_facelist_True.append(face)
+
+    myG.inner_facelist_True = inner_facelist_True   
+
+    inner_nodelist_True = []
+    for face in myG.inner_facelist_True:
+        inner_nodelist_True.extend(face.nodes)
+    inner_nodelist_True = list(set(inner_nodelist_True))
+    myG.inner_nodelist_True = inner_nodelist_True 
+
+    return myG,myNodeDict,myEdgeDict
+
 
 
 ####################
@@ -1188,7 +1210,9 @@ def test_dual(myG):
     S0 = myG.weak_dual()
 
     myG.plot_roads(update=False)
+
     S0.plot(node_color='g', edge_color='g', width=3)
+
 
 
 def test_nodes(n1, n2):
@@ -1261,7 +1285,7 @@ def testGraphLattice(n, xshift=0, yshift=0, scale=1):
         nodelist[j] = mg.MyNode((x, y))
 
     edgelist = defaultdict(list)
-
+ 
     for i in nodelist.keys():
         ni = nodelist[i]
         for j in nodelist.keys():
@@ -1362,32 +1386,23 @@ def testmat():
     return testmat
 
 
-def build_lattice_barrier(myG):
-    edgesub = [
-        e for e in myG.myedges() if e.nodes[0].y == 0 and e.nodes[1].y == 0
-    ]
-    # barrieredges = [e for e in edgesub if e.nodes[1].y == 0]
-
-    for e in edgesub:
-        myG.remove_road_segment(e)
-        e.barrier = True
-
-    myG.define_interior_parcels()
-    return myG, edgesub
-
 
 if __name__ == "__main__":
     master = testGraphLattice(7)
     master.name = "Lat_0"
     master.define_roads()
     master.define_interior_parcels()
-    # S0, barrier_edges = build_lattice_barrier(S0)
+
+    # S0, barrier_edges = build_lattice_barrier(master)  used to be S0
+    # print ("barrier_edges",barrier_edges)
     # barGraph = graphFromMyEdges(barrier_edges)
-    S0 = master.copy()
+    
+    # S0 = master.copy()
 
     # S0.plot_roads(master, update=False, new_plot=True)
 
-    test_dual(S0)
+    # test_dual(S0)
+    # plt.show()
 
     S0 = master.copy()
     new_roads_i = build_all_roads(S0,
@@ -1395,24 +1410,29 @@ if __name__ == "__main__":
                                   alpha=2,
                                   wholepath=True,
                                   barriers=False,
+                                  road_max=1,
                                   plot_intermediate=False,
                                   strict_greedy=True,
-                                  vquiet=True,
-                                  outsidein=True)
+                                  vquiet=False,
+                                  outsidein=True
+                                  )
 
     S0.plot_roads()
     print("outside to in" + str(new_roads_i))
 
-    S0 = master.copy()
-    new_roads_i = build_all_roads(S0,
-                                  master,
-                                  alpha=2,
-                                  wholepath=True,
-                                  barriers=False,
-                                  plot_intermediate=True,
-                                  strict_greedy=True,
-                                  vquiet=True,
-                                  outsidein=False)
+    # S0 = master.copy()
+    # new_roads_i = build_all_roads(S0,
+    #                               master,
+    #                               alpha=2,
+    #                               wholepath=True,
+    #                               barriers=False,
+    #                               plot_intermediate=True,
+    #                               strict_greedy=True,
+    #                               vquiet=True,
+    #                               outsidein=False)
 
-    S0.plot_roads()
-    print("inside out" + str(new_roads_i))
+    # S0.plot_roads()
+    # print("inside out" + str(new_roads_i))
+
+    plt.show()
+

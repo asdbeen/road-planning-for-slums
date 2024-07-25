@@ -39,7 +39,7 @@ class Agent:
             state = self.env.reset()
             logger.start_episode(self.env)
 
-            for t in range(10000):
+            for t in range(1):  # Change for testing, original 10000
                 state_var = tensor(state).unsqueeze(0)
                 trans_out = self.trans_policy(state_var)
                 use_mean_action = mean_action or torch.bernoulli(torch.tensor([1 - self.noise_rate])).item()

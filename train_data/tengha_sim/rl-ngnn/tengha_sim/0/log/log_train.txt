@@ -1,0 +1,526 @@
+[2024-06-27 14:09:58,606] data_dir:data/Epworth_Before
+[2024-06-27 14:09:58,606] id: tengha_sim
+[2024-06-27 14:09:58,607] seed: 0
+[2024-06-27 14:09:58,607] objectives_plan: 
+[2024-06-27 14:09:58,607] init_plan: 
+[2024-06-27 14:09:58,608] env_specs: {}
+[2024-06-27 14:09:58,608] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-06-27 14:09:58,609] obs_specs: {}
+[2024-06-27 14:09:58,609] agent_specs: {'batch_stage': False}
+[2024-06-27 14:09:58,609] gamma: 0.9
+[2024-06-27 14:09:58,609] tau: 0.0
+[2024-06-27 14:09:58,609] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-06-27 14:09:58,610] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-06-27 14:09:58,610] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-06-27 14:09:58,610] lr: 0.0004
+[2024-06-27 14:09:58,611] weightdecay: 0.0
+[2024-06-27 14:09:58,611] eps: 1e-05
+[2024-06-27 14:09:58,612] value_pred_coef: 0.5
+[2024-06-27 14:09:58,612] entropy_coef: 0.01
+[2024-06-27 14:09:58,613] clip_epsilon: 0.2
+[2024-06-27 14:09:58,613] max_num_iterations: 100
+[2024-06-27 14:09:58,613] num_episodes_per_iteration: 1200
+[2024-06-27 14:09:58,613] max_sequence_length: 33
+[2024-06-27 14:09:58,613] num_optim_epoch: 4
+[2024-06-27 14:09:58,613] mini_batch_size: 1024
+[2024-06-27 14:09:58,614] save_model_interval: 1
+[2024-06-27 14:12:55,717] data_dir:data/Epworth_Before
+[2024-06-27 14:12:55,717] id: tengha_sim
+[2024-06-27 14:12:55,718] seed: 0
+[2024-06-27 14:12:55,718] objectives_plan: 
+[2024-06-27 14:12:55,719] init_plan: 
+[2024-06-27 14:12:55,719] env_specs: {}
+[2024-06-27 14:12:55,720] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-06-27 14:12:55,720] obs_specs: {}
+[2024-06-27 14:12:55,720] agent_specs: {'batch_stage': False}
+[2024-06-27 14:12:55,720] gamma: 0.9
+[2024-06-27 14:12:55,721] tau: 0.0
+[2024-06-27 14:12:55,721] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-06-27 14:12:55,721] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-06-27 14:12:55,721] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-06-27 14:12:55,722] lr: 0.0004
+[2024-06-27 14:12:55,722] weightdecay: 0.0
+[2024-06-27 14:12:55,722] eps: 1e-05
+[2024-06-27 14:12:55,723] value_pred_coef: 0.5
+[2024-06-27 14:12:55,723] entropy_coef: 0.01
+[2024-06-27 14:12:55,723] clip_epsilon: 0.2
+[2024-06-27 14:12:55,724] max_num_iterations: 100
+[2024-06-27 14:12:55,724] num_episodes_per_iteration: 1200
+[2024-06-27 14:12:55,725] max_sequence_length: 33
+[2024-06-27 14:12:55,725] num_optim_epoch: 4
+[2024-06-27 14:12:55,725] mini_batch_size: 1024
+[2024-06-27 14:12:55,726] save_model_interval: 1
+[2024-06-27 14:15:11,147] data_dir:data/Epworth_Before
+[2024-06-27 14:15:11,147] id: tengha_sim
+[2024-06-27 14:15:11,148] seed: 0
+[2024-06-27 14:15:11,148] objectives_plan: 
+[2024-06-27 14:15:11,149] init_plan: 
+[2024-06-27 14:15:11,149] env_specs: {}
+[2024-06-27 14:15:11,149] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-06-27 14:15:11,149] obs_specs: {}
+[2024-06-27 14:15:11,150] agent_specs: {'batch_stage': False}
+[2024-06-27 14:15:11,150] gamma: 0.9
+[2024-06-27 14:15:11,150] tau: 0.0
+[2024-06-27 14:15:11,150] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-06-27 14:15:11,150] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-06-27 14:15:11,151] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-06-27 14:15:11,151] lr: 0.0004
+[2024-06-27 14:15:11,151] weightdecay: 0.0
+[2024-06-27 14:15:11,151] eps: 1e-05
+[2024-06-27 14:15:11,151] value_pred_coef: 0.5
+[2024-06-27 14:15:11,152] entropy_coef: 0.01
+[2024-06-27 14:15:11,152] clip_epsilon: 0.2
+[2024-06-27 14:15:11,152] max_num_iterations: 100
+[2024-06-27 14:15:11,152] num_episodes_per_iteration: 1200
+[2024-06-27 14:15:11,152] max_sequence_length: 33
+[2024-06-27 14:15:11,152] num_optim_epoch: 4
+[2024-06-27 14:15:11,153] mini_batch_size: 1024
+[2024-06-27 14:15:11,153] save_model_interval: 1
+[2024-06-27 14:15:35,996] data_dir:data/Epworth_Before
+[2024-06-27 14:15:35,996] id: tengha_sim
+[2024-06-27 14:15:35,997] seed: 0
+[2024-06-27 14:15:35,997] objectives_plan: 
+[2024-06-27 14:15:35,997] init_plan: 
+[2024-06-27 14:15:35,998] env_specs: {}
+[2024-06-27 14:15:35,998] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-06-27 14:15:35,999] obs_specs: {}
+[2024-06-27 14:15:35,999] agent_specs: {'batch_stage': False}
+[2024-06-27 14:15:35,999] gamma: 0.9
+[2024-06-27 14:15:35,999] tau: 0.0
+[2024-06-27 14:15:36,000] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-06-27 14:15:36,000] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-06-27 14:15:36,000] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-06-27 14:15:36,000] lr: 0.0004
+[2024-06-27 14:15:36,000] weightdecay: 0.0
+[2024-06-27 14:15:36,001] eps: 1e-05
+[2024-06-27 14:15:36,001] value_pred_coef: 0.5
+[2024-06-27 14:15:36,001] entropy_coef: 0.01
+[2024-06-27 14:15:36,002] clip_epsilon: 0.2
+[2024-06-27 14:15:36,002] max_num_iterations: 100
+[2024-06-27 14:15:36,002] num_episodes_per_iteration: 1200
+[2024-06-27 14:15:36,003] max_sequence_length: 33
+[2024-06-27 14:15:36,003] num_optim_epoch: 4
+[2024-06-27 14:15:36,003] mini_batch_size: 1024
+[2024-06-27 14:15:36,004] save_model_interval: 1
+[2024-06-27 14:39:18,269] 0	T_sample 1325.07	T_update 86.63	T_eval 9.38	ETA 1 day, 15:04:47	train_R_eps -2.32	eval_R_eps -0.04	tengha_sim
+[2024-06-27 14:39:18,291] save best checkpoint with rewards -0.04!
+[2024-06-27 15:03:35,009] 1	T_sample 1362.13	T_update 86.53	T_eval 7.92	ETA 1 day, 15:39:05	train_R_eps -2.30	eval_R_eps -0.02	tengha_sim
+[2024-06-27 15:03:35,028] save best checkpoint with rewards -0.02!
+[2024-06-27 15:28:34,657] 2	T_sample 1404.33	T_update 86.50	T_eval 8.59	ETA 1 day, 16:24:04	train_R_eps -2.25	eval_R_eps -0.02	tengha_sim
+[2024-06-27 15:53:30,517] 3	T_sample 1401.25	T_update 86.70	T_eval 7.76	ETA 1 day, 15:53:08	train_R_eps -2.20	eval_R_eps -0.02	tengha_sim
+[2024-06-27 16:18:45,153] 4	T_sample 1413.48	T_update 93.19	T_eval 7.83	ETA 1 day, 15:57:57	train_R_eps -2.16	eval_R_eps -0.02	tengha_sim
+[2024-06-27 16:44:21,841] 5	T_sample 1438.93	T_update 88.17	T_eval 9.40	ETA 1 day, 16:07:11	train_R_eps -2.13	eval_R_eps -0.02	tengha_sim
+[2024-06-27 17:04:52,368] data_dir:data/Epworth_Before
+[2024-06-27 17:04:52,369] id: tengha_sim
+[2024-06-27 17:04:52,370] seed: 0
+[2024-06-27 17:04:52,370] objectives_plan: 
+[2024-06-27 17:04:52,370] init_plan: 
+[2024-06-27 17:04:52,371] env_specs: {}
+[2024-06-27 17:04:52,371] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-06-27 17:04:52,371] obs_specs: {}
+[2024-06-27 17:04:52,371] agent_specs: {'batch_stage': False}
+[2024-06-27 17:04:52,371] gamma: 0.9
+[2024-06-27 17:04:52,372] tau: 0.0
+[2024-06-27 17:04:52,372] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-06-27 17:04:52,372] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-06-27 17:04:52,373] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-06-27 17:04:52,373] lr: 0.0004
+[2024-06-27 17:04:52,373] weightdecay: 0.0
+[2024-06-27 17:04:52,373] eps: 1e-05
+[2024-06-27 17:04:52,373] value_pred_coef: 0.5
+[2024-06-27 17:04:52,374] entropy_coef: 0.01
+[2024-06-27 17:04:52,374] clip_epsilon: 0.2
+[2024-06-27 17:04:52,374] max_num_iterations: 100
+[2024-06-27 17:04:52,375] num_episodes_per_iteration: 1200
+[2024-06-27 17:04:52,375] max_sequence_length: 33
+[2024-06-27 17:04:52,375] num_optim_epoch: 4
+[2024-06-27 17:04:52,375] mini_batch_size: 1024
+[2024-06-27 17:04:52,376] save_model_interval: 1
+[2024-06-27 17:28:45,959] 0	T_sample 1336.49	T_update 86.96	T_eval 8.80	ETA 1 day, 15:23:13	train_R_eps -2.32	eval_R_eps -1.88	tengha_sim
+[2024-06-27 17:28:45,970] save best checkpoint with rewards -1.88!
+[2024-06-27 17:52:57,273] 1	T_sample 1356.45	T_update 86.09	T_eval 8.60	ETA 1 day, 15:30:12	train_R_eps -2.30	eval_R_eps -1.77	tengha_sim
+[2024-06-27 17:52:57,314] save best checkpoint with rewards -1.77!
+[2024-06-27 18:17:56,281] 2	T_sample 1403.95	T_update 86.30	T_eval 8.55	ETA 1 day, 16:23:03	train_R_eps -2.25	eval_R_eps -1.69	tengha_sim
+[2024-06-27 18:17:56,291] save best checkpoint with rewards -1.69!
+[2024-06-27 18:43:04,502] 3	T_sample 1413.77	T_update 85.39	T_eval 8.90	ETA 1 day, 16:12:54	train_R_eps -2.20	eval_R_eps -1.64	tengha_sim
+[2024-06-27 18:43:04,520] save best checkpoint with rewards -1.64!
+[2024-06-27 19:08:28,702] 4	T_sample 1428.38	T_update 86.81	T_eval 8.84	ETA 1 day, 16:13:03	train_R_eps -2.16	eval_R_eps -1.75	tengha_sim
+[2024-06-27 19:34:31,368] 5	T_sample 1463.99	T_update 89.50	T_eval 9.02	ETA 1 day, 16:47:56	train_R_eps -2.13	eval_R_eps -1.73	tengha_sim
+[2024-06-27 20:01:00,195] 6	T_sample 1490.04	T_update 89.65	T_eval 8.95	ETA 1 day, 17:02:24	train_R_eps -2.12	eval_R_eps -1.71	tengha_sim
+[2024-06-27 20:28:20,480] 7	T_sample 1540.43	T_update 90.49	T_eval 9.19	ETA 1 day, 17:54:50	train_R_eps -2.09	eval_R_eps -1.84	tengha_sim
+[2024-06-27 20:55:48,452] 8	T_sample 1541.73	T_update 95.37	T_eval 10.70	ETA 1 day, 17:39:10	train_R_eps -2.09	eval_R_eps -1.84	tengha_sim
+[2024-06-27 21:22:46,940] 9	T_sample 1522.05	T_update 86.14	T_eval 10.13	ETA 1 day, 16:27:29	train_R_eps -2.10	eval_R_eps -1.97	tengha_sim
+[2024-06-27 21:49:21,105] 10	T_sample 1497.24	T_update 86.64	T_eval 10.11	ETA 1 day, 15:24:25	train_R_eps -2.10	eval_R_eps -2.01	tengha_sim
+[2024-06-27 22:15:56,207] 11	T_sample 1497.44	T_update 87.54	T_eval 9.95	ETA 1 day, 14:59:14	train_R_eps -2.11	eval_R_eps -2.01	tengha_sim
+[2024-06-27 22:42:43,994] 12	T_sample 1510.02	T_update 87.15	T_eval 10.46	ETA 1 day, 14:51:04	train_R_eps -2.12	eval_R_eps -2.04	tengha_sim
+[2024-06-27 23:09:32,137] 13	T_sample 1509.27	T_update 88.53	T_eval 10.15	ETA 1 day, 14:24:44	train_R_eps -2.13	eval_R_eps -2.02	tengha_sim
+[2024-06-27 23:36:23,841] 14	T_sample 1513.83	T_update 87.45	T_eval 10.17	ETA 1 day, 14:02:54	train_R_eps -2.15	eval_R_eps -2.16	tengha_sim
+[2024-06-28 00:03:12,330] 15	T_sample 1510.97	T_update 87.36	T_eval 9.91	ETA 1 day, 13:31:32	train_R_eps -2.16	eval_R_eps -2.17	tengha_sim
+[2024-06-28 00:29:57,705] 16	T_sample 1506.92	T_update 88.04	T_eval 10.19	ETA 1 day, 13:00:28	train_R_eps -2.17	eval_R_eps -2.17	tengha_sim
+[2024-06-28 00:56:40,451] 17	T_sample 1504.63	T_update 87.85	T_eval 10.10	ETA 1 day, 12:30:12	train_R_eps -2.18	eval_R_eps -2.17	tengha_sim
+[2024-06-28 01:23:32,418] 18	T_sample 1512.97	T_update 88.73	T_eval 10.08	ETA 1 day, 12:15:54	train_R_eps -2.19	eval_R_eps -2.16	tengha_sim
+[2024-06-28 01:50:24,877] 19	T_sample 1513.43	T_update 88.61	T_eval 10.27	ETA 1 day, 11:49:45	train_R_eps -2.20	eval_R_eps -2.17	tengha_sim
+[2024-06-28 02:17:21,599] 20	T_sample 1519.13	T_update 87.09	T_eval 10.26	ETA 1 day, 11:28:22	train_R_eps -2.22	eval_R_eps -2.21	tengha_sim
+[2024-06-28 02:44:30,817] 21	T_sample 1530.81	T_update 88.19	T_eval 10.06	ETA 1 day, 11:17:47	train_R_eps -2.23	eval_R_eps -2.18	tengha_sim
+[2024-06-28 03:11:46,929] 22	T_sample 1536.92	T_update 88.92	T_eval 10.08	ETA 1 day, 10:59:26	train_R_eps -2.25	eval_R_eps -2.20	tengha_sim
+[2024-06-28 03:39:00,508] 23	T_sample 1532.78	T_update 90.36	T_eval 10.18	ETA 1 day, 10:28:52	train_R_eps -2.26	eval_R_eps -2.20	tengha_sim
+[2024-06-28 04:06:16,182] 24	T_sample 1535.78	T_update 89.42	T_eval 10.32	ETA 1 day, 10:04:24	train_R_eps -2.27	eval_R_eps -2.20	tengha_sim
+[2024-06-28 04:33:52,193] 25	T_sample 1555.52	T_update 89.69	T_eval 10.54	ETA 1 day, 10:02:05	train_R_eps -2.26	eval_R_eps -2.20	tengha_sim
+[2024-06-28 05:01:15,301] 26	T_sample 1542.84	T_update 89.82	T_eval 10.30	ETA 1 day, 9:18:56	train_R_eps -2.27	eval_R_eps -2.20	tengha_sim
+[2024-06-28 05:28:39,576] 27	T_sample 1546.47	T_update 87.26	T_eval 10.30	ETA 1 day, 8:52:51	train_R_eps -2.27	eval_R_eps -2.17	tengha_sim
+[2024-06-28 05:56:01,726] 28	T_sample 1545.09	T_update 87.58	T_eval 9.30	ETA 1 day, 8:23:00	train_R_eps -2.27	eval_R_eps -2.25	tengha_sim
+[2024-06-28 06:23:34,633] 29	T_sample 1548.69	T_update 92.14	T_eval 11.77	ETA 1 day, 8:08:02	train_R_eps -2.26	eval_R_eps -2.26	tengha_sim
+[2024-06-28 06:51:10,316] 30	T_sample 1557.21	T_update 87.92	T_eval 10.34	ETA 1 day, 7:43:47	train_R_eps -2.26	eval_R_eps -2.26	tengha_sim
+[2024-06-28 07:18:39,273] 31	T_sample 1549.65	T_update 88.93	T_eval 10.16	ETA 1 day, 7:08:34	train_R_eps -2.25	eval_R_eps -2.18	tengha_sim
+[2024-06-28 07:46:07,762] 32	T_sample 1548.64	T_update 89.20	T_eval 10.36	ETA 1 day, 6:40:29	train_R_eps -2.25	eval_R_eps -2.18	tengha_sim
+[2024-06-28 08:13:36,982] 33	T_sample 1549.89	T_update 89.00	T_eval 10.12	ETA 1 day, 6:13:54	train_R_eps -2.25	eval_R_eps -2.13	tengha_sim
+[2024-06-28 08:40:49,750] 34	T_sample 1532.87	T_update 89.42	T_eval 10.33	ETA 1 day, 5:28:40	train_R_eps -2.24	eval_R_eps -2.21	tengha_sim
+[2024-06-28 09:07:51,503] 35	T_sample 1521.50	T_update 89.59	T_eval 10.45	ETA 1 day, 4:49:39	train_R_eps -2.24	eval_R_eps -2.27	tengha_sim
+[2024-06-28 09:34:47,151] 36	T_sample 1518.28	T_update 87.22	T_eval 9.99	ETA 1 day, 4:16:16	train_R_eps -2.25	eval_R_eps -2.23	tengha_sim
+[2024-06-28 10:01:09,559] 37	T_sample 1469.07	T_update 101.93	T_eval 11.16	ETA 1 day, 3:14:54	train_R_eps -2.23	eval_R_eps -2.28	tengha_sim
+[2024-06-28 10:26:03,520] 38	T_sample 1370.31	T_update 113.58	T_eval 9.88	ETA 1 day, 1:18:40	train_R_eps -2.23	eval_R_eps -2.21	tengha_sim
+[2024-06-28 10:51:22,368] 39	T_sample 1401.85	T_update 105.95	T_eval 10.80	ETA 1 day, 1:18:36	train_R_eps -2.22	eval_R_eps -2.21	tengha_sim
+[2024-06-28 11:28:14,581] 40	T_sample 2095.09	T_update 105.87	T_eval 11.01	ETA 1 day, 12:15:06	train_R_eps -2.22	eval_R_eps -2.15	tengha_sim
+[2024-07-01 13:02:24,184] data_dir:data/Epworth_Before
+[2024-07-01 13:02:24,185] id: tengha_sim
+[2024-07-01 13:02:24,185] seed: 0
+[2024-07-01 13:02:24,185] objectives_plan: 
+[2024-07-01 13:02:24,185] init_plan: 
+[2024-07-01 13:02:24,186] env_specs: {}
+[2024-07-01 13:02:24,186] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:02:24,186] obs_specs: {}
+[2024-07-01 13:02:24,186] agent_specs: {'batch_stage': False}
+[2024-07-01 13:02:24,187] gamma: 0.9
+[2024-07-01 13:02:24,187] tau: 0.0
+[2024-07-01 13:02:24,187] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:02:24,187] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:02:24,188] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:02:24,188] lr: 0.0004
+[2024-07-01 13:02:24,188] weightdecay: 0.0
+[2024-07-01 13:02:24,188] eps: 1e-05
+[2024-07-01 13:02:24,189] value_pred_coef: 0.5
+[2024-07-01 13:02:24,189] entropy_coef: 0.01
+[2024-07-01 13:02:24,189] clip_epsilon: 0.2
+[2024-07-01 13:02:24,189] max_num_iterations: 100
+[2024-07-01 13:02:24,190] num_episodes_per_iteration: 1200
+[2024-07-01 13:02:24,190] max_sequence_length: 33
+[2024-07-01 13:02:24,190] num_optim_epoch: 4
+[2024-07-01 13:02:24,191] mini_batch_size: 1024
+[2024-07-01 13:02:24,191] save_model_interval: 1
+[2024-07-01 13:02:34,022] Infer time: 8.52
+[2024-07-01 13:02:34,022] dis: 0.0
+[2024-07-01 13:02:34,022] cost: 21.7056602166584
+[2024-07-01 13:02:34,023] eval_0.9&0.1: -2.1705660216658402
+[2024-07-01 13:02:34,023] save plan to file: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\plan\plan.p
+[2024-07-01 13:02:34,024] training done!
+[2024-07-01 13:04:29,768] data_dir:data/Epworth_Before
+[2024-07-01 13:04:29,769] id: tengha_sim
+[2024-07-01 13:04:29,770] seed: 0
+[2024-07-01 13:04:29,770] objectives_plan: 
+[2024-07-01 13:04:29,771] init_plan: 
+[2024-07-01 13:04:29,771] env_specs: {}
+[2024-07-01 13:04:29,772] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:04:29,772] obs_specs: {}
+[2024-07-01 13:04:29,772] agent_specs: {'batch_stage': False}
+[2024-07-01 13:04:29,773] gamma: 0.9
+[2024-07-01 13:04:29,773] tau: 0.0
+[2024-07-01 13:04:29,773] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:04:29,773] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:04:29,774] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:04:29,774] lr: 0.0004
+[2024-07-01 13:04:29,774] weightdecay: 0.0
+[2024-07-01 13:04:29,774] eps: 1e-05
+[2024-07-01 13:04:29,775] value_pred_coef: 0.5
+[2024-07-01 13:04:29,777] entropy_coef: 0.01
+[2024-07-01 13:04:29,777] clip_epsilon: 0.2
+[2024-07-01 13:04:29,777] max_num_iterations: 100
+[2024-07-01 13:04:29,778] num_episodes_per_iteration: 1200
+[2024-07-01 13:04:29,778] max_sequence_length: 33
+[2024-07-01 13:04:29,778] num_optim_epoch: 4
+[2024-07-01 13:04:29,779] mini_batch_size: 1024
+[2024-07-01 13:04:29,779] save_model_interval: 1
+[2024-07-01 13:04:39,699] Infer time: 8.84
+[2024-07-01 13:04:39,699] dis: 0.0
+[2024-07-01 13:04:39,699] cost: 21.7056602166584
+[2024-07-01 13:04:39,700] eval_0.9&0.1: -2.1705660216658402
+[2024-07-01 13:04:39,700] save plan to file: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\plan\plan.p
+[2024-07-01 13:04:39,701] training done!
+[2024-07-01 13:06:06,214] data_dir:data/Epworth_Before
+[2024-07-01 13:06:06,215] id: tengha_sim
+[2024-07-01 13:06:06,215] seed: 0
+[2024-07-01 13:06:06,216] objectives_plan: 
+[2024-07-01 13:06:06,216] init_plan: 
+[2024-07-01 13:06:06,217] env_specs: {}
+[2024-07-01 13:06:06,217] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:06:06,217] obs_specs: {}
+[2024-07-01 13:06:06,218] agent_specs: {'batch_stage': False}
+[2024-07-01 13:06:06,218] gamma: 0.9
+[2024-07-01 13:06:06,218] tau: 0.0
+[2024-07-01 13:06:06,219] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:06:06,219] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:06:06,220] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:06:06,220] lr: 0.0004
+[2024-07-01 13:06:06,221] weightdecay: 0.0
+[2024-07-01 13:06:06,221] eps: 1e-05
+[2024-07-01 13:06:06,221] value_pred_coef: 0.5
+[2024-07-01 13:06:06,222] entropy_coef: 0.01
+[2024-07-01 13:06:06,222] clip_epsilon: 0.2
+[2024-07-01 13:06:06,222] max_num_iterations: 100
+[2024-07-01 13:06:06,222] num_episodes_per_iteration: 1200
+[2024-07-01 13:06:06,223] max_sequence_length: 33
+[2024-07-01 13:06:06,223] num_optim_epoch: 4
+[2024-07-01 13:06:06,223] mini_batch_size: 1024
+[2024-07-01 13:06:06,223] save_model_interval: 1
+[2024-07-01 13:06:16,191] Infer time: 8.89
+[2024-07-01 13:06:16,191] dis: 0.0
+[2024-07-01 13:06:16,191] cost: 21.7056602166584
+[2024-07-01 13:06:16,191] eval_0.9&0.1: -2.1705660216658402
+[2024-07-01 13:06:16,191] save plan to file: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\plan\plan.p
+[2024-07-01 13:08:01,957] data_dir:data/Epworth_Before
+[2024-07-01 13:08:01,957] id: tengha_sim
+[2024-07-01 13:08:01,958] seed: 0
+[2024-07-01 13:08:01,958] objectives_plan: 
+[2024-07-01 13:08:01,959] init_plan: 
+[2024-07-01 13:08:01,959] env_specs: {}
+[2024-07-01 13:08:01,960] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:08:01,960] obs_specs: {}
+[2024-07-01 13:08:01,960] agent_specs: {'batch_stage': False}
+[2024-07-01 13:08:01,960] gamma: 0.9
+[2024-07-01 13:08:01,961] tau: 0.0
+[2024-07-01 13:08:01,961] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:08:01,961] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:08:01,961] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:08:01,962] lr: 0.0004
+[2024-07-01 13:08:01,962] weightdecay: 0.0
+[2024-07-01 13:08:01,962] eps: 1e-05
+[2024-07-01 13:08:01,963] value_pred_coef: 0.5
+[2024-07-01 13:08:01,963] entropy_coef: 0.01
+[2024-07-01 13:08:01,963] clip_epsilon: 0.2
+[2024-07-01 13:08:01,964] max_num_iterations: 100
+[2024-07-01 13:08:01,964] num_episodes_per_iteration: 1200
+[2024-07-01 13:08:01,964] max_sequence_length: 33
+[2024-07-01 13:08:01,965] num_optim_epoch: 4
+[2024-07-01 13:08:01,965] mini_batch_size: 1024
+[2024-07-01 13:08:01,965] save_model_interval: 1
+[2024-07-01 13:08:28,041] data_dir:data/Epworth_Before
+[2024-07-01 13:08:28,041] id: tengha_sim
+[2024-07-01 13:08:28,042] seed: 0
+[2024-07-01 13:08:28,042] objectives_plan: 
+[2024-07-01 13:08:28,043] init_plan: 
+[2024-07-01 13:08:28,043] env_specs: {}
+[2024-07-01 13:08:28,043] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:08:28,044] obs_specs: {}
+[2024-07-01 13:08:28,044] agent_specs: {'batch_stage': False}
+[2024-07-01 13:08:28,044] gamma: 0.9
+[2024-07-01 13:08:28,044] tau: 0.0
+[2024-07-01 13:08:28,045] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:08:28,045] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:08:28,045] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:08:28,045] lr: 0.0004
+[2024-07-01 13:08:28,046] weightdecay: 0.0
+[2024-07-01 13:08:28,046] eps: 1e-05
+[2024-07-01 13:08:28,046] value_pred_coef: 0.5
+[2024-07-01 13:08:28,046] entropy_coef: 0.01
+[2024-07-01 13:08:28,046] clip_epsilon: 0.2
+[2024-07-01 13:08:28,047] max_num_iterations: 100
+[2024-07-01 13:08:28,047] num_episodes_per_iteration: 1200
+[2024-07-01 13:08:28,048] max_sequence_length: 33
+[2024-07-01 13:08:28,048] num_optim_epoch: 4
+[2024-07-01 13:08:28,049] mini_batch_size: 1024
+[2024-07-01 13:08:28,049] save_model_interval: 1
+[2024-07-01 13:08:38,567] Infer time: 9.41
+[2024-07-01 13:08:38,568] dis: 0.0
+[2024-07-01 13:08:38,568] cost: 21.7056602166584
+[2024-07-01 13:08:38,568] eval_0.9&0.1: -2.1705660216658402
+[2024-07-01 13:08:38,569] save plan to file: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\plan\plan.p
+[2024-07-01 13:08:38,570] training done!
+[2024-07-01 13:13:19,339] data_dir:data/Epworth_Before
+[2024-07-01 13:13:19,339] id: tengha_sim
+[2024-07-01 13:13:19,340] seed: 0
+[2024-07-01 13:13:19,340] objectives_plan: 
+[2024-07-01 13:13:19,340] init_plan: 
+[2024-07-01 13:13:19,341] env_specs: {}
+[2024-07-01 13:13:19,341] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:13:19,341] obs_specs: {}
+[2024-07-01 13:13:19,342] agent_specs: {'batch_stage': False}
+[2024-07-01 13:13:19,342] gamma: 0.9
+[2024-07-01 13:13:19,342] tau: 0.0
+[2024-07-01 13:13:19,342] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:13:19,343] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:13:19,343] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:13:19,343] lr: 0.0004
+[2024-07-01 13:13:19,343] weightdecay: 0.0
+[2024-07-01 13:13:19,343] eps: 1e-05
+[2024-07-01 13:13:19,343] value_pred_coef: 0.5
+[2024-07-01 13:13:19,344] entropy_coef: 0.01
+[2024-07-01 13:13:19,344] clip_epsilon: 0.2
+[2024-07-01 13:13:19,344] max_num_iterations: 100
+[2024-07-01 13:13:19,344] num_episodes_per_iteration: 1200
+[2024-07-01 13:13:19,344] max_sequence_length: 33
+[2024-07-01 13:13:19,344] num_optim_epoch: 4
+[2024-07-01 13:13:19,345] mini_batch_size: 1024
+[2024-07-01 13:13:19,345] save_model_interval: 1
+[2024-07-01 13:13:20,418] loading model from checkpoint: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\models/best.p
+[2024-07-01 13:13:49,280] data_dir:data/Epworth_Before
+[2024-07-01 13:13:49,281] id: tengha_sim
+[2024-07-01 13:13:49,282] seed: 0
+[2024-07-01 13:13:49,282] objectives_plan: 
+[2024-07-01 13:13:49,283] init_plan: 
+[2024-07-01 13:13:49,283] env_specs: {}
+[2024-07-01 13:13:49,284] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-01 13:13:49,284] obs_specs: {}
+[2024-07-01 13:13:49,285] agent_specs: {'batch_stage': False}
+[2024-07-01 13:13:49,285] gamma: 0.9
+[2024-07-01 13:13:49,286] tau: 0.0
+[2024-07-01 13:13:49,286] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-01 13:13:49,287] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-01 13:13:49,287] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-01 13:13:49,288] lr: 0.0004
+[2024-07-01 13:13:49,288] weightdecay: 0.0
+[2024-07-01 13:13:49,288] eps: 1e-05
+[2024-07-01 13:13:49,289] value_pred_coef: 0.5
+[2024-07-01 13:13:49,289] entropy_coef: 0.01
+[2024-07-01 13:13:49,289] clip_epsilon: 0.2
+[2024-07-01 13:13:49,290] max_num_iterations: 100
+[2024-07-01 13:13:49,290] num_episodes_per_iteration: 1200
+[2024-07-01 13:13:49,290] max_sequence_length: 33
+[2024-07-01 13:13:49,291] num_optim_epoch: 4
+[2024-07-01 13:13:49,291] mini_batch_size: 1024
+[2024-07-01 13:13:49,291] save_model_interval: 1
+[2024-07-01 13:13:50,383] loading model from checkpoint: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\models/best.p
+[2024-07-01 13:13:59,894] Infer time: 9.51
+[2024-07-01 13:13:59,894] dis: 0.0
+[2024-07-01 13:13:59,895] cost: 16.413740103529243
+[2024-07-01 13:13:59,895] eval_0.9&0.1: -1.6413740103529244
+[2024-07-01 13:13:59,896] save plan to file: C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\train_data\tengha_sim\rl-ngnn\tengha_sim\0\plan\plan.p
+[2024-07-01 13:13:59,897] training done!
+[2024-07-19 13:19:07,909] data_dir:data/Epworth_Before
+[2024-07-19 13:19:07,909] id: tengha_sim
+[2024-07-19 13:19:07,909] seed: 0
+[2024-07-19 13:19:07,909] objectives_plan: 
+[2024-07-19 13:19:07,909] init_plan: 
+[2024-07-19 13:19:07,909] env_specs: {}
+[2024-07-19 13:19:07,909] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-19 13:19:07,909] obs_specs: {}
+[2024-07-19 13:19:07,909] agent_specs: {'batch_stage': False}
+[2024-07-19 13:19:07,909] gamma: 0.9
+[2024-07-19 13:19:07,909] tau: 0.0
+[2024-07-19 13:19:07,909] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-19 13:19:07,909] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-19 13:19:07,909] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-19 13:19:07,909] lr: 0.0004
+[2024-07-19 13:19:07,909] weightdecay: 0.0
+[2024-07-19 13:19:07,909] eps: 1e-05
+[2024-07-19 13:19:07,909] value_pred_coef: 0.5
+[2024-07-19 13:19:07,909] entropy_coef: 0.01
+[2024-07-19 13:19:07,909] clip_epsilon: 0.2
+[2024-07-19 13:19:07,909] max_num_iterations: 100
+[2024-07-19 13:19:07,909] num_episodes_per_iteration: 1200
+[2024-07-19 13:19:07,909] max_sequence_length: 33
+[2024-07-19 13:19:07,909] num_optim_epoch: 4
+[2024-07-19 13:19:07,909] mini_batch_size: 1024
+[2024-07-19 13:19:07,909] save_model_interval: 1
+[2024-07-19 13:30:14,372] data_dir:data/Epworth_Before
+[2024-07-19 13:30:14,372] id: tengha_sim
+[2024-07-19 13:30:14,372] seed: 0
+[2024-07-19 13:30:14,387] objectives_plan: 
+[2024-07-19 13:30:14,388] init_plan: 
+[2024-07-19 13:30:14,388] env_specs: {}
+[2024-07-19 13:30:14,388] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-19 13:30:14,389] obs_specs: {}
+[2024-07-19 13:30:14,389] agent_specs: {'batch_stage': False}
+[2024-07-19 13:30:14,389] gamma: 0.9
+[2024-07-19 13:30:14,390] tau: 0.0
+[2024-07-19 13:30:14,390] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-19 13:30:14,391] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-19 13:30:14,392] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-19 13:30:14,392] lr: 0.0004
+[2024-07-19 13:30:14,392] weightdecay: 0.0
+[2024-07-19 13:30:14,392] eps: 1e-05
+[2024-07-19 13:30:14,392] value_pred_coef: 0.5
+[2024-07-19 13:30:14,392] entropy_coef: 0.01
+[2024-07-19 13:30:14,392] clip_epsilon: 0.2
+[2024-07-19 13:30:14,392] max_num_iterations: 100
+[2024-07-19 13:30:14,394] num_episodes_per_iteration: 1200
+[2024-07-19 13:30:14,394] max_sequence_length: 33
+[2024-07-19 13:30:14,394] num_optim_epoch: 4
+[2024-07-19 13:30:14,394] mini_batch_size: 1024
+[2024-07-19 13:30:14,394] save_model_interval: 1
+[2024-07-19 13:31:10,919] data_dir:data/Epworth_Before
+[2024-07-19 13:31:10,919] id: tengha_sim
+[2024-07-19 13:31:10,919] seed: 0
+[2024-07-19 13:31:10,927] objectives_plan: 
+[2024-07-19 13:31:10,927] init_plan: 
+[2024-07-19 13:31:10,927] env_specs: {}
+[2024-07-19 13:31:10,928] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-19 13:31:10,928] obs_specs: {}
+[2024-07-19 13:31:10,928] agent_specs: {'batch_stage': False}
+[2024-07-19 13:31:10,929] gamma: 0.9
+[2024-07-19 13:31:10,929] tau: 0.0
+[2024-07-19 13:31:10,929] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-19 13:31:10,929] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-19 13:31:10,930] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-19 13:31:10,930] lr: 0.0004
+[2024-07-19 13:31:10,930] weightdecay: 0.0
+[2024-07-19 13:31:10,930] eps: 1e-05
+[2024-07-19 13:31:10,930] value_pred_coef: 0.5
+[2024-07-19 13:31:10,930] entropy_coef: 0.01
+[2024-07-19 13:31:10,931] clip_epsilon: 0.2
+[2024-07-19 13:31:10,931] max_num_iterations: 100
+[2024-07-19 13:31:10,931] num_episodes_per_iteration: 1200
+[2024-07-19 13:31:10,931] max_sequence_length: 33
+[2024-07-19 13:31:10,931] num_optim_epoch: 4
+[2024-07-19 13:31:10,932] mini_batch_size: 1024
+[2024-07-19 13:31:10,932] save_model_interval: 1
+[2024-07-25 12:01:08,560] data_dir:data/Epworth_Before
+[2024-07-25 12:01:08,561] id: tengha_sim
+[2024-07-25 12:01:08,561] seed: 0
+[2024-07-25 12:01:08,562] objectives_plan: 
+[2024-07-25 12:01:08,562] init_plan: 
+[2024-07-25 12:01:08,562] env_specs: {}
+[2024-07-25 12:01:08,562] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-25 12:01:08,563] obs_specs: {}
+[2024-07-25 12:01:08,563] agent_specs: {'batch_stage': False}
+[2024-07-25 12:01:08,563] gamma: 0.9
+[2024-07-25 12:01:08,564] tau: 0.0
+[2024-07-25 12:01:08,564] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-25 12:01:08,564] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-25 12:01:08,564] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-25 12:01:08,565] lr: 0.0004
+[2024-07-25 12:01:08,565] weightdecay: 0.0
+[2024-07-25 12:01:08,565] eps: 1e-05
+[2024-07-25 12:01:08,565] value_pred_coef: 0.5
+[2024-07-25 12:01:08,565] entropy_coef: 0.01
+[2024-07-25 12:01:08,566] clip_epsilon: 0.2
+[2024-07-25 12:01:08,566] max_num_iterations: 100
+[2024-07-25 12:01:08,566] num_episodes_per_iteration: 1200
+[2024-07-25 12:01:08,566] max_sequence_length: 33
+[2024-07-25 12:01:08,567] num_optim_epoch: 4
+[2024-07-25 12:01:08,567] mini_batch_size: 1024
+[2024-07-25 12:01:08,567] save_model_interval: 1
+[2024-07-25 12:02:04,126] data_dir:data/Epworth_Before
+[2024-07-25 12:02:04,126] id: tengha_sim
+[2024-07-25 12:02:04,127] seed: 0
+[2024-07-25 12:02:04,127] objectives_plan: 
+[2024-07-25 12:02:04,127] init_plan: 
+[2024-07-25 12:02:04,127] env_specs: {}
+[2024-07-25 12:02:04,128] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-07-25 12:02:04,128] obs_specs: {}
+[2024-07-25 12:02:04,128] agent_specs: {'batch_stage': False}
+[2024-07-25 12:02:04,129] gamma: 0.9
+[2024-07-25 12:02:04,129] tau: 0.0
+[2024-07-25 12:02:04,129] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-07-25 12:02:04,129] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-07-25 12:02:04,129] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-07-25 12:02:04,130] lr: 0.0004
+[2024-07-25 12:02:04,130] weightdecay: 0.0
+[2024-07-25 12:02:04,130] eps: 1e-05
+[2024-07-25 12:02:04,130] value_pred_coef: 0.5
+[2024-07-25 12:02:04,130] entropy_coef: 0.01
+[2024-07-25 12:02:04,131] clip_epsilon: 0.2
+[2024-07-25 12:02:04,131] max_num_iterations: 100
+[2024-07-25 12:02:04,131] num_episodes_per_iteration: 1200
+[2024-07-25 12:02:04,131] max_sequence_length: 33
+[2024-07-25 12:02:04,132] num_optim_epoch: 4
+[2024-07-25 12:02:04,132] mini_batch_size: 1024
+[2024-07-25 12:02:04,132] save_model_interval: 1
