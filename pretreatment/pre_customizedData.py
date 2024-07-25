@@ -1,5 +1,8 @@
 import sys
-sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
+import os
+cwd = os.getcwd()
+sys.path.append(cwd) 
+
 
 import json
 import numpy as np
@@ -15,17 +18,25 @@ import operator
 
 if __name__ == '__main__':
 
+
+ 
+        
+
     ########################################
     ## Main Code
     ########################################
     ###### Import
-    jsonPath = r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\JSONInput\env1.json"
+    
+    #jsonPath = r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\JSONInput\env1.json"
+    cwd = os.getcwd()
+    jsonPath = os.path.join(cwd,"JSONInput","env1.json")
     myG,myNodeDict,myEdgeDict = mgh.GraphFromJSON_Customized(jsonPath,scaleTag=False)
 
     ###### Initialize info
     myG.define_roads_FirstTime()                 # Road
     myG.define_interior_parcels()                # Interior_Parcels
 
+    
 
     ###### Compute
     S0 = myG

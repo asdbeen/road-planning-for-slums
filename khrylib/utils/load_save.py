@@ -20,6 +20,9 @@ def get_file_path(file_path):
         file_path = os.path.join('/data2/zhengyu/workspace/urban_planning', file_path)
     elif hostname == 'DESKTOP-9JGI75U':
         file_path = os.path.join(cwd, file_path)
+    elif hostname == 'chens-iMac.local':
+        file_path = os.path.join(cwd, file_path)
+
 
     else:
         raise ValueError('Unknown hostname: {}'.format(socket.gethostname()))

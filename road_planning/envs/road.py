@@ -70,7 +70,8 @@ def load_graph(slum):
 
 def reward_info_function(mg: MyGraph, name: Text,
                          travel_distance_weight: float,
-                         road_cost_weight: float) -> Tuple[float, Dict]:
+                         road_cost_weight: float,
+                         travel_distance_POI_weight: float=0.5) -> Tuple[float, Dict]:
     """Returns the RL reward and info.
 
     Args:
@@ -88,6 +89,9 @@ def reward_info_function(mg: MyGraph, name: Text,
     """
 
     travel_distance = travel_distance_weight * mg.travel_distance()
+
+    #travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
+
     road_cost = road_cost_weight * mg.road_cost()
     connect_reward = mg.connected_ration()
 
@@ -98,10 +102,11 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     # print(connect_reward , travel_distance , road_cost)
     # print(face2face_avg,total_road_cost)
-    return connect_reward + travel_distance + road_cost, {
+    return connect_reward + travel_distance + 0 +  road_cost, {
 
         'connect_reward': connect_reward,
         'travel_distance_reward': travel_distance,
+        #'travel_distance_POI_reward': travel_distance_POI,
         'road_cost_reward': road_cost,
 
         'interior_parcels_num':interior_parcels_num,
@@ -129,6 +134,7 @@ class RoadEnv:
         self._frozen = False
         self._action_history = []
         self._mg = load_graph(cfg.slum)
+
         self._cmg = copy.deepcopy(self._mg)
 
         self._reward_info_fn = partial(reward_info_fn,
@@ -283,7 +289,7 @@ class RoadEnv:
 
         numerical, node_feature, edge_part_feature, edge_index, edge_mask = self._mg.get_obs()
         stage = self._get_stage_obs()
-
+        
         return [
             numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage
         ]
@@ -447,6 +453,7 @@ class RoadEnv:
             plt.savefig(path, format='svg', transparent=True)
         if show:
             plt.show()
+    
         plt.close()
 
     def visualize(self,
@@ -456,6 +463,7 @@ class RoadEnv:
         """
         Visualize the city plan.
         """
+        
         self.plot_and_save_gdf(save_fig, path, show)
 
     # def load_plan(self, gdf: GeoDataFrame) -> None:

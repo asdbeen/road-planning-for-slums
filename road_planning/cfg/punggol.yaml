@@ -32,11 +32,11 @@ entropy_coef: 0.01
 clip_epsilon: 0.2
 
 
-max_num_iterations: 100
+max_num_iterations: 1  # 100
 #num_episodes_per_iteration: 500
 num_episodes_per_iteration: 1200
 #max_sequence_length: 100
-max_sequence_length: 33
+max_sequence_length: 33                     # will it limited？
 num_optim_epoch: 4
 #mini_batch_size: 1024
 mini_batch_size: 1024

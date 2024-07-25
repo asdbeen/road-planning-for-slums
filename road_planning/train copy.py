@@ -1,11 +1,13 @@
 import sys
-sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
 import os
+cwd = os.getcwd()
+sys.path.append(cwd) 
+
+sys.path.append(os.path.join(cwd,'road_planning/envs'))
+
 import setproctitle
 
-import sys
-cwd = os.getcwd()
-sys.path.append(os.path.join(cwd,'road_planning/envs'))
+
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -24,7 +26,6 @@ flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
-# flags.DEFINE_bool('visualize', False, 'visualize plan.')
 flags.DEFINE_bool('visualize', True, 'visualize plan.')
 flags.DEFINE_enum('agent', 'rl-ngnn',
                   ['rl-sgnn', 'rl-ngnn', 'rl-mlp', 'rl-rmlp',
@@ -43,6 +44,7 @@ FLAGS = flags.FLAGS
 
 
 def train_one_iteration(agent: RoadPlanningAgent, iteration: int) -> None:
+    
     """Train one iteration"""
     agent.optimize(iteration)
     agent.save_checkpoint(iteration)

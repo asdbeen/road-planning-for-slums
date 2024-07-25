@@ -1,6 +1,9 @@
 import sys
-sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
+import os
+cwd = os.getcwd()
+sys.path.append(cwd) 
 
+    
 import numpy as np
 from matplotlib import pyplot as plt
 import networkx as nx
@@ -256,7 +259,18 @@ class MyGraph(object):
         self.td_dict_nodeToPOIEdge: dict[MyNode, dict[MyEdge, float]] = {}
         self.td_dict_faceToPOIEdge: dict[MyFace, dict[MyEdge, float]] = {}
         self.td_dict_ave_faceToPOIEdge: dict[MyFace, float] = {}
+        self.td_dict_ave_faceToPOIEdge_min: dict[MyFace, float] = {}
 
+        self.td_dict_nodeToPOInode: dict[MyNode, dict[MyNode, float]] = {}
+        self.td_dict_nodeToPOIEdge: dict[MyNode, dict[MyEdge, float]] = {}
+        self.td_dict_faceToPOIEdge: dict[MyFace, dict[MyEdge, float]] = {}
+        self.td_dict_ave_faceToPOIEdge: dict[MyFace, float] = {}
+        self.td_dict_ave_faceToPOIEdge_min: dict[MyFace, float] = {}
+
+        ##########################
+        # Summarize added features
+        self.f2POI_avg = 10000
+        self.f2POI_avg_min = 10000
 
         if G is None:
             self.G = nx.Graph()
@@ -1084,7 +1098,9 @@ class MyGraph(object):
 ############################
 # REWARD FUNCTIONS
 ############################
-    def save_step_data(self,path=r'C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\road_planning\data\data.csv'):
+    def save_step_data(self):    # For now it only save the last one
+        cwd = os.getcwd()
+        path = os.path.join(cwd,r'\road_planning\data\data.csv')
         data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])
         data.to_csv(path,encoding='gbk')
 
@@ -1650,6 +1666,8 @@ class MyGraph(object):
                 sumDist += self.td_dict_faceToPOIEdge[f1][POIEdge]["Dist"]
             ave = sumDist/len(self.POIEdges)    
             self.td_dict_ave_faceToPOIEdge[f1] = ave
+        
+
 
 
     ###
@@ -1742,7 +1760,7 @@ class MyGraph(object):
 
     def face2POI_avg_min(self):
         ave = sum(self.td_dict_ave_faceToPOIEdge_min[f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
-        self.f2POI_avg = ave
+        self.f2POI_avg_min = ave
         return ave
 
     def travel_distance_forPOI(self) -> float:
@@ -1865,7 +1883,7 @@ class MyGraph(object):
                 #                  node_size=old_node_size, node_color='black',
                 #                  edge_color='black', width=old_road_width)
             
-            plt.show()
+            #plt.show()
             
     def plot_all_paths(self, all_paths, update=False):
         """ plots the shortest paths from all interior parcels to the road.

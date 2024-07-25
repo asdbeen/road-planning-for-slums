@@ -1,6 +1,9 @@
 import sys
-sys.path.append(r"C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums")
+import os
+cwd = os.getcwd()
+sys.path.append(cwd) 
 
+    
 import numpy as np
 from matplotlib import pyplot as plt
 import shapefile

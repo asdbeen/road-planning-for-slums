@@ -30,40 +30,44 @@ class Agent:
         self.sample_modules = [policy_net]
         self.update_modules = [policy_net, value_net]
 
-    def sample_worker(self, pid, queue, num_samples, mean_action):
-        self.seed_worker(pid)
-        memory = Memory()
-        logger = self.logger_cls(**self.logger_kwargs)
+    # def sample_worker_legacy(self, pid, queue, num_samples, mean_action):
+    #     self.seed_worker(pid)
+    #     memory = Memory()
+    #     logger = self.logger_cls(**self.logger_kwargs)
+      
+    #     while logger.num_steps < num_samples:
+    #         state = self.env.reset()
+    #         logger.start_episode(self.env)
 
-        while logger.num_steps < num_samples:
-            state = self.env.reset()
-            logger.start_episode(self.env)
+    #         for t in range(10000):  
+    #             state_var = tensor(state).unsqueeze(0)
+    #             trans_out = self.trans_policy(state_var)
+    #             use_mean_action = mean_action or torch.bernoulli(torch.tensor([1 - self.noise_rate])).item()
+    #             action = self.policy_net.select_action(trans_out, use_mean_action)[0].numpy()
+    #             #.unsqueez(0)
+    #             action = int(action) if self.policy_net.type == 'discrete' else action.astype(np.float64)
+    #             next_state, reward, done, info = self.env.step(action)
+    #             # logging
+    #             logger.step(self.env, reward, info)
 
-            for t in range(1):  # Change for testing, original 10000
-                state_var = tensor(state).unsqueeze(0)
-                trans_out = self.trans_policy(state_var)
-                use_mean_action = mean_action or torch.bernoulli(torch.tensor([1 - self.noise_rate])).item()
-                action = self.policy_net.select_action(trans_out, use_mean_action)[0].numpy()
-                #.unsqueez(0)
-                action = int(action) if self.policy_net.type == 'discrete' else action.astype(np.float64)
-                next_state, reward, done, info = self.env.step(action)
-                # logging
-                logger.step(self.env, reward, info)
+    #             mask = 0 if done else 1
+    #             exp = 1 - use_mean_action
+    #             self.push_memory(memory, state, action, mask, next_state, reward, exp)
 
-                mask = 0 if done else 1
-                exp = 1 - use_mean_action
-                self.push_memory(memory, state, action, mask, next_state, reward, exp)
+    #             if done:
+    #                 break
+    #             state = next_state
 
-                if done:
-                    break
-                state = next_state
 
-            logger.end_episode(self.env)
 
-        if queue is not None:
-            queue.put([pid, memory, logger])
-        else:
-            return memory, logger
+    #         logger.end_episode(self.env)
+
+
+
+    #     if queue is not None:
+    #         queue.put([pid, memory, logger])
+    #     else:
+    #         return memory, logger
 
     def seed_worker(self, pid):
         if pid > 0:
@@ -74,22 +78,32 @@ class Agent:
         memory.push(state, action, mask, next_state, reward, exp)
 
     def sample(self, num_samples, mean_action=False, nthreads=None):
+
         if nthreads is None:
             nthreads = self.num_threads
         t_start = time.time()
         to_test(*self.sample_modules)
+
         with to_cpu(*self.sample_modules):
             with torch.no_grad():
                 thread_num_samples = int(math.floor(num_samples / nthreads))
                 queue = multiprocessing.Queue()
                 memories = [None] * nthreads
                 loggers = [None] * nthreads
+
+           
+            
                 for i in range(nthreads-1):
                     worker_args = (i+1, queue, thread_num_samples, mean_action)
                     worker = multiprocessing.Process(target=self.sample_worker, args=worker_args)
                     worker.start()
-                memories[0], loggers[0] = self.sample_worker(0, None, thread_num_samples, mean_action)
 
+                
+                print ("orginal thread_num_samples",thread_num_samples)
+                thread_num_samples = 1  ######temp！！！
+                print ("change to temporarily thread_num_samples",thread_num_samples)
+                memories[0], loggers[0] = self.sample_worker(0, None, thread_num_samples, mean_action)
+             
                 for i in range(nthreads - 1):
                     pid, worker_memory, worker_logger = queue.get()
                     memories[pid] = worker_memory

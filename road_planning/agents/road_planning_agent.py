@@ -65,7 +65,7 @@ class RoadPlanningAgent(AgentPPO):
                                            (self.value_net.parameters(), 1)],
                          mini_batch_size=cfg.mini_batch_size)
 
-    def sample_worker(self, pid, queue, num_samples, mean_action):
+    def sample_worker(self, pid, queue, num_samples, mean_action):  # This is the one in use
         self.seed_worker(pid)
         memory = Memory()
         logger = self.logger_cls(**self.logger_kwargs)
@@ -77,11 +77,12 @@ class RoadPlanningAgent(AgentPPO):
             episode_success = False
             logger_messages = []
             memory_messages = []
-            for t in range(10000):
+            for t in range(10000):    
                 state_var = tensorfy([state])
                 use_mean_action = mean_action or torch.bernoulli(
                     torch.tensor([1 - self.noise_rate])).item()
                 # action = self.policy_net.select_action(state_var, use_mean_action).numpy().squeeze(0)
+                
                 action = self.policy_net.select_action(
                     state_var, use_mean_action).numpy().squeeze(0)
 
@@ -90,7 +91,7 @@ class RoadPlanningAgent(AgentPPO):
                 # cache logging
                 logger_messages.append([reward, info])
 
-                mask = 0 if done else 1
+                mask = 0 if done else 1     
                 exp = 1 - use_mean_action
                 # cache memory
                 memory_messages.append(
@@ -116,7 +117,7 @@ class RoadPlanningAgent(AgentPPO):
             #     self.thread_loggers[pid].info(
             #         '[!]worker {} failed episode {}.'.format(
             #             pid, logger.num_episodes))
-
+            
         if queue is not None:
             queue.put([pid, memory, logger])
         else:
@@ -272,20 +273,23 @@ class RoadPlanningAgent(AgentPPO):
     def optimize_policy(self, iteration):
         """generate multiple trajectories that reach the minimum batch_size"""
         t0 = time.time()
+        
         num_samples = self.cfg.num_episodes_per_iteration * self.cfg.max_sequence_length
+
         batch, log = self.sample(num_samples)
 
-        print ("batch", batch)
-        print ("log",log)
-        t0 + log + self.update_params()
 
         """update networks"""
         t1 = time.time()
         self.update_params(batch, iteration)
+
+        
+
         t2 = time.time()
         """evaluate policy"""
-        log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True)
+        log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True,iteration=iteration)
         t3 = time.time()
+        
 
         info = {
             'log': log,
@@ -293,7 +297,8 @@ class RoadPlanningAgent(AgentPPO):
             'T_sample': t1 - t0,
             'T_update': t2 - t1,
             'T_eval': t3 - t2,
-            'T_total': t3 - t0
+            'T_total': t3 - t0,
+            'NewRecord':0
         }
         return info
 
@@ -318,6 +323,8 @@ class RoadPlanningAgent(AgentPPO):
         """get advantage estimation from the trajectories"""
         advantages, returns = estimate_advantages(rewards, masks, values,
                                                   self.gamma, self.tau)
+        
+     
         self.update_policy(states, actions, returns, advantages, exps,
                            iteration)
 
@@ -446,12 +453,19 @@ class RoadPlanningAgent(AgentPPO):
     def log_optimize_policy(self, iteration, info):
         cfg = self.cfg
         log, log_eval = info['log'], info['log_eval']
+        newRecord = info['NewRecord']
         logger, tb_logger = self.logger, self.tb_logger
+        print("info:", info)
+        print("info['T_sample'] type:", type(info.get("T_sample")))
+        print("info['T_update'] type:", type(info.get("T_update")))
         log_str = f'{iteration}\tT_sample {info["T_sample"]:.2f}\tT_update {info["T_update"]:.2f}\t' \
                   f'T_eval {info["T_eval"]:.2f}\t' \
                   f'ETA {get_eta_str(iteration, cfg.max_num_iterations, info["T_total"])}\t' \
                   f'train_R_eps {log.avg_episode_reward + self.reward_offset:.2f}\t'\
-                  f'eval_R_eps {log_eval.avg_episode_reward + self.reward_offset:.2f}\t{cfg.id}'
+                  f'eval_R_eps {log_eval.avg_episode_reward + self.reward_offset:.2f}\t{cfg.id}\t'\
+                  f'New {newRecord + self.reward_offset:.2f}\t'
+                  
+
         logger.info(log_str)
 
         self.current_rewards = log_eval.avg_episode_reward + self.reward_offset
@@ -493,26 +507,35 @@ class RoadPlanningAgent(AgentPPO):
         tb_logger.add_scalar('eval/total_road_cost', log_eval.total_road_cost,
                              iteration)
 
-    def eval_agent(self, num_samples=1, mean_action=True, visualize=True):
+    def eval_agent(self, num_samples=1, mean_action=True, visualize=True,iteration = None):
         t_start = time.time()
         to_test(*self.sample_modules)
         self.env.eval()
         with to_cpu(*self.sample_modules):
             with torch.no_grad():
                 logger = self.logger_cls(**self.logger_kwargs)
-
+                
                 while logger.num_steps < num_samples:
                     state = self.env.reset()
+            
                     if visualize:
-                        self.env.visualize(save_fig=True,
-                                           path=os.path.join(
-                                               self.cfg.plan_dir,
-                                               'origin.svg'))
+                        if iteration == None:
+                            self.env.visualize(save_fig=True,
+                                            path=os.path.join(
+                                                self.cfg.plan_dir,
+                                                'origin.svg'))
+                        else:
+                            os.makedirs(os.path.join(self.cfg.plan_dir,str(iteration)), exist_ok=True)
+                            self.env.visualize(save_fig=True,
+                                            path=os.path.join(
+                                                self.cfg.plan_dir,str(iteration),  # add a folder for each iteration
+                                                'origin.svg'))
+            
                     logger.start_episode(self.env)
 
                     info_plan = dict()
                     episode_success = False
-                    for t in range(1, 10000):
+                    for t in range(1, 10000):  
                         state_var = tensorfy([state])
                         action = self.policy_net.select_action(
                             state_var, mean_action).numpy()
@@ -520,11 +543,23 @@ class RoadPlanningAgent(AgentPPO):
                             action, self.logger)
                         logger.step(self.env, reward, info)
                         # self.logger.info(f'reward:{reward}  step:{t:02d}')
+              
                         if visualize:
-                            self.env.visualize(save_fig=True,
-                                               path=os.path.join(
-                                                   self.cfg.plan_dir,
-                                                   f'step_all_{t:04d}.svg'))
+
+                            if iteration == None:
+                                self.env.visualize(save_fig=True,
+                                                path=os.path.join(
+                                                    self.cfg.plan_dir,
+                                                    f'step_all_{t:04d}.svg'))
+                            else:
+                                os.makedirs(os.path.join(self.cfg.plan_dir,str(iteration)), exist_ok=True)
+                                self.env.visualize(save_fig=True,
+                                                path=os.path.join(
+                                                    self.cfg.plan_dir,str(iteration),  # add a folder for each iteration
+                                                    f'step_all_{t:04d}.svg'))
+                        
+                        
+                  
                         if done:
                             episode_success = (reward != self.env.FAILURE_REWARD) and \
                                               (reward != self.env.INTERMEDIATE_REWARD)
@@ -537,10 +572,17 @@ class RoadPlanningAgent(AgentPPO):
                     if not episode_success:
                         self.logger.info('Plan fails during eval.')
                     else:
-                        self.env.visualize(save_fig=True,
-                                           path=os.path.join(
-                                               self.cfg.plan_dir,
-                                               f'final.svg'))
+                        if iteration == None:
+                            self.env.visualize(save_fig=True,
+                                            path=os.path.join(
+                                                self.cfg.plan_dir,
+                                                'final.svg'))
+                        else:
+                            os.makedirs(os.path.join(self.cfg.plan_dir,str(iteration)), exist_ok=True)
+                            self.env.visualize(save_fig=True,
+                                            path=os.path.join(
+                                                self.cfg.plan_dir,str(iteration),  # add a folder for each iteration
+                                                'final.svg'))
                 logger = self.logger_cls.merge([logger], **self.logger_kwargs)
 
         self.env.train()
