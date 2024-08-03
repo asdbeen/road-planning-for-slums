@@ -26,7 +26,7 @@ flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory
 flags.DEFINE_string('slum_name', 'Epworth_Demo', 'data_dir')
 # flags.DEFINE_string('cfg', 'demo', 'Configuration file of rl training.')
 # flags.DEFINE_string('slum_name', 'tengha_sim', 'data_dir')
-flags.DEFINE_string('cfg', 'tengha_sim', 'Configuration file of rl training.')
+flags.DEFINE_string('cfg', 'demo', 'Configuration file of rl training.')
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')

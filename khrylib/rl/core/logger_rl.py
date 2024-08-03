@@ -10,6 +10,8 @@ class LoggerRL:
         self.num_episodes = 0
         self.sample_time = 0
         self.stats_names = ['episode_len', 'reward', 'episode_reward_avg','episode_reward_dis','episode_reward_cost', 'interior_parcels_num', 'connecting_steps','f2f_dis_avg', 'total_road_cost']
+
+        self.stats_names.append('f2POI_dis_avg')      # "New added"
         if init_stats_logger:
             self.stats_loggers = {x: StatsLogger(is_nparray=False) for x in self.stats_names}
         self.plans = []
@@ -28,13 +30,17 @@ class LoggerRL:
         self.num_episodes += 1
         self.stats_loggers['episode_len'].log(self.episode_len)
         self.stats_loggers['episode_reward_avg'].log(-0.9*info['f2f_dis_avg'] - 0.1*info['total_road_cost'])
-        self.stats_loggers['episode_reward_dis'].log(-info['f2f_dis_avg'])
+        self.stats_loggers['episode_reward_dis'].log(-info['f2f_dis_avg'])            # Now consider travel dist to POI also
         self.stats_loggers['episode_reward_cost'].log(-info['total_road_cost'])
 
         self.stats_loggers['interior_parcels_num'].log(info['interior_parcels_num'])
         self.stats_loggers['connecting_steps'].log(info['connecting_steps'])
         self.stats_loggers['f2f_dis_avg'].log(info['f2f_dis_avg'])
         self.stats_loggers['total_road_cost'].log(info['total_road_cost'])
+
+        self.stats_loggers['f2POI_dis_avg'].log(info['f2POI_dis_avg'])          # "New added"
+
+
 
     def add_plan(self, info_plan):
         self.plans.append(info_plan)
@@ -59,5 +65,7 @@ class LoggerRL:
         logger.face2face_avg = logger.stats_loggers['f2f_dis_avg'].avg()
         logger.total_road_cost = logger.stats_loggers['total_road_cost'].avg()
         
+        logger.f2POI_dis_avg = logger.stats_loggers['f2POI_dis_avg'].avg()          # "New added"
+
         logger.plans = list(itertools.chain(*[var.plans for var in logger_list]))
         return logger

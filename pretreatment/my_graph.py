@@ -230,8 +230,8 @@ class MyGraph(object):
         self.interior_parcels: list[MyFace] = [] 
         self.interior_nodes: list[MyNode] = [] 
 
-        self.max_interior_parcels: int = 0
-        self.max_del_interior_parcels: int = 0
+        #self.max_interior_parcels: int = 0
+        #self.max_del_interior_parcels: int = 0
 
         ##########################
         # Summarize added features
@@ -562,6 +562,7 @@ class MyGraph(object):
 
     # what is 0.5 used for
     def _get_numerical(self):
+        
         if self.full_connected_road_num == 0:
             stage1_num = self.build_road_num
             stage2_num = 0
@@ -939,14 +940,14 @@ class MyGraph(object):
         self.interior_parcels = interior_parcels
         self.interior_nodes = [n for n in self.G.nodes() if n.interior]
 
-        #if not hasattr(self, 'max_interior_parcels'):
-        self.max_interior_parcels = len(self.interior_parcels)
-        self.max_del_interior_parcels = 0
-        for n in self.G.nodes:
-            self.max_del_interior_parcels = max(
-                len(list(self.G.neighbors(n))),
-                self.max_del_interior_parcels)
-        self.max_del_interior_parcels = self.max_del_interior_parcels - 2
+        if not hasattr(self, 'max_interior_parcels'):
+            self.max_interior_parcels = len(self.interior_parcels)
+            self.max_del_interior_parcels = 0
+            for n in self.G.nodes:
+                self.max_del_interior_parcels = max(
+                    len(list(self.G.neighbors(n))),
+                    self.max_del_interior_parcels)
+            self.max_del_interior_parcels = self.max_del_interior_parcels - 2     # -2 is a designed adjustment， i guess
 
         self.td_dict_init()
         # print "define interior parcels called"
@@ -970,9 +971,9 @@ class MyGraph(object):
         return interior_etup
 
     # ok 
-    def build_road_from_action(self, action: List):
+    def build_road_from_action(self, action: List,POIVersionTag = False):
         e = self.edge_list[int(action)]
-        self.add_road_segment(e)
+        self.add_road_segment(e,POIVersionTag)
 
     # ok 
     def road_update(self, edge):
@@ -984,7 +985,7 @@ class MyGraph(object):
         """ Updates properties of graph to make edge a road. """
         edge = self.G[edge.nodes[0]][edge.nodes[1]]['myedge']
         # self.myw = self.G[edge.nodes[0]][edge.nodes[1]]['weight']
-
+        
         if POIVersionTag == False:
             self.td_dict_update(edge)
         elif POIVersionTag == True:
@@ -1029,7 +1030,7 @@ class MyGraph(object):
         self.road_nodes_idx = rn_idx
         self.build_road_num += 1
         self.interior_parcels_update()
-
+       
     # ok 
     def add_all_road(self):
         for e in self.myedges():
@@ -1117,12 +1118,14 @@ class MyGraph(object):
         # if self._reward_count == 0:
         #     return 0
         # return 10*self._td_reward / self._reward_count
-        if len(self.interior_parcels) or self.del_parcel_num:
+
+        
+        if len(self.interior_parcels) or self.del_parcel_num:  # So it is not in use when the road is not fully connected
             before = self.face2face_avg()
             return 0
         else:
-            before = self.f2f_avg
-            now = self.face2face_avg()
+            before = self.f2f_avg   
+            now = self.face2face_avg()    # execute to get the current
             return  (before-now)/(before-self.f2f_avg_min)
 
     # ok  
@@ -1148,10 +1151,14 @@ class MyGraph(object):
 
     # ok  
     def connected_ration(self):
-        self.parcels_data.append(len(self.interior_parcels))
+        #print ("using this connected_ration")
+     
+        
         if self.del_parcel_num == 0 and len(self.interior_parcels) != 0:
+            #print ("case1","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
             return -1/self.max_del_interior_parcels
         else:
+            #print ("case2","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
             return self.del_parcel_num / self.max_del_interior_parcels
 
     def td_dict_init(self): 
@@ -1346,7 +1353,6 @@ class MyGraph(object):
                 
     def td_dict_update_ForPOI(self,edge):
         #print ("td_dict_update_ForPOI")
-        
         n1 = edge.nodes[0]
         n2 = edge.nodes[1]
         idx1 = self.node_list.index(n1)
@@ -1356,10 +1362,7 @@ class MyGraph(object):
         change_two = False
         change_node = []
 
-        #print ("n1:", self.node_list.index(n1), "n2:", self.node_list.index(n2))
-        #print ("n1 in self.road_nodes",n1 in self.road_nodes,"n2 in self.road_nodes",n2 in self.road_nodes)
-        # if (self.node_list.index(n1) == 146 and self.node_list.index(n2)==147) or (self.node_list.index(n1)== 147 and self.node_list.index(n2) ==146):
-        #     print ("catch!!!")
+
 
         ### update node2POInode shortest distance
         if n1 not in self.road_nodes:
@@ -1388,10 +1391,6 @@ class MyGraph(object):
                         self.td_dict_nodeToPOIEdge[n1][POIEdge]["POINode": POIEdge.nodes[1]]
                         self.td_dict_nodeToPOIEdge[n1][POIEdge]["Dist": self.td_dict_nodeToPOInode[n1][POIEdge.nodes[1]]]
 
-                if self.td_dict_nodeToPOIEdge[n1][POIEdge]["Dist"] - 1.266 <0.1:
-                    tag = "catch 1"
-                      
-
         elif n2 not in self.road_nodes:
             if n1 not in self.road_nodes:
                 change_node.append([idx1, idx2])
@@ -1418,8 +1417,7 @@ class MyGraph(object):
                         self.td_dict_nodeToPOIEdge[n2][POIEdge]["POINode": POIEdge.nodes[1]]
                         self.td_dict_nodeToPOIEdge[n2][POIEdge]["Dist": self.td_dict_nodeToPOInode[n2][POIEdge.nodes[1]]]
                     
-                if self.td_dict_nodeToPOIEdge[n2][POIEdge]["Dist"] - 1.266 <0.1:
-                    tag = "catch 2"
+    
 
         else:
             change_two = True   # to indicate 2 nodes now are connected, need to update td
@@ -1448,9 +1446,6 @@ class MyGraph(object):
                         self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"] = POIEdge.nodes[1]
                         self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"] = self.td_dict_nodeToPOInode[node][POIEdge.nodes[1]]
 
-
-
-
         # update face2face distance
         if change_two:
             for pair in change_node:
@@ -1471,14 +1466,7 @@ class MyGraph(object):
                                           self.td_dict[idx1][idx2])
                 
                 
-                # if self.node_list.index(n1) == 36 and self.node_list.index(n2) == 149:
-                #     print ("before")
-                #     for node in self.inner_nodelist_True:
-                #         if self.node_list.index(node) == 152:
-                #             for POIEdge in self.POIEdges: 
-                #                 if self.node_list.index(POIEdge.nodes[0]) in [48,49]:
-                #                     print (self.node_list.index(POIEdge.nodes[0]))
-                #                     print  (self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"])
+
                 # For POI: 
                 for changeNode in [n1, n2]:
                     for face in [f for f in self.inner_facelist_True if changeNode in f.nodes]:
@@ -1526,18 +1514,22 @@ class MyGraph(object):
                     self.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge]["POINode"] = allRecord[selectedIndex]["POINode"]
                     self.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge]["node"] = face.nodes[selectedIndex]
 
-       
-        # print ("wwww!!!!!")
-        # for node in self.inner_nodelist_True:
-        #     if self.node_list.index(node) == 152:
-        #         for POIEdge in self.POIEdges: 
-        #             if self.node_list.index(POIEdge.nodes[0]) in [48,49]:
-        #                 print (self.node_list.index(POIEdge.nodes[0]))
-        #                 print  (self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"])
+        for pair in change_node:
+            idx1 = pair[0]
+            idx2 = pair[1]
+            n1 = self.node_list[idx1]
+            n2 = self.node_list[idx2]
+            if n1 in self.outerface.nodes:
+                for f2 in [f for f in self.inner_facelist if n2 in f.nodes]:
+                    self.td_dict_face[self.outerface][f2] = min(self.td_dict_face[self.outerface][f2], self.td_dict[idx1][idx2])
+            elif n2 in self.outerface.nodes:
+                for f1 in [f for f in self.inner_facelist if n1 in f.nodes]:
+                    self.td_dict_face[self.outerface][f1] = min(self.td_dict_face[self.outerface][f1], self.td_dict[idx1][idx2])
+                
+
 
     # ok             
     def interior_parcels_update(self):
-        # print (" -----in interior_parcels_update-----")
 
         parcels = len(self.interior_parcels)
         # print ("parcels",parcels)
@@ -1706,15 +1698,15 @@ class MyGraph(object):
         ### init_td_dict_nodeToPOIEdge
         self.td_dict_nodeToPOIEdge_min = {}
         for node in self.inner_nodelist_True:
-            self.td_dict_nodeToPOIEdge[node] = {}
+            self.td_dict_nodeToPOIEdge_min[node] = {}
             for POIEdge in self.POIEdges:
                 POINode_A = POIEdge.nodes[0]
                 POINode_B = POIEdge.nodes[1]
                 
-                if self.td_dict_nodeToPOInode[node][POINode_A] <= self.td_dict_nodeToPOInode[node][POINode_B]:
-                    self.td_dict_nodeToPOIEdge[node][POIEdge] = {"POINode": POINode_A, "Dist":self.td_dict_nodeToPOInode[node][POINode_A]}
+                if self.td_dict_nodeToPOInode_min[node][POINode_A] <= self.td_dict_nodeToPOInode_min[node][POINode_B]:
+                    self.td_dict_nodeToPOIEdge_min[node][POIEdge] = {"POINode": POINode_A, "Dist":self.td_dict_nodeToPOInode_min[node][POINode_A]}
                 else:
-                    self.td_dict_nodeToPOIEdge[node][POIEdge] = {"POINode": POINode_B, "Dist":self.td_dict_nodeToPOInode[node][POINode_B]}
+                    self.td_dict_nodeToPOIEdge_min[node][POIEdge] = {"POINode": POINode_B, "Dist":self.td_dict_nodeToPOInode_min[node][POINode_B]}
 
     def td_dict_faceToPOIEdge_min_init(self,infiniteDist = 10000):
         self.td_dict_faceToPOIEdge_min = {}
@@ -1727,10 +1719,10 @@ class MyGraph(object):
                 self.td_dict_faceToPOIEdge_TheNodePair_min[f1][POIEdge] = {"POINode":None,"node":None}
                 for node in f1.nodes:
                     if self.td_dict_faceToPOIEdge_min[f1][POIEdge]["Dist"] > self.td_dict_nodeToPOIEdge_min[node][POIEdge]["Dist"]:  
-                        self.td_dict_faceToPOIEdge_min[f1][POIEdge] = self.td_dict_nodeToPOIEdge_min[node][POIEdge]
+                        self.td_dict_faceToPOIEdge_min[f1][POIEdge] = {"POINode":self.td_dict_nodeToPOIEdge_min[node][POIEdge]["POINode"], "Dist":self.td_dict_nodeToPOIEdge_min[node][POIEdge]["Dist"] }  
                         self.td_dict_faceToPOIEdge_TheNodePair_min[f1][POIEdge] = {"POINode": self.td_dict_nodeToPOIEdge_min[node][POIEdge]["POINode"],"node":node}
-
-    @staticmethod     
+        
+ 
     def td_dict_ave_faceToPOIEdge_min_init(self):
         self.td_dict_ave_faceToPOIEdge_min = {}
         for f1 in self.inner_facelist_True:
@@ -1748,14 +1740,21 @@ class MyGraph(object):
         self.td_dict_nodeToPOIEdge_init()
         self.td_dict_faceToPOIEdge_init()
         self.td_dict_ave_faceToPOIEdge_init()
+        self.face2POI_avg()
 
-
-
+        ####
+        self.td_dict_nodeToPOInode_min_init()
+        #self.td_dict_ave_nodeToPOInode_min_init()
+        self.td_dict_nodeToPOIEdge_min_init()
+        self.td_dict_faceToPOIEdge_min_init()
+        self.td_dict_ave_faceToPOIEdge_min_init()
+        self.face2POI_avg_min()
 
     def face2POI_avg(self):
         ave = sum(self.td_dict_ave_faceToPOIEdge[f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
         self.f2POI_avg = ave
         # self.f2POI_data.append(ave)  Pending to decide what to record
+ 
         return ave
 
     def face2POI_avg_min(self):
@@ -1770,6 +1769,7 @@ class MyGraph(object):
         else:
             before = self.f2POI_avg
             now = self.face2POI_avg()
+            # print ("self.f2POI_avg_min",self.f2POI_avg_min)
             return  (before-now)/(before-self.f2POI_avg_min)
 
     def CheckCuldesacNum(self):

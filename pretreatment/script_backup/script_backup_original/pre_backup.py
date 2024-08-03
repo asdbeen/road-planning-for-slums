@@ -1,3 +1,8 @@
+import sys
+import os
+cwd = os.getcwd()
+sys.path.append(cwd) 
+
 from matplotlib import pyplot as plt
 import pickle
 import pretreatment.my_graph_helpers as mgh
@@ -165,4 +170,3 @@ if __name__ == "__main__":
 # 
     # ep_geojson = g.myedges_geoJSON()
     # map_roads, newblock = run_once([blocklist[0]])
-

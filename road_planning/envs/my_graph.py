@@ -550,6 +550,7 @@ class MyGraph(object):
         return 4
 
     def _get_numerical(self):
+
         if self.full_connected_road_num == 0:
             stage1_num = self.build_road_num
             stage2_num = 0
@@ -1075,6 +1076,7 @@ class MyGraph(object):
 
     def connected_ration(self):
         self.parcels_data.append(len(self.interior_parcels))
+        print ("asd!!")
         if self.del_parcel_num == 0 and len(self.interior_parcels) != 0:
             return -1/self.max_del_interior_parcels
         else:

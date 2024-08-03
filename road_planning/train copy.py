@@ -2,7 +2,6 @@ import sys
 import os
 cwd = os.getcwd()
 sys.path.append(cwd) 
-
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
 import setproctitle
@@ -26,6 +25,7 @@ flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
+#flags.DEFINE_bool('infer', True, 'Train or Infer.')
 flags.DEFINE_bool('visualize', True, 'visualize plan.')
 flags.DEFINE_enum('agent', 'rl-ngnn',
                   ['rl-sgnn', 'rl-ngnn', 'rl-mlp', 'rl-rmlp',
@@ -99,3 +99,10 @@ if __name__ == '__main__':
 
     # print (FLAGS.iteration)
     app.run(main_loop)
+
+
+
+
+#tensorboard --logdir=/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/tb
+#ps aux | grep tensorboard
+#kill <PID>

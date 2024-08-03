@@ -88,10 +88,29 @@ def reward_info_function(mg: MyGraph, name: Text,
         Info dictionary.
     """
 
+
+
     travel_distance = travel_distance_weight * mg.travel_distance()
 
-    #travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
+    if name == 'connecting':
+        travel_distance_POI = 0
+    elif name == 'full_connected':
 
+        ### Do POI related computation
+        mg.td_dict_nodeToPOInode_init()
+        mg.td_dict_nodeToPOIEdge_init()
+        mg.td_dict_faceToPOIEdge_init()
+        mg.td_dict_ave_faceToPOIEdge_init()
+
+
+        travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
+        # print ("name",name)
+        # print ("travel_distance_POI",travel_distance_POI)
+        # print ("f2f_avg",mg.f2f_avg)
+        # print ("f2POI_avg",mg.f2POI_avg)
+        # print ("-------------")
+    # print (mg.face2POI_avg())
+    # print ("travel_distance_POI",travel_distance_POI)
     road_cost = road_cost_weight * mg.road_cost()
     connect_reward = mg.connected_ration()
 
@@ -102,20 +121,28 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     # print(connect_reward , travel_distance , road_cost)
     # print(face2face_avg,total_road_cost)
-    return connect_reward + travel_distance + 0 +  road_cost, {
+
+    # print ("travel_distance",travel_distance)
+    # print ("travel_distance_POI",travel_distance_POI)
+    # print ("road_cost",travel_distance_POI)
+    # print ("--------")
+    
+    return connect_reward + travel_distance + travel_distance_POI +  road_cost, {
 
         'connect_reward': connect_reward,
         'travel_distance_reward': travel_distance,
-        #'travel_distance_POI_reward': travel_distance_POI,
+        'travel_distance_POI_reward': travel_distance_POI,   # New
         'road_cost_reward': road_cost,
 
         'interior_parcels_num':interior_parcels_num,
         'connecting_steps':connecting_steps,
-        'f2f_dis_avg': 0,
+        'f2f_dis_avg': mg.f2POI_avg,        # original is 9
         'total_road_cost': total_road_cost,
 
         'travel_distance_weight':travel_distance_weight,
         'road_cost_weight':road_cost_weight,
+
+        'f2POI_dis_avg':mg.f2f_avg
     }
 
 
@@ -142,7 +169,7 @@ class RoadEnv:
                                        road_cost_weight=cfg.reward_specs.get('cost_weight',1.0)*-0.8)
         
         self.build_ration = cfg.reward_specs.get('build_ration', 0.5)
-
+        
         self._all_stages = ['connecting', 'full_connected', 'done']
         self._set_stage()
         self._done = False
@@ -186,6 +213,8 @@ class RoadEnv:
             The RL reward.
             Info dictionary.
         """
+        
+
         if self._stage == 'connecting':
             return self._reward_info_fn(self._mg, 'connecting')
         elif self._stage == 'full_connected':
@@ -294,7 +323,7 @@ class RoadEnv:
             numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage
         ]
 
-    def build_road(self, action: List):
+    def build_road(self, action: List,POIVersionTag = False):
         """
         Builds the road.
 
@@ -302,7 +331,7 @@ class RoadEnv:
             action (int): the action.
         """
         # print('action')
-        self._mg.build_road_from_action(action)
+        self._mg.build_road_from_action(action,POIVersionTag)
 
     def snapshot_land_use(self):
         """
@@ -364,13 +393,14 @@ class RoadEnv:
             done (bool): whether the episode has ended, in which case further step() calls will return undefined results
             info (dict): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)
         """
+        
         if self._done:
             raise RuntimeError('Action taken after episode is done.')
 
         else:
             if self._stage == 'connecting':
                 self._action_history.append(action)
-                self.build_road(action)
+                self.build_road(action,POIVersionTag = False)  ########
 
                 self._connecting_steps += 1
                 if self._connecting_steps >= math.floor(
@@ -380,7 +410,7 @@ class RoadEnv:
 
             elif self._stage == 'full_connected':
                 self._action_history.append(action)
-                self.build_road(action)
+                self.build_road(action,POIVersionTag = False)   #######
 
                 self._full_connected_steps += 1
                 if (self._full_connected_steps + self._connecting_steps >

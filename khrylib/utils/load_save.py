@@ -33,6 +33,7 @@ def load_yaml(file_path):
     file_path = get_file_path(file_path)
     files = glob.glob(file_path, recursive=True)
     print(file_path)
+
     assert(len(files) == 1)
     cfg = yaml.safe_load(open(files[0], 'r'))
     return cfg

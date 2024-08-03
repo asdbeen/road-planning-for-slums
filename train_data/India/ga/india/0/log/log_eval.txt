@@ -1,0 +1,26 @@
+[2024-08-02 18:01:25,142] data_dir:data/India
+[2024-08-02 18:01:25,142] id: india
+[2024-08-02 18:01:25,142] seed: 0
+[2024-08-02 18:01:25,142] objectives_plan: 
+[2024-08-02 18:01:25,142] init_plan: 
+[2024-08-02 18:01:25,142] env_specs: {}
+[2024-08-02 18:01:25,142] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-02 18:01:25,142] obs_specs: {}
+[2024-08-02 18:01:25,142] agent_specs: {'batch_stage': False}
+[2024-08-02 18:01:25,142] gamma: 0.995
+[2024-08-02 18:01:25,142] tau: 0.0
+[2024-08-02 18:01:25,142] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-02 18:01:25,142] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-02 18:01:25,142] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-02 18:01:25,142] lr: 0.0004
+[2024-08-02 18:01:25,142] weightdecay: 0.0
+[2024-08-02 18:01:25,142] eps: 1e-05
+[2024-08-02 18:01:25,142] value_pred_coef: 0.5
+[2024-08-02 18:01:25,142] entropy_coef: 0.01
+[2024-08-02 18:01:25,143] clip_epsilon: 0.2
+[2024-08-02 18:01:25,143] max_num_iterations: 100
+[2024-08-02 18:01:25,143] num_episodes_per_iteration: 1200
+[2024-08-02 18:01:25,143] max_sequence_length: 87
+[2024-08-02 18:01:25,143] num_optim_epoch: 4
+[2024-08-02 18:01:25,143] mini_batch_size: 1024
+[2024-08-02 18:01:25,143] save_model_interval: 10
