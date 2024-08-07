@@ -17,6 +17,7 @@ class Config:
             cwd = os.getcwd()
             #file_path = os.path.join(cwd,'road_planning/cfg/punggol.yaml')   # change to punggol.yaml
             file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
+            print ("in Config", file_path)
             cfg = load_yaml(file_path)
          
         # create dirs

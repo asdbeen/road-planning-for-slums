@@ -23,16 +23,16 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
 #flags.DEFINE_string('slum_name', 'Epworth_Demo', 'data_dir')
-flags.DEFINE_string('slum_name', 'India', 'data_dir')
-flags.DEFINE_string('cfg', 'india', 'Configuration file of rl training.')
+flags.DEFINE_string('slum_name', 'punggol', 'data_dir')
+flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('mean_action', True, 'Whether to use greedy strategy.')
 flags.DEFINE_bool('visualize', False, 'Whether to visualize the planning process.')
 flags.DEFINE_bool('only_road', False, 'Whether to only visualize road planning.')
 flags.DEFINE_bool('save_video', False, 'Whether to save a video of the planning process.')
 flags.DEFINE_integer('global_seed', 0, 'Used in env and weight initialization, does not impact action sampling.')
-flags.DEFINE_integer('sol_per_pop', 20, 'The number of solutions per population.')
-flags.DEFINE_integer('num_generations', 1, 'The number of generations.')
+flags.DEFINE_integer('sol_per_pop', 100, 'The number of solutions per population.')  #20
+flags.DEFINE_integer('num_generations', 2, 'The number of generations.')      #1
 flags.DEFINE_integer('num_parents_mating', 2, 'The number of parents for mating.')
 flags.DEFINE_integer('init_range_low', -5, 'Low range for gene initialization.')
 flags.DEFINE_integer('init_range_high', 5, 'High range for gene initialization.')
