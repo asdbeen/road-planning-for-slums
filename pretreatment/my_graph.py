@@ -90,7 +90,7 @@ class MyEdge(object):
         self.isConstraint:bool = None
         self.isPOI:bool = None
         self.fake:bool = None
-
+        self.isShortCut:bool = None
 
     @lazy_property
     def length(self):

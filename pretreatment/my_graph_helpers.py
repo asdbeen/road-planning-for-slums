@@ -1116,7 +1116,8 @@ def GraphFromJSON_Customized(jsonPath,scaleTag = True,rezero=np.array([0, 0]),na
         myEdgeDict[edgeID].isConstraint = edgeDict[str(edgeID)]["isConstraint"]       # overlap with onBoundary  
         myEdgeDict[edgeID].isPOI = edgeDict[str(edgeID)]["isPOI"]                     # overlap with internal,external  
         myEdgeDict[edgeID].fake = edgeDict[str(edgeID)]["fake"]                       # overlap with external
-
+        myEdgeDict[edgeID].isShortCut = edgeDict[str(edgeID)]["isShortCut"]                 # overlap with isShortCut
+    
     ### Record the types of edges for easy info 
     myG.externalEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].external]
     myG.internalEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].internal]
@@ -1125,6 +1126,8 @@ def GraphFromJSON_Customized(jsonPath,scaleTag = True,rezero=np.array([0, 0]),na
     myG.isConstraintEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isConstraint]
     myG.isPOIEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isPOI]
     myG.fakeEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].fake]
+    myG.shortcutEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isShortCut]
+  
 
     ### Add node property
     # Initialize so later it can be overwrited

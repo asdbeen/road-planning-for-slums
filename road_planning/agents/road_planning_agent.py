@@ -32,7 +32,8 @@ class RoadPlanningAgent(AgentPPO):
                  num_threads: int,
                  training: bool = True,
                  checkpoint: Union[int, Text] = 0,
-                 restore_best_rewards: bool = True):
+                 restore_best_rewards: bool = True,
+                 specificCheckPointPath = None):
         self.cfg = cfg
         self.training = training
         self.device = device
@@ -43,7 +44,7 @@ class RoadPlanningAgent(AgentPPO):
         self.setup_optimizer()
         if checkpoint != 0:
             self.start_iteration = self.load_checkpoint(
-                checkpoint, restore_best_rewards)
+                checkpoint, restore_best_rewards,specificCheckPointPath)
         else:
             self.start_iteration = 0
         super().__init__(env=self.env,
@@ -204,13 +205,16 @@ class RoadPlanningAgent(AgentPPO):
         else:
             self.optimizer = None
 
-    def load_checkpoint(self, checkpoint, restore_best_rewards):
+    def load_checkpoint(self, checkpoint, restore_best_rewards,specificCheckPointPath = None):
         cfg = self.cfg
-        if isinstance(checkpoint, int):
-            cp_path = '%s/iteration_%04d.p' % (cfg.model_dir, checkpoint)
+        if specificCheckPointPath == None:
+            if isinstance(checkpoint, int):
+                cp_path = '%s/iteration_%04d.p' % (cfg.model_dir, checkpoint)
+            else:
+                assert isinstance(checkpoint, str)
+                cp_path = '%s/%s.p' % (cfg.model_dir, checkpoint)
         else:
-            assert isinstance(checkpoint, str)
-            cp_path = '%s/%s.p' % (cfg.model_dir, checkpoint)
+            cp_path = specificCheckPointPath
 
         self.logger.info('loading model from checkpoint: %s' % cp_path)
         model_cp = pickle.load(open(cp_path, "rb"))
