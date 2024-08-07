@@ -1101,7 +1101,8 @@ class MyGraph(object):
 ############################
     def save_step_data(self):    # For now it only save the last one
         cwd = os.getcwd()
-        path = os.path.join(cwd,r'\road_planning\data\data.csv')
+        #path = os.path.join(cwd,r'\road_planning\data\data.csv')
+        path = os.path.join(cwd, 'road_planning', 'data', 'step_data.csv')
         data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])
         data.to_csv(path,encoding='gbk')
 
