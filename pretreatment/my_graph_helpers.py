@@ -1080,17 +1080,22 @@ def GraphFromJSON_Customized(jsonPath,scaleTag = True,rezero=np.array([0, 0]),na
     rezero=np.array([0, 0])
 
     ### Build the myNodeDict
+    newCoords = []
     myNodeDict = dict()
     for nID in ptCoordDict.keys():
         coords =  ptCoordDict[nID]
         coords = coords - rezero
         if scaleTag == True:
             coords_New = [remap(coords[0],old_min,old_max,new_min,new_max),remap(coords[1],old_min,old_max,new_min,new_max)]
+            newCoords.append(coords_New) ##
+   
             myN = mg.MyNode(coords_New)
         else:
             myN = mg.MyNode(coords)
 
         myNodeDict[int(nID)] = myN
+
+    #print (newCoords)
 
     ### Build the myEdgeDict
     myEdgeDict = dict()

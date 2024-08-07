@@ -29,7 +29,7 @@ class MyNode(object):
     """ rounds float nodes to (2!) decimal places, defines equality """
 
     def __init__(self, locarray, name=None):
-        significant_figs = 2
+        significant_figs = 5   # original 2, change it to 5
         if len(locarray) != 2:
             print("error")
         x = locarray[0]
