@@ -53,6 +53,7 @@ def load_graph(slum):
         # mg.feature_init()
     return mg
 
+
 ###### The Original One
 # def load_graph(slum):
 #     ## Check path
@@ -154,7 +155,8 @@ class RoadEnv:
     def __init__(self,
                  cfg: Config,
                  is_eval: bool = False,
-                 reward_info_fn=reward_info_function):
+                 reward_info_fn=reward_info_function,
+                 ):
         #  Callable[[MyGraph, Text, float, float], Tuple[float, Dict]] = reward_info_function):
         self.cfg = cfg
         self._is_eval = is_eval

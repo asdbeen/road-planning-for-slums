@@ -20,8 +20,9 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
-flags.DEFINE_string('slum_name', 'punggol', 'data_dir')
+flags.DEFINE_string('slum_name', 'punggol', 'data_dir')                           # this is the name of ymal file 
 flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
+flags.DEFINE_string('train_file_num', '3', 'Number of trianing file.')              # this is the number of training file 
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
@@ -57,7 +58,7 @@ def main_loop(_):
 
     setproctitle.setproctitle(f'road_planning_{FLAGS.cfg}_{FLAGS.global_seed}@suhy')
 
-    cfg = Config(FLAGS.cfg, FLAGS.slum_name, FLAGS.global_seed, FLAGS.tmp, FLAGS.root_dir, FLAGS.agent)
+    cfg = Config(FLAGS.cfg, FLAGS.slum_name, FLAGS.global_seed, FLAGS.tmp, FLAGS.root_dir, FLAGS.agent,train_file_num = FLAGS.train_file_num)
 
     dtype = torch.float32
     torch.set_default_dtype(dtype)
@@ -74,8 +75,10 @@ def main_loop(_):
     #checkpoint = "best"
 
     """create agent"""
+    print ("cfg.slum",cfg.slum)
     agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
-                               training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards)
+                               training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards,
+                               )
 
 
     

@@ -91,8 +91,6 @@ class Agent:
                 memories = [None] * nthreads
                 loggers = [None] * nthreads
 
-           
-            
                 for i in range(nthreads-1):
                     worker_args = (i+1, queue, thread_num_samples, mean_action)
                     worker = multiprocessing.Process(target=self.sample_worker, args=worker_args)
@@ -100,7 +98,7 @@ class Agent:
 
                 
                 print ("orginal thread_num_samples",thread_num_samples)
-                thread_num_samples = 5000  ######temp！！！
+                thread_num_samples = 200  ######temp！！！
                 print ("change to temporarily thread_num_samples",thread_num_samples)
                 memories[0], loggers[0] = self.sample_worker(0, None, thread_num_samples, mean_action)
              
@@ -108,12 +106,15 @@ class Agent:
                     pid, worker_memory, worker_logger = queue.get()
                     memories[pid] = worker_memory
                     loggers[pid] = worker_logger
+
                 traj_batch = self.traj_cls(memories)
                 logger = self.logger_cls.merge(loggers, **self.logger_kwargs)
 
         logger.sample_time = time.time() - t_start
         return traj_batch, logger
 
+
+    
     def trans_policy(self, states):
         """transform states before going into policy net"""
         return states

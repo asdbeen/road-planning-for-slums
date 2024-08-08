@@ -6,18 +6,21 @@ from typing import Text, Dict
 class Config:
 
     def __init__(self, cfg: Text, slum_name: Text, global_seed: int, tmp: bool, root_dir: Text,
-                 agent: Text = 'random', cfg_dict: Dict = None):
+                 agent: Text = 'random', cfg_dict: Dict = None, train_file_num: int = 1):
   
         self.id = cfg
         self.slum = slum_name
         self.seed = global_seed
+
+        self.train_file_num = int(train_file_num)
+
         if cfg_dict is not None:
             cfg = cfg_dict
         else:
             cwd = os.getcwd()
             #file_path = os.path.join(cwd,'road_planning/cfg/punggol.yaml')   # change to punggol.yaml
             file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
-            print ("in Config", file_path)
+
             cfg = load_yaml(file_path)
          
         # create dirs

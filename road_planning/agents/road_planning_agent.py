@@ -33,39 +33,80 @@ class RoadPlanningAgent(AgentPPO):
                  training: bool = True,
                  checkpoint: Union[int, Text] = 0,
                  restore_best_rewards: bool = True,
-                 specificCheckPointPath = None):
-        self.cfg = cfg
-        self.training = training
-        self.device = device
-        self.loss_iter = 0
-        self.setup_logger(num_threads)
-        self.setup_env()
-        self.setup_model()
-        self.setup_optimizer()
-        if checkpoint != 0:
-            self.start_iteration = self.load_checkpoint(
-                checkpoint, restore_best_rewards,specificCheckPointPath)
-        else:
-            self.start_iteration = 0
-        super().__init__(env=self.env,
-                         dtype=dtype,
-                         device=device,
-                         logger_cls=LoggerRL,
-                         traj_cls=TrajBatchDisc,
-                         num_threads=num_threads,
-                         policy_net=self.policy_net,
-                         value_net=self.value_net,
-                         optimizer=self.optimizer,
-                         opt_num_epochs=cfg.num_optim_epoch,
-                         gamma=cfg.gamma,
-                         tau=cfg.tau,
-                         clip_epsilon=cfg.clip_epsilon,
-                         value_pred_coef=cfg.value_pred_coef,
-                         entropy_coef=cfg.entropy_coef,
-                         policy_grad_clip=[(self.policy_net.parameters(), 1),
-                                           (self.value_net.parameters(), 1)],
-                         mini_batch_size=cfg.mini_batch_size)
+                 specificCheckPointPath = None
+                 ):
+        
 
+        if cfg.train_file_num == 1:
+            self.cfg = cfg
+            self.training = training
+            self.device = device
+            self.loss_iter = 0
+            self.setup_logger(num_threads)
+
+            self.setup_env()
+            self.setup_model()
+            self.setup_optimizer()
+            if checkpoint != 0:
+                self.start_iteration = self.load_checkpoint(
+                    checkpoint, restore_best_rewards,specificCheckPointPath)
+            else:
+                self.start_iteration = 0
+            super().__init__(env=self.env,
+                            dtype=dtype,
+                            device=device,
+                            logger_cls=LoggerRL,
+                            traj_cls=TrajBatchDisc,
+                            num_threads=num_threads,
+                            policy_net=self.policy_net,
+                            value_net=self.value_net,
+                            optimizer=self.optimizer,
+                            opt_num_epochs=cfg.num_optim_epoch,
+                            gamma=cfg.gamma,
+                            tau=cfg.tau,
+                            clip_epsilon=cfg.clip_epsilon,
+                            value_pred_coef=cfg.value_pred_coef,
+                            entropy_coef=cfg.entropy_coef,
+                            policy_grad_clip=[(self.policy_net.parameters(), 1),
+                                            (self.value_net.parameters(), 1)],
+                            mini_batch_size=cfg.mini_batch_size)
+
+        elif cfg.train_file_num != 1:
+            self.cfg = cfg
+            self.training = training
+            self.device = device
+            self.loss_iter = 0
+            self.setup_logger(num_threads)
+
+            self.setup_env_multi()    # it defaultly set the first env
+            self.setup_model()
+            self.setup_optimizer()
+            if checkpoint != 0:
+                self.start_iteration = self.load_checkpoint(
+                    checkpoint, restore_best_rewards,specificCheckPointPath)
+            else:
+                self.start_iteration = 0
+            super().__init__(env=self.env,
+                            dtype=dtype,
+                            device=device,
+                            logger_cls=LoggerRL,
+                            traj_cls=TrajBatchDisc,
+                            num_threads=num_threads,
+                            policy_net=self.policy_net,
+                            value_net=self.value_net,
+                            optimizer=self.optimizer,
+                            opt_num_epochs=cfg.num_optim_epoch,
+                            gamma=cfg.gamma,
+                            tau=cfg.tau,
+                            clip_epsilon=cfg.clip_epsilon,
+                            value_pred_coef=cfg.value_pred_coef,
+                            entropy_coef=cfg.entropy_coef,
+                            policy_grad_clip=[(self.policy_net.parameters(), 1),
+                                            (self.value_net.parameters(), 1)],
+                            mini_batch_size=cfg.mini_batch_size)
+            
+
+ 
     def sample_worker(self, pid, queue, num_samples, mean_action):  # This is the one in use
         self.seed_worker(pid)
         memory = Memory()
@@ -129,6 +170,28 @@ class RoadPlanningAgent(AgentPPO):
         self.env = env = RoadEnv(self.cfg)
         self.numerical_feature_size = env.get_numerical_feature_size()
         self.node_dim = env.get_node_dim()
+
+    def setup_env_multi(self):
+        multi_envs = []
+        multi_numerical_feature_size = []
+        multi_node_dim = []
+        originalSlumName = self.cfg.slum
+        for i in range(1,self.cfg.train_file_num+1,1):   # becasue it counts from 1
+            self.cfg.slum += "_" + str(i)
+            env = RoadEnv(self.cfg)
+            multi_envs.append(env)
+            multi_numerical_feature_size.append(env.get_numerical_feature_size())
+            multi_node_dim.append(env.get_node_dim())
+
+            self.cfg.slum = originalSlumName
+
+        self.multi_envs = multi_envs
+        self.multi_numerical_feature_size = multi_numerical_feature_size
+        self.multi_node_dim = multi_node_dim
+
+        self.env = multi_envs[0]
+        self.numerical_feature_size = multi_numerical_feature_size[0]
+        self.node_dim = multi_node_dim[0]
 
     def setup_logger(self, num_threads):
         cfg = self.cfg
@@ -282,10 +345,21 @@ class RoadPlanningAgent(AgentPPO):
         
         num_samples = self.cfg.num_episodes_per_iteration * self.cfg.max_sequence_length
         print ("optimize_policy_ start sample")    
-        batch, log = self.sample(num_samples)
+
+        if self.cfg.train_file_num != 1:
+            for i in range (len(self.multi_envs)):     # shift the environment
+                self.env = self.multi_envs[i]    
+                self.numerical_feature_size = self.multi_numerical_feature_size[i]
+                self.node_dim = self.multi_node_dim[i] 
+                batch, log = self.sample(num_samples)
+        else:
+            batch, log = self.sample(num_samples)
+
+            
         # print ("self.env._connecting_steps",self.env._connecting_steps)
         # print ("self.env._full_connected_steps",self.env._full_connected_steps)
 
+       
         """update networks"""
         t1 = time.time()
 
@@ -299,6 +373,14 @@ class RoadPlanningAgent(AgentPPO):
         t2 = time.time()
         """evaluate policy"""
         print ("optimize_policy_ start eval_agent")  
+        if self.cfg.train_file_num != 1:
+            self.env = self.multi_envs[len(self.multi_envs)-1]    
+            self.numerical_feature_size = self.multi_numerical_feature_size[i]
+            self.node_dim = self.multi_node_dim[i] 
+       
+        else:
+            pass
+
         log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True,iteration=iteration)
         t3 = time.time()
         

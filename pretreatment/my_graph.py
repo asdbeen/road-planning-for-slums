@@ -415,23 +415,30 @@ class MyGraph(object):
                     break
             self.edge_face_index.append(pair)
 
-    def _cal_graph_node_feature(self):
+    def _cal_graph_node_feature(self,withPOITag = False):
         self.graph_node_feature = {}
-        for n in self.node_list:
-            self.graph_node_feature[n] = self._get_node_loc(
-                n) + self._get_node_centrality(n)
+
+        if withPOITag == False:
+            for n in self.node_list:
+                self.graph_node_feature[n] = self._get_node_loc(
+                    n) + self._get_node_centrality(n)
+
+        elif withPOITag == True:
+            for n in self.node_list:
+                self.graph_node_feature[n] = self._get_node_loc(
+                    n) + self._get_node_centrality(n) + self._get_node_isPOI(n)
 
     def feature_init(self):
-        self._cal_graph_centrality()
-        self._cal_graph_node_feature()
-        self._cal_edge_index_and_length()
-        self._cal_node_degree_and_isroad()
-        self._cal_edge_face_index()
+        self._cal_graph_centrality()                     # Create the dictionaries of graph info
+        self._cal_graph_node_feature()                   # graph_node_feature : [x,y,degree_cen,betweenness_cen,eigenvector_cen,closeness_cen] , they are all number
+        self._cal_edge_index_and_length()                # Create the list pair for edge info  
+        self._cal_node_degree_and_isroad()               # Create the node degree info, these are pure number, differ from the above ones
+        self._cal_edge_face_index()                      # Pair the faces that share with one edge
 
     def get_obs(self):
         numerical = self._get_numerical()
         node_feature = np.concatenate(
-            [[self._get_node_feature(n) for n in self.node_list]], axis=1)
+            [[self._get_node_feature(n) for n in self.node_list]], axis=1)          # [[1 x (numNodeFeature x numNode)]]
         # node_feature = np.zeros_like(node_feature)
 
         edge_part_feature = self._get_edge_part_feature()
@@ -442,24 +449,42 @@ class MyGraph(object):
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
 
     # ok
-    def _get_edge_part_feature(self):
-        edge_isroad = np.array(self._get_edge_isroad()).reshape(-1, 1)
-        edge_length = np.array(self.edge_length).reshape(-1, 1)
+    def _get_edge_part_feature(self,withPOITag = False):
+        if withPOITag == False:
+            edge_isroad = np.array(self._get_edge_isroad()).reshape(-1, 1)
+            edge_length = np.array(self.edge_length).reshape(-1, 1)
 
-        edge_face_interior = np.array(self._get_edge_face_interior()).reshape(-1, 1)
-        # edge_face_interior = np.zeros_like(edge_face_interior)
-        edge_avg_dis = np.array(self._get_edge_avg_dis()).reshape(-1, 1)
-        # edge_avg_dis = np.zeros_like(edge_avg_dis)
-        # edge_outerface_dis = np.array(self._get_edge_outerface_dis()).reshape(-1, 1)
-        edge_ration_dis = np.array(self._get_edge_ration_dis()).reshape(-1, 1)
-        # edge_ration_dis = np.zeros_like(edge_ration_dis)
+            edge_face_interior = np.array(self._get_edge_face_interior()).reshape(-1, 1)
+            # edge_face_interior = np.zeros_like(edge_face_interior)
+            edge_avg_dis = np.array(self._get_edge_avg_dis()).reshape(-1, 1)
+            # edge_avg_dis = np.zeros_like(edge_avg_dis)
+            # edge_outerface_dis = np.array(self._get_edge_outerface_dis()).reshape(-1, 1)
+            edge_ration_dis = np.array(self._get_edge_ration_dis()).reshape(-1, 1)
+            # edge_ration_dis = np.zeros_like(edge_ration_dis)
 
-        edge_part_feature = np.concatenate(
-            [edge_isroad, edge_length, edge_face_interior ,edge_avg_dis, edge_ration_dis], axis=1)
+            edge_part_feature = np.concatenate(
+                [edge_isroad, edge_length, edge_face_interior ,edge_avg_dis, edge_ration_dis], axis=1)          # [[numEdge x (numEdgeFeature)]]
+        
+        elif withPOITag == True:
+            edge_isroad = np.array(self._get_edge_isroad()).reshape(-1, 1)
+            edge_length = np.array(self.edge_length).reshape(-1, 1)
+
+            edge_face_interior = np.array(self._get_edge_face_interior()).reshape(-1, 1)
+            # edge_face_interior = np.zeros_like(edge_face_interior)
+            edge_avg_dis = np.array(self._get_edge_avg_dis()).reshape(-1, 1)
+            # edge_avg_dis = np.zeros_like(edge_avg_dis)
+            # edge_outerface_dis = np.array(self._get_edge_outerface_dis()).reshape(-1, 1)
+            edge_ration_dis = np.array(self._get_edge_ration_dis()).reshape(-1, 1)
+            # edge_ration_dis = np.zeros_like(edge_ration_dis)
+
+            edge_isPOI = np.array(self._get_edge_isPOI()).reshape(-1, 1)
+            edge_part_feature = np.concatenate(
+                [edge_isroad, edge_isPOI, edge_length, edge_face_interior ,edge_avg_dis, edge_ration_dis], axis=1)
+        
 
         return edge_part_feature
 
-    def _get_edge_mask(self):
+    def _get_edge_mask(self):                   # so the edge selection can start for the cul-de-sac
         edge_mask = []
         interior_del_able = False
         for e in self.edge_list:
@@ -556,6 +581,16 @@ class MyGraph(object):
         # return np.zeros_like(edge_isroad)
         return edge_isroad
 
+    def _get_edge_isPOI(self):           #### New Added
+        edge_isPOI= []
+        for e in self.edge_list:
+            if e.isPOI == True:
+                edge_isPOI.append(1)
+            else:
+                edge_isPOI.append(0)
+   
+        return edge_isPOI
+    
     # ok - double check
     def get_numerical_feature_size(self):
         return 4
@@ -610,7 +645,9 @@ class MyGraph(object):
             self.degree_cen[node], self.betweenness_cen[node],
             self.eigenvector_cen[node], self.closeness_cen[node]
         ]
-
+        
+    def _get_node_isPOI(self, node: MyNode):    # new added
+        return [node.isPOI]
 
 ############################
 # GEOMETRY CLEAN UP FUNCTIONS
