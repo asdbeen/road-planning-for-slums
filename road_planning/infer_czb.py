@@ -72,7 +72,11 @@ def main_loop(_):
 
     checkpoint = int(FLAGS.iteration) if FLAGS.iteration.isnumeric() else FLAGS.iteration
 
-    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
+    #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
+    #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p"
+    checkpoint = 46
+    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0046.p"
+    
     """create agent"""
     agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
                                training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards, specificCheckPointPath = specificCheckPointPath)
@@ -86,7 +90,7 @@ if __name__ == '__main__':
     # flags.mark_flags_as_required([
     #   'cfg'
     # ])
-
+    #print ("hi")
     # print (FLAGS.iteration)
     app.run(main_loop)
 

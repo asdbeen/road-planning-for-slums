@@ -1,0 +1,220 @@
+[2024-08-19 13:54:36,173] data_dir:data/punggol_5
+[2024-08-19 13:54:36,173] id: punggol
+[2024-08-19 13:54:36,173] seed: 0
+[2024-08-19 13:54:36,173] objectives_plan: 
+[2024-08-19 13:54:36,173] init_plan: 
+[2024-08-19 13:54:36,173] env_specs: {}
+[2024-08-19 13:54:36,173] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 13:54:36,173] obs_specs: {}
+[2024-08-19 13:54:36,173] agent_specs: {'batch_stage': False}
+[2024-08-19 13:54:36,173] gamma: 0.9
+[2024-08-19 13:54:36,173] tau: 0.0
+[2024-08-19 13:54:36,173] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 13:54:36,173] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 13:54:36,173] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 13:54:36,173] lr: 0.0004
+[2024-08-19 13:54:36,173] weightdecay: 0.0
+[2024-08-19 13:54:36,173] eps: 1e-05
+[2024-08-19 13:54:36,173] value_pred_coef: 0.5
+[2024-08-19 13:54:36,173] entropy_coef: 0.01
+[2024-08-19 13:54:36,173] clip_epsilon: 0.2
+[2024-08-19 13:54:36,173] max_num_iterations: 50
+[2024-08-19 13:54:36,174] num_episodes_per_iteration: 1200
+[2024-08-19 13:54:36,174] max_sequence_length: 33
+[2024-08-19 13:54:36,174] num_optim_epoch: 4
+[2024-08-19 13:54:36,174] mini_batch_size: 1024
+[2024-08-19 13:54:36,174] save_model_interval: 1
+[2024-08-19 13:54:52,703] Infer time: 15.90
+[2024-08-19 13:54:52,703] dis: 1.2448878369341865
+[2024-08-19 13:54:52,703] cost: 7.482001032216222
+[2024-08-19 13:54:52,703] eval_0.9&0.1: -1.8685991564623903
+[2024-08-19 13:54:52,703] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p
+[2024-08-19 13:58:04,866] data_dir:data/punggol_5
+[2024-08-19 13:58:04,866] id: punggol
+[2024-08-19 13:58:04,866] seed: 0
+[2024-08-19 13:58:04,866] objectives_plan: 
+[2024-08-19 13:58:04,866] init_plan: 
+[2024-08-19 13:58:04,866] env_specs: {}
+[2024-08-19 13:58:04,866] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 13:58:04,866] obs_specs: {}
+[2024-08-19 13:58:04,866] agent_specs: {'batch_stage': False}
+[2024-08-19 13:58:04,866] gamma: 0.9
+[2024-08-19 13:58:04,866] tau: 0.0
+[2024-08-19 13:58:04,866] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 13:58:04,866] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 13:58:04,867] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 13:58:04,867] lr: 0.0004
+[2024-08-19 13:58:04,867] weightdecay: 0.0
+[2024-08-19 13:58:04,867] eps: 1e-05
+[2024-08-19 13:58:04,867] value_pred_coef: 0.5
+[2024-08-19 13:58:04,867] entropy_coef: 0.01
+[2024-08-19 13:58:04,867] clip_epsilon: 0.2
+[2024-08-19 13:58:04,867] max_num_iterations: 50
+[2024-08-19 13:58:04,867] num_episodes_per_iteration: 1200
+[2024-08-19 13:58:04,867] max_sequence_length: 33
+[2024-08-19 13:58:04,867] num_optim_epoch: 4
+[2024-08-19 13:58:04,867] mini_batch_size: 1024
+[2024-08-19 13:58:04,867] save_model_interval: 1
+[2024-08-19 13:58:21,542] Infer time: 16.05
+[2024-08-19 13:58:21,542] dis: 1.2448878369341865
+[2024-08-19 13:58:21,542] cost: 7.482001032216222
+[2024-08-19 13:58:21,542] eval_0.9&0.1: -1.8685991564623903
+[2024-08-19 13:58:21,542] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p
+[2024-08-19 14:00:46,042] data_dir:data/punggol_5
+[2024-08-19 14:00:46,042] id: punggol
+[2024-08-19 14:00:46,042] seed: 0
+[2024-08-19 14:00:46,042] objectives_plan: 
+[2024-08-19 14:00:46,042] init_plan: 
+[2024-08-19 14:00:46,042] env_specs: {}
+[2024-08-19 14:00:46,042] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 14:00:46,042] obs_specs: {}
+[2024-08-19 14:00:46,042] agent_specs: {'batch_stage': False}
+[2024-08-19 14:00:46,043] gamma: 0.9
+[2024-08-19 14:00:46,043] tau: 0.0
+[2024-08-19 14:00:46,043] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 14:00:46,043] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 14:00:46,043] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 14:00:46,043] lr: 0.0004
+[2024-08-19 14:00:46,043] weightdecay: 0.0
+[2024-08-19 14:00:46,043] eps: 1e-05
+[2024-08-19 14:00:46,043] value_pred_coef: 0.5
+[2024-08-19 14:00:46,043] entropy_coef: 0.01
+[2024-08-19 14:00:46,043] clip_epsilon: 0.2
+[2024-08-19 14:00:46,043] max_num_iterations: 50
+[2024-08-19 14:00:46,043] num_episodes_per_iteration: 1200
+[2024-08-19 14:00:46,043] max_sequence_length: 33
+[2024-08-19 14:00:46,043] num_optim_epoch: 4
+[2024-08-19 14:00:46,043] mini_batch_size: 1024
+[2024-08-19 14:00:46,043] save_model_interval: 1
+[2024-08-19 14:01:02,679] Infer time: 16.02
+[2024-08-19 14:01:02,679] dis: 1.2448878369341865
+[2024-08-19 14:01:02,679] cost: 7.482001032216222
+[2024-08-19 14:01:02,679] eval_0.9&0.1: -1.8685991564623903
+[2024-08-19 14:01:02,679] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p
+[2024-08-19 14:02:57,156] data_dir:data/punggol_5
+[2024-08-19 14:02:57,157] id: punggol
+[2024-08-19 14:02:57,157] seed: 0
+[2024-08-19 14:02:57,157] objectives_plan: 
+[2024-08-19 14:02:57,157] init_plan: 
+[2024-08-19 14:02:57,157] env_specs: {}
+[2024-08-19 14:02:57,157] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 14:02:57,157] obs_specs: {}
+[2024-08-19 14:02:57,157] agent_specs: {'batch_stage': False}
+[2024-08-19 14:02:57,157] gamma: 0.9
+[2024-08-19 14:02:57,157] tau: 0.0
+[2024-08-19 14:02:57,157] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 14:02:57,157] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 14:02:57,157] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 14:02:57,157] lr: 0.0004
+[2024-08-19 14:02:57,157] weightdecay: 0.0
+[2024-08-19 14:02:57,157] eps: 1e-05
+[2024-08-19 14:02:57,157] value_pred_coef: 0.5
+[2024-08-19 14:02:57,157] entropy_coef: 0.01
+[2024-08-19 14:02:57,157] clip_epsilon: 0.2
+[2024-08-19 14:02:57,157] max_num_iterations: 50
+[2024-08-19 14:02:57,157] num_episodes_per_iteration: 1200
+[2024-08-19 14:02:57,157] max_sequence_length: 33
+[2024-08-19 14:02:57,157] num_optim_epoch: 4
+[2024-08-19 14:02:57,157] mini_batch_size: 1024
+[2024-08-19 14:02:57,157] save_model_interval: 1
+[2024-08-19 14:03:13,736] Infer time: 15.97
+[2024-08-19 14:03:13,736] dis: 1.2448878369341865
+[2024-08-19 14:03:13,736] cost: 7.482001032216222
+[2024-08-19 14:03:13,736] eval_0.9&0.1: -1.8685991564623903
+[2024-08-19 14:03:13,736] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p
+[2024-08-19 14:04:15,163] data_dir:data/punggol_5
+[2024-08-19 14:04:15,163] id: punggol
+[2024-08-19 14:04:15,163] seed: 0
+[2024-08-19 14:04:15,163] objectives_plan: 
+[2024-08-19 14:04:15,163] init_plan: 
+[2024-08-19 14:04:15,163] env_specs: {}
+[2024-08-19 14:04:15,163] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 14:04:15,163] obs_specs: {}
+[2024-08-19 14:04:15,163] agent_specs: {'batch_stage': False}
+[2024-08-19 14:04:15,163] gamma: 0.9
+[2024-08-19 14:04:15,163] tau: 0.0
+[2024-08-19 14:04:15,163] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 14:04:15,163] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 14:04:15,163] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 14:04:15,163] lr: 0.0004
+[2024-08-19 14:04:15,163] weightdecay: 0.0
+[2024-08-19 14:04:15,163] eps: 1e-05
+[2024-08-19 14:04:15,163] value_pred_coef: 0.5
+[2024-08-19 14:04:15,163] entropy_coef: 0.01
+[2024-08-19 14:04:15,163] clip_epsilon: 0.2
+[2024-08-19 14:04:15,163] max_num_iterations: 50
+[2024-08-19 14:04:15,163] num_episodes_per_iteration: 1200
+[2024-08-19 14:04:15,163] max_sequence_length: 33
+[2024-08-19 14:04:15,163] num_optim_epoch: 4
+[2024-08-19 14:04:15,163] mini_batch_size: 1024
+[2024-08-19 14:04:15,163] save_model_interval: 1
+[2024-08-19 14:04:15,773] loading model from checkpoint: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p
+[2024-08-19 14:04:32,973] Infer time: 17.20
+[2024-08-19 14:04:32,973] dis: 1.1072791759636214
+[2024-08-19 14:04:32,973] cost: 6.7902168634671805
+[2024-08-19 14:04:32,973] eval_0.9&0.1: -1.6755729447139773
+[2024-08-19 14:04:32,973] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p
+[2024-08-19 14:05:31,973] data_dir:data/punggol_5
+[2024-08-19 14:05:31,973] id: punggol
+[2024-08-19 14:05:31,973] seed: 0
+[2024-08-19 14:05:31,973] objectives_plan: 
+[2024-08-19 14:05:31,973] init_plan: 
+[2024-08-19 14:05:31,973] env_specs: {}
+[2024-08-19 14:05:31,973] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 14:05:31,973] obs_specs: {}
+[2024-08-19 14:05:31,973] agent_specs: {'batch_stage': False}
+[2024-08-19 14:05:31,973] gamma: 0.9
+[2024-08-19 14:05:31,973] tau: 0.0
+[2024-08-19 14:05:31,973] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 14:05:31,974] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 14:05:31,974] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 14:05:31,974] lr: 0.0004
+[2024-08-19 14:05:31,974] weightdecay: 0.0
+[2024-08-19 14:05:31,974] eps: 1e-05
+[2024-08-19 14:05:31,974] value_pred_coef: 0.5
+[2024-08-19 14:05:31,974] entropy_coef: 0.01
+[2024-08-19 14:05:31,974] clip_epsilon: 0.2
+[2024-08-19 14:05:31,974] max_num_iterations: 50
+[2024-08-19 14:05:31,974] num_episodes_per_iteration: 1200
+[2024-08-19 14:05:31,974] max_sequence_length: 33
+[2024-08-19 14:05:31,974] num_optim_epoch: 4
+[2024-08-19 14:05:31,974] mini_batch_size: 1024
+[2024-08-19 14:05:31,974] save_model_interval: 1
+[2024-08-19 14:05:32,562] loading model from checkpoint: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0035.p
+[2024-08-19 14:05:49,247] Infer time: 16.68
+[2024-08-19 14:05:49,247] dis: 1.1045428157295614
+[2024-08-19 14:05:49,247] cost: 6.4058275808971334
+[2024-08-19 14:05:49,247] eval_0.9&0.1: -1.6346712922463187
+[2024-08-19 14:05:49,247] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p
+[2024-08-19 15:28:33,298] data_dir:data/punggol_5
+[2024-08-19 15:28:33,299] id: punggol
+[2024-08-19 15:28:33,299] seed: 0
+[2024-08-19 15:28:33,299] objectives_plan: 
+[2024-08-19 15:28:33,299] init_plan: 
+[2024-08-19 15:28:33,299] env_specs: {}
+[2024-08-19 15:28:33,299] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-19 15:28:33,299] obs_specs: {}
+[2024-08-19 15:28:33,299] agent_specs: {'batch_stage': False}
+[2024-08-19 15:28:33,299] gamma: 0.9
+[2024-08-19 15:28:33,299] tau: 0.0
+[2024-08-19 15:28:33,299] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-19 15:28:33,299] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-19 15:28:33,299] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-19 15:28:33,299] lr: 0.0004
+[2024-08-19 15:28:33,299] weightdecay: 0.0
+[2024-08-19 15:28:33,299] eps: 1e-05
+[2024-08-19 15:28:33,299] value_pred_coef: 0.5
+[2024-08-19 15:28:33,299] entropy_coef: 0.01
+[2024-08-19 15:28:33,299] clip_epsilon: 0.2
+[2024-08-19 15:28:33,299] max_num_iterations: 50
+[2024-08-19 15:28:33,299] num_episodes_per_iteration: 1200
+[2024-08-19 15:28:33,299] max_sequence_length: 33
+[2024-08-19 15:28:33,299] num_optim_epoch: 4
+[2024-08-19 15:28:33,299] mini_batch_size: 1024
+[2024-08-19 15:28:33,299] save_model_interval: 1
+[2024-08-19 15:28:34,044] loading model from checkpoint: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0046.p
+[2024-08-19 15:28:50,998] Infer time: 16.95
+[2024-08-19 15:28:50,998] dis: 1.0910917812328789
+[2024-08-19 15:28:50,998] cost: 6.2984268563523695
+[2024-08-19 15:28:50,998] eval_0.9&0.1: -1.611825288744828
+[2024-08-19 15:28:50,998] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_5/rl-ngnn/punggol/0/plan\plan.p

@@ -36,7 +36,9 @@ class RoadPlanningAgent(AgentPPO):
                  specificCheckPointPath = None
                  ):
         
-
+        print ("asd!!!")
+        print ("cfg.train_file_num",cfg.train_file_num)
+        print ("checkpoint",checkpoint)
         if cfg.train_file_num == 1:
             self.cfg = cfg
             self.training = training
@@ -50,6 +52,7 @@ class RoadPlanningAgent(AgentPPO):
             if checkpoint != 0:
                 self.start_iteration = self.load_checkpoint(
                     checkpoint, restore_best_rewards,specificCheckPointPath)
+           
             else:
                 self.start_iteration = 0
             super().__init__(env=self.env,
@@ -345,13 +348,14 @@ class RoadPlanningAgent(AgentPPO):
         
         num_samples = self.cfg.num_episodes_per_iteration * self.cfg.max_sequence_length
         print ("optimize_policy_ start sample")    
-
+        
         if self.cfg.train_file_num != 1:
             for i in range (len(self.multi_envs)):     # shift the environment
                 self.env = self.multi_envs[i]    
                 self.numerical_feature_size = self.multi_numerical_feature_size[i]
                 self.node_dim = self.multi_node_dim[i] 
                 batch, log = self.sample(num_samples)
+                print ("i am using this env",self.env._mg)
         else:
             batch, log = self.sample(num_samples)
 
@@ -374,7 +378,7 @@ class RoadPlanningAgent(AgentPPO):
         """evaluate policy"""
         print ("optimize_policy_ start eval_agent")  
         if self.cfg.train_file_num != 1:
-            self.env = self.multi_envs[len(self.multi_envs)-1]    
+            self.env = self.multi_envs[i]    
             self.numerical_feature_size = self.multi_numerical_feature_size[i]
             self.node_dim = self.multi_node_dim[i] 
        

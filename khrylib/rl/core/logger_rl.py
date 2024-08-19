@@ -29,6 +29,8 @@ class LoggerRL:
         self.num_steps += self.episode_len
         self.num_episodes += 1
         self.stats_loggers['episode_len'].log(self.episode_len)
+
+        
         self.stats_loggers['episode_reward_avg'].log(-0.9*info['f2f_dis_avg'] - 0.1*info['total_road_cost'])
         self.stats_loggers['episode_reward_dis'].log(-info['f2f_dis_avg'])            # Now consider travel dist to POI also
         self.stats_loggers['episode_reward_cost'].log(-info['total_road_cost'])
@@ -39,9 +41,12 @@ class LoggerRL:
         self.stats_loggers['total_road_cost'].log(info['total_road_cost'])
 
         self.stats_loggers['f2POI_dis_avg'].log(info['f2POI_dis_avg'])          # "New added"
-
-
-
+        # print ("------")
+        # print ("end_episode")
+        # print (self.stats_loggers['f2f_dis_avg'].total_val)
+        # print (self.stats_loggers['total_road_cost'].total_val)
+        # print (-0.9*info['f2f_dis_avg'],0.1*info['total_road_cost'],self.stats_loggers['episode_reward_avg'].total_val)
+        # print ("------")
     def add_plan(self, info_plan):
         self.plans.append(info_plan)
 
@@ -56,6 +61,10 @@ class LoggerRL:
 
         logger.total_reward = logger.stats_loggers['reward'].total()
         logger.avg_episode_len = logger.stats_loggers['episode_len'].avg()
+        
+        print ("logger.stats_loggers.num_episodes",logger.stats_loggers['episode_len'].n)
+  
+
         logger.avg_episode_reward = logger.stats_loggers['episode_reward_avg'].avg()
         logger.dis_episode_reward = logger.stats_loggers['episode_reward_dis'].avg()
         logger.cost_episode_reward = logger.stats_loggers['episode_reward_cost'].avg()

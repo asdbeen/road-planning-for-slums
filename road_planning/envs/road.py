@@ -418,7 +418,9 @@ class RoadEnv:
                 if (self._full_connected_steps + self._connecting_steps >
                         self._total_road_steps * self.build_ration):
                     self.transition_stage()
-
+            
+            # print ("in step:", "total_cost",self._mg.total_cost(),self._stage)
+            # print ("in step:",'f2POI_dis_avg',self._mg.f2f_avg)
             reward, info = self.get_reward_info()
             if self._stage == 'done':
                 self.save_step_data()

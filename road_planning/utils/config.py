@@ -20,8 +20,10 @@ class Config:
             cwd = os.getcwd()
             #file_path = os.path.join(cwd,'road_planning/cfg/punggol.yaml')   # change to punggol.yaml
             file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
-
-            cfg = load_yaml(file_path)
+            try:
+                cfg = load_yaml(file_path)
+            except:
+                print ("file_path:",file_path)
          
         # create dirs
         self.root_dir = os.path.join(cwd,'tmp') if tmp else root_dir
@@ -39,6 +41,7 @@ class Config:
         self.agent = agent
 
         # env
+        print ("cfg",cfg)
         self.objectives_plan = cfg.get('objectives_plan', '')
         self.init_plan = cfg.get('init_plan', '')
         self.env_specs = cfg.get('env_specs', dict())

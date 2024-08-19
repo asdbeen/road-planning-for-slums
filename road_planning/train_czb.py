@@ -22,7 +22,7 @@ flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory
                                                                       'logs/summaries/checkpoints.')
 flags.DEFINE_string('slum_name', 'punggol', 'data_dir')                           # this is the name of ymal file 
 flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
-flags.DEFINE_string('train_file_num', '3', 'Number of trianing file.')              # this is the number of training file 
+flags.DEFINE_string('train_file_num', '5', 'Number of trianing file.')              # this is the number of training file 
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
