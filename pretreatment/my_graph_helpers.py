@@ -1200,6 +1200,147 @@ def GraphFromJSON_Customized(jsonPath,scaleTag = True,rezero=np.array([0, 0]),na
 
     return myG,myNodeDict,myEdgeDict
 
+def GraphFromJSON_Customized_IgnoreShortCut(jsonPath,scaleTag = True,rezero=np.array([0, 0]),name="None",new_min = 0,new_max = 2):
+    with open(jsonPath, 'r') as file:
+        data = json.load(file)
+        ptCoordDict = data["ptCoordDict"]
+        edgeDict = data["edgeDict"]
+        parcelEdgeIDs = data["parcelEdgeIDs"]
+
+    allCoords = []
+    for key in ptCoordDict.keys():
+        allCoords.append(ptCoordDict[key][0])
+        allCoords.append(ptCoordDict[key][1])
+
+    old_min = min(allCoords)
+    old_max = max(allCoords)
+
+    ### Initialize the graph
+    myG = mg.MyGraph(name="name")
+    rezero=np.array([0, 0])
+
+    ### Build the myNodeDict
+    newCoords = []
+    myNodeDict = dict()
+    for nID in ptCoordDict.keys():
+        coords =  ptCoordDict[nID]
+        coords = coords - rezero
+        if scaleTag == True:
+            coords_New = [remap(coords[0],old_min,old_max,new_min,new_max),remap(coords[1],old_min,old_max,new_min,new_max)]
+            newCoords.append(coords_New) ##
+   
+            myN = mg.MyNode(coords_New)
+        else:
+            myN = mg.MyNode(coords)
+
+        myNodeDict[int(nID)] = myN
+
+    #print (newCoords)
+
+    ### Build the myEdgeDict
+    myEdgeDict = dict()
+    for edgeID in edgeDict.keys():
+        thisEdge = edgeDict[str(edgeID)]
+        startNode = myNodeDict[thisEdge["start"]]
+        endNode = myNodeDict[thisEdge["end"]]   
+        myEdge = mg.MyEdge((startNode,endNode))
+        myEdgeDict[edgeID] = myEdge
+        if edgeDict[str(edgeID)]["isShortCut"] != True:
+            myG.add_edge(myEdge)
+
+    ### Add edge property
+    for edgeID in myEdgeDict:
+        myEdgeDict[edgeID].external = edgeDict[str(edgeID)]["external"]               # overlap with isPOI, isRoad, fake
+        myEdgeDict[edgeID].internal = edgeDict[str(edgeID)]["internal"]               # overlap with isPOI  
+        myEdgeDict[edgeID].onBoundary = edgeDict[str(edgeID)]["onBoundary"]           # overlap with isRoad, isConstraint  
+        myEdgeDict[edgeID].isRoad = edgeDict[str(edgeID)]["isRoad"]                   # overlap with internal, onBoundary
+        myEdgeDict[edgeID].isConstraint = edgeDict[str(edgeID)]["isConstraint"]       # overlap with onBoundary  
+        myEdgeDict[edgeID].isPOI = edgeDict[str(edgeID)]["isPOI"]                     # overlap with internal,external  
+        myEdgeDict[edgeID].fake = edgeDict[str(edgeID)]["fake"]                       # overlap with external
+        myEdgeDict[edgeID].isShortCut = edgeDict[str(edgeID)]["isShortCut"]                 # overlap with isShortCut
+    
+    ### Record the types of edges for easy info 
+    myG.externalEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].external]
+    myG.internalEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].internal]
+    myG.onBoundaryEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].onBoundary]
+    myG.isRoadEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isRoad]
+    myG.isConstraintEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isConstraint]
+    myG.isPOIEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isPOI]
+    myG.fakeEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].fake]
+    myG.shortcutEdges = [myEdgeDict[edgeID] for edgeID in myEdgeDict if myEdgeDict[edgeID].isShortCut]
+  
+
+    ### Add node property
+    # Initialize so later it can be overwrited
+    for edgeID, edge in myEdgeDict.items():
+        for node in edge.nodes:
+            node.onBoundary = None
+            node.external = None
+            node.internal = None
+
+    # Assign
+    for edgeID, edge in myEdgeDict.items():
+        if edge.external == True:
+            for node in edge.nodes:
+                node.external = True
+
+        if edge.internal == True:
+            for node in edge.nodes:
+                node.internal = True
+
+        if edge.onBoundary == True:    # onBoundary is last assignment so that it can overwrite the properties 
+            for node in edge.nodes:
+                node.onBoundary = True
+
+    # Initialize so later it can be overwrited
+    for edgeID, edge in myEdgeDict.items(): 
+        for node in edge.nodes:
+            node.isPOI = None
+
+    # Assign
+    for edgeID, edge in myEdgeDict.items():
+        if edge.isPOI == True:
+            for node in edge.nodes:
+                node.isPOI = True
+
+    ### Record global POI info
+    POIInfo = {}                                # {Edge:[node0,node1]}
+    for edgeID, edge in myEdgeDict.items():
+        if edge.isPOI == True:
+            POIInfo[edge] = edge.nodes
+
+    POIEdges = list(POIInfo.keys())
+    POINodes = []
+    for value in POIInfo.values():
+        POINodes.extend(value)
+
+    POINodes= list(set(POINodes))  # in case overlapping
+    
+    myG.POIInfo = POIInfo
+    myG.POIEdges = POIEdges
+    myG.POINodes = POINodes 
+
+    ### Record the faces and nodes that truly inside 
+    inner_facelist_True = []
+    for face in myG.inner_facelist:
+        tag = True
+        for node in face.nodes:
+            if node.external == True:
+                tag = False
+                break
+        if tag == True:
+            inner_facelist_True.append(face)
+
+    myG.inner_facelist_True = inner_facelist_True   
+
+    inner_nodelist_True = []
+    for face in myG.inner_facelist_True:
+        inner_nodelist_True.extend(face.nodes)
+    inner_nodelist_True = list(set(inner_nodelist_True))
+    myG.inner_nodelist_True = inner_nodelist_True 
+
+    return myG,myNodeDict,myEdgeDict
+
 
 
 ####################

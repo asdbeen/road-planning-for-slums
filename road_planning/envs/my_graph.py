@@ -389,7 +389,7 @@ class MyGraph(object):
             self.edge_index.append([idx1, idx2])
             self.edge_length.append(self.G[e.nodes[0]][e.nodes[1]]['weight'])
 
-    def _cal_edge_face_index(self):
+    def _cal_edge_face_index(self):                                   ###### if e is a shortcut edge, this pair will be []
         self.edge_face_index = []
         for e in self.edge_list:
             pair = []
@@ -469,7 +469,7 @@ class MyGraph(object):
         
     def _get_edge_face_interior(self):
         edge_face_interior=[]
-        for pair in self.edge_face_index:
+        for pair in self.edge_face_index:                  
             if len(pair) == 1:
                 edge_face_interior.append(0)
             else:

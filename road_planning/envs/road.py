@@ -317,7 +317,6 @@ class RoadEnv:
             observation (object): the observation
         """
 
-
         numerical, node_feature, edge_part_feature, edge_index, edge_mask = self._mg.get_obs()
         stage = self._get_stage_obs()
         
@@ -395,7 +394,11 @@ class RoadEnv:
             done (bool): whether the episode has ended, in which case further step() calls will return undefined results
             info (dict): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)
         """
-        
+        # print ("in step,self._total_road_steps:",self._total_road_steps)
+        # print ("in step,self._total_road_steps * self.build_ration:",self._total_road_steps * self.build_ration)
+        # print ("in step,self._full_connected_steps:",self._full_connected_steps)
+        # print ("in step,self._connecting_steps:",self._connecting_steps)
+
         if self._done:
             raise RuntimeError('Action taken after episode is done.')
 
@@ -424,6 +427,10 @@ class RoadEnv:
             reward, info = self.get_reward_info()
             if self._stage == 'done':
                 self.save_step_data()
+
+        
+        converted_list = [float(arr[0]) for arr in self._action_history]
+        #print ("self._action_history",converted_list)
 
         return self._get_obs(), reward, self._done, info
 

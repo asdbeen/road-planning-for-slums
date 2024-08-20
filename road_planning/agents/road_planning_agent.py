@@ -35,10 +35,7 @@ class RoadPlanningAgent(AgentPPO):
                  restore_best_rewards: bool = True,
                  specificCheckPointPath = None
                  ):
-        
-        print ("asd!!!")
-        print ("cfg.train_file_num",cfg.train_file_num)
-        print ("checkpoint",checkpoint)
+      
         if cfg.train_file_num == 1:
             self.cfg = cfg
             self.training = training
@@ -131,6 +128,7 @@ class RoadPlanningAgent(AgentPPO):
                 action = self.policy_net.select_action(
                     state_var, use_mean_action).numpy().squeeze(0)
 
+                print ("in sample_worker_action",action)
                 next_state, reward, done, info = self.env.step(
                     action, self.thread_loggers[pid])
                 # cache logging
@@ -334,9 +332,13 @@ class RoadPlanningAgent(AgentPPO):
             log_eval: LoggerRL object.
         """
         cfg = self.cfg
-        self.logger.info(f'save plan to file: {cfg.plan_dir}\plan.p')
-        with open(f'{cfg.plan_dir}\plan.p', 'wb') as f:
+        # self.logger.info(f'save plan to file: {cfg.plan_dir}\plan.p')
+        # with open(f'{cfg.plan_dir}\plan.p', 'wb') as f:
+        plan_file_path = os.path.join(cfg.plan_dir,'plan.p')
+        self.logger.info(f'save plan to file: {plan_file_path}')
+        with open(plan_file_path, 'wb') as f:
             pickle.dump(log_eval.plans, f)
+
 
     def optimize(self, iteration):
         info = self.optimize_policy(iteration)
@@ -535,7 +537,6 @@ class RoadPlanningAgent(AgentPPO):
                              total_entropy_loss / self.opt_num_epochs,
                              iteration)
 
-       
     
     def ppo_entropy_loss(self, states, actions, advantages, fixed_log_probs,
                          ind):
@@ -712,6 +713,16 @@ class RoadPlanningAgent(AgentPPO):
 
     def eval_agent_infer(self, num_samples=1, mean_action=True, visualize=True,iteration = None):
         print ("eval_agent_infer",iteration)
+        print ("self.env._mg.f2POI_avg",self.env._mg.f2POI_avg)
+        #print ("road_",self.env._mg.edge_list)
+        # info = []
+        # for edge in self.env._mg.edge_list:
+        #     for node in edge.nodes:
+        #         info.append(node.x)
+        #         info.append(node.y)
+
+        # print (info)
+
         t_start = time.time()
         to_test(*self.sample_modules)
         self.env.eval()
@@ -744,6 +755,7 @@ class RoadPlanningAgent(AgentPPO):
                         state_var = tensorfy([state])
                         action = self.policy_net.select_action(
                             state_var, mean_action).numpy()
+                        
                         next_state, reward, done, info = self.env.step(
                             action, self.logger)
                         logger.step(self.env, reward, info)
@@ -792,6 +804,8 @@ class RoadPlanningAgent(AgentPPO):
 
         self.env.train()
         logger.sample_time = time.time() - t_start
+
+        print ("self.env._mg.f2POI_avg",self.env._mg.f2POI_avg)
         return logger
     
     def infer(self,

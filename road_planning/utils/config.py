@@ -15,11 +15,13 @@ class Config:
         self.train_file_num = int(train_file_num)
 
         if cfg_dict is not None:
+
             cfg = cfg_dict
         else:
             cwd = os.getcwd()
             #file_path = os.path.join(cwd,'road_planning/cfg/punggol.yaml')   # change to punggol.yaml
             file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
+
             try:
                 cfg = load_yaml(file_path)
             except:

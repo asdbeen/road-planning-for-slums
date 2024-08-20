@@ -20,7 +20,8 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
-flags.DEFINE_string('slum_name', 'tengah_1', 'data_dir')
+flags.DEFINE_string('slum_name', 'punggol_1_withShortcut_withConfig', 'data_dir')
+#flags.DEFINE_string('slum_name', 'punggol_1', 'data_dir')
 flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')

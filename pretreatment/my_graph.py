@@ -212,7 +212,7 @@ class MyGraph(object):
 
         self.road_nodes: list[MyNode] = [] 
         self.road_nodes_idx: list[int] = []
-        self.road_edges: list[MyNode] = [] 
+        self.road_edges: list[MyEdge] = [] 
 
         self.max_road_cost: float = 0
         self.total_road_cost: float = 0
@@ -406,7 +406,7 @@ class MyGraph(object):
 
     def _cal_edge_face_index(self):
         self.edge_face_index = []
-        for e in self.edge_list:
+        for e in self.edge_list:                                                    ##### if e is the shortcut egde, this will not be calculated
             pair = []
             for f in self.inner_facelist:
                 if len(set(e.nodes).intersection(set(f.nodes))) == 2:
@@ -510,7 +510,7 @@ class MyGraph(object):
     # ok
     def _get_edge_face_interior(self):
         edge_face_interior=[]
-        for pair in self.edge_face_index:
+        for pair in self.edge_face_index:          ##### if e is the shortcut egde, this will not be calculated
             if len(pair) == 1:
                 edge_face_interior.append(0)
             elif len(pair) == 2:
@@ -556,7 +556,7 @@ class MyGraph(object):
 
             face_mean_dis[f1] = self.td_face_min[f1]/(dis/(count-1))
 
-        for pair in self.edge_face_index:
+        for pair in self.edge_face_index:                                       ##### if e is the shortcut egde, this will not be calculated
             if len(pair) == 1:
                 f = pair[0]
                 mean_dis = face_mean_dis[f]
@@ -606,8 +606,13 @@ class MyGraph(object):
             stage2_num = self.build_road_num - self.full_connected_road_num
         stage1_ration = stage1_num / self.max_road_num
         stage2_ration = stage2_num / self.max_road_num
-        interior_ration = len(
-            self.interior_parcels) / self.max_interior_parcels
+
+        if self.max_interior_parcels!= 0:
+            interior_ration = len(
+                self.interior_parcels) / self.max_interior_parcels
+        else:
+            interior_ration = 0          # newly added for internal path cases
+
         # print(stage1_ration, stage2_ration, interior_ration)
         return [0.5, stage1_ration, stage2_ration, interior_ration]
 
@@ -1031,6 +1036,7 @@ class MyGraph(object):
 
 
         edge.road = True
+        #print ("len(self.road_edges)",len(self.road_edges),edge)
         if edge in self.road_edges:
             print (edge)
             raise ValueError("[!]Already in ")
