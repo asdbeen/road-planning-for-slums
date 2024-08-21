@@ -20,7 +20,7 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
-flags.DEFINE_string('slum_name', 'punggol_1_withShortcut_withConfig', 'data_dir')
+flags.DEFINE_string('slum_name', 'punggol_1_withShortcut_withConfigAll', 'data_dir')
 #flags.DEFINE_string('slum_name', 'punggol_1', 'data_dir')
 flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
 
@@ -47,7 +47,7 @@ FLAGS = flags.FLAGS
 def train_one_iteration(agent: RoadPlanningAgent, iteration: int) -> None:
     
     """Train one iteration"""
-    agent.optimize(iteration)
+    agent.optimize(iteration,fullConnected=False)
     agent.save_checkpoint(iteration)
 
     """clean up gpu memory"""
@@ -82,7 +82,7 @@ def main_loop(_):
     agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
                                training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards, specificCheckPointPath = specificCheckPointPath)
 
-    agent.infer(visualize=FLAGS.visualize)
+    agent.infer(visualize=FLAGS.visualize,fullConnected=True)
     print ("Done")
 
  

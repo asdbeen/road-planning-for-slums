@@ -54,7 +54,7 @@ class MyNode(object):
         if self.name:
             return self.name
         else:
-            return "(%.2f,%.2f)" % (self.x, self.y)
+            return "(%.2f,%.2f)" % (self.x, self.y)   # rounded
 
     def __eq__(self, other):
         if hasattr(other, 'loc'):
@@ -1116,11 +1116,14 @@ class MyGraph(object):
                     road_nodes.append(n)
                     road_nodes_idx.append(self.node_list.index(n))
 
-
-        self.max_road_cost = max([
-            self.G[e.nodes[0]][e.nodes[1]]['weight'] for e in self.myedges()
-            if not e.road
-        ])
+        try:
+            self.max_road_cost = max([
+                self.G[e.nodes[0]][e.nodes[1]]['weight'] for e in self.myedges()
+                if not e.road
+            ])
+        except:
+            self.max_road_cost = 0
+            
         self.total_road_cost = 0
 
         self.roads_update = True
@@ -1785,6 +1788,7 @@ class MyGraph(object):
         self.td_dict_faceToPOIEdge_init()
         self.td_dict_ave_faceToPOIEdge_init()
         self.face2POI_avg()
+        self.CheckCuldesacNum()
 
         ####
         self.td_dict_nodeToPOInode_min_init()
@@ -1822,12 +1826,26 @@ class MyGraph(object):
             e = self.road_edges[idx]
             roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
 
-        single_neighbor_nodes = [node for node in roadG.nodes() if len(list(roadG.neighbors(node))) == 1]
+        single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
         num_single_neighbor_nodes = len(single_neighbor_nodes)
+
+        self.culdesacNum = num_single_neighbor_nodes
         return num_single_neighbor_nodes
 
 
+    def CuldesacReward(self) -> float:
+        before = self.culdesacNum 
+        now = self.CheckCuldesacNum()
+        print ("in CuldesacRewardbefore",before)
+        print ("in CuldesacRewardnow",now)
 
+        if before == 0 or before == now:
+            culdesacReward = 0
+        elif now > before:
+            culdesacReward = -1
+        elif now < before:
+            culdesacReward = 1
+        return  culdesacReward  
 
 
 ###################################

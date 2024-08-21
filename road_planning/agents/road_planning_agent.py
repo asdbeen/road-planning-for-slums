@@ -121,6 +121,7 @@ class RoadPlanningAgent(AgentPPO):
             memory_messages = []
             for t in range(10000):    
                 state_var = tensorfy([state])
+                #### self.noise_rate == 1 meaning it is totally depend on mean_action
                 use_mean_action = mean_action or torch.bernoulli(
                     torch.tensor([1 - self.noise_rate])).item()
                 # action = self.policy_net.select_action(state_var, use_mean_action).numpy().squeeze(0)
@@ -128,7 +129,7 @@ class RoadPlanningAgent(AgentPPO):
                 action = self.policy_net.select_action(
                     state_var, use_mean_action).numpy().squeeze(0)
 
-                print ("in sample_worker_action",action)
+                #print ("in sample_worker_action",action)
                 next_state, reward, done, info = self.env.step(
                     action, self.thread_loggers[pid])
                 # cache logging
@@ -147,7 +148,7 @@ class RoadPlanningAgent(AgentPPO):
                     break
                 state = next_state
 
-     
+            print ("sample_worker_episode_success",episode_success)
             if episode_success:
                 logger.start_episode(self.env)
                 for var in range(len(logger_messages)):
@@ -340,11 +341,11 @@ class RoadPlanningAgent(AgentPPO):
             pickle.dump(log_eval.plans, f)
 
 
-    def optimize(self, iteration):
-        info = self.optimize_policy(iteration)
+    def optimize(self, iteration,fullConnected = False):
+        info = self.optimize_policy(iteration,fullConnected)
         self.log_optimize_policy(iteration, info)
 
-    def optimize_policy(self, iteration):
+    def optimize_policy(self, iteration,fullConnected=False):
         """generate multiple trajectories that reach the minimum batch_size"""
         t0 = time.time()
         
@@ -387,7 +388,7 @@ class RoadPlanningAgent(AgentPPO):
         else:
             pass
 
-        log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True,iteration=iteration)
+        log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True,iteration=iteration,fullConnected=fullConnected)
         t3 = time.time()
         
 
@@ -625,7 +626,7 @@ class RoadPlanningAgent(AgentPPO):
         # print ("log.stats_loggers.n",log.stats_loggers['reward'].n)
 
 
-    def eval_agent(self, num_samples=1, mean_action=True, visualize=True,iteration = None):
+    def eval_agent(self, num_samples=1, mean_action=True, visualize=True,iteration = None,fullConnected = False):
         print ("eval_agent",iteration)
         t_start = time.time()
         to_test(*self.sample_modules)
@@ -636,7 +637,8 @@ class RoadPlanningAgent(AgentPPO):
                 
                 while logger.num_steps < num_samples:
                     state = self.env.reset()
-            
+                    if fullConnected == True:
+                        self.env._stage = 'full_connected'     #####
                     if visualize:
                         if iteration == None:
                             os.makedirs(os.path.join(self.cfg.plan_dir,"eva_"), exist_ok=True)
@@ -705,15 +707,18 @@ class RoadPlanningAgent(AgentPPO):
                                             path=os.path.join(
                                                 self.cfg.plan_dir,"eva_"+ str(iteration),  # add a folder for each iteration
                                                 'final.svg'))
+
                 logger = self.logger_cls.merge([logger], **self.logger_kwargs)
+   
 
         self.env.train()
         logger.sample_time = time.time() - t_start
         return logger
 
-    def eval_agent_infer(self, num_samples=1, mean_action=True, visualize=True,iteration = None):
+    def eval_agent_infer(self, num_samples=1, mean_action=True, visualize=True,iteration = None,fullConnected = False):
         print ("eval_agent_infer",iteration)
         print ("self.env._mg.f2POI_avg",self.env._mg.f2POI_avg)
+        
         #print ("road_",self.env._mg.edge_list)
         # info = []
         # for edge in self.env._mg.edge_list:
@@ -726,13 +731,19 @@ class RoadPlanningAgent(AgentPPO):
         t_start = time.time()
         to_test(*self.sample_modules)
         self.env.eval()
+
+ 
+
         with to_cpu(*self.sample_modules):
             with torch.no_grad():
                 logger = self.logger_cls(**self.logger_kwargs)
                 
                 while logger.num_steps < num_samples:
                     state = self.env.reset()
-            
+                    if fullConnected == True:
+                        self.env._stage == 'full_connected'     #####
+                        print ("trun _stage to true")
+                        print (self.env._stage)
                     if visualize:
                         if iteration == None:
                             os.makedirs(os.path.join(self.cfg.plan_dir,"eva_infer"), exist_ok=True)
@@ -813,12 +824,13 @@ class RoadPlanningAgent(AgentPPO):
               mean_action=True,
               visualize=False,
               save_video=False,
-              only_road=False):
-
+              only_road=False,
+              fullConnected=False):
+        
         t_start = time.time()
         log_eval = self.eval_agent_infer(num_samples,
                                    mean_action=mean_action,
-                                   visualize=visualize)
+                                   visualize=visualize,fullConnected=fullConnected)
         t_eval = time.time() - t_start
 
         logger = self.logger

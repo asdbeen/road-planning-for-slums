@@ -20,9 +20,9 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
-flags.DEFINE_string('slum_name', 'punggol', 'data_dir')                           # this is the name of ymal file 
+flags.DEFINE_string('slum_name', 'punggol_1_withShortcut_withConfigAll', 'data_dir')                           # this is the name of ymal file 
 flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
-flags.DEFINE_string('train_file_num', '5', 'Number of trianing file.')              # this is the number of training file 
+flags.DEFINE_string('train_file_num', '1', 'Number of trianing file.')              # this is the number of training file 
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
@@ -47,7 +47,8 @@ FLAGS = flags.FLAGS
 def train_one_iteration(agent: RoadPlanningAgent, iteration: int) -> None:
     
     """Train one iteration"""
-    agent.optimize(iteration)
+    #agent.optimize(iteration,fullConnected=False)  
+    agent.optimize(iteration,fullConnected=True)      #!!!!!! for internal path cases
     agent.save_checkpoint(iteration)
 
     """clean up gpu memory"""

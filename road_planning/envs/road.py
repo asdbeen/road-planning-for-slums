@@ -107,8 +107,10 @@ def reward_info_function(mg: MyGraph, name: Text,
         travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
         # print ("name",name)
         # print ("travel_distance_POI",travel_distance_POI)
-        # print ("f2f_avg",mg.f2f_avg)
-        # print ("f2POI_avg",mg.f2POI_avg)
+        print ("f2f_avg",mg.f2f_avg)
+        print ("f2POI_avg",mg.f2POI_avg)
+        
+        print ("Culdesac",mg.culdesacNum)    
         # print ("-------------")
     # print (mg.face2POI_avg())
     # print ("travel_distance_POI",travel_distance_POI)
@@ -120,6 +122,9 @@ def reward_info_function(mg: MyGraph, name: Text,
     # face2face_avg = mg.face2face_avg()
     total_road_cost = mg.total_cost()
 
+    culdesacReward = mg.CuldesacReward()
+    print ("culdesacReward",culdesacReward)
+    print ("travel_distance_POI",travel_distance_POI)  
     # print(connect_reward , travel_distance , road_cost)
     # print(face2face_avg,total_road_cost)
 
@@ -128,7 +133,9 @@ def reward_info_function(mg: MyGraph, name: Text,
     # print ("road_cost",travel_distance_POI)
     # print ("--------")
     
-    return connect_reward + travel_distance + travel_distance_POI +  road_cost, {
+
+
+    return connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward, {
 
         'connect_reward': connect_reward,
         'travel_distance_reward': travel_distance,
@@ -137,13 +144,16 @@ def reward_info_function(mg: MyGraph, name: Text,
 
         'interior_parcels_num':interior_parcels_num,
         'connecting_steps':connecting_steps,
-        'f2f_dis_avg': mg.f2POI_avg,        # original is 9
+        'f2f_dis_avg': mg.f2f_avg,        # original is 0
         'total_road_cost': total_road_cost,
 
         'travel_distance_weight':travel_distance_weight,
         'road_cost_weight':road_cost_weight,
 
-        'f2POI_dis_avg':mg.f2f_avg
+        'f2POI_dis_avg':mg.f2POI_avg,        # New
+        'culdesacReward':culdesacReward        # New
+
+
     }
 
 
@@ -394,10 +404,12 @@ class RoadEnv:
             done (bool): whether the episode has ended, in which case further step() calls will return undefined results
             info (dict): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)
         """
-        # print ("in step,self._total_road_steps:",self._total_road_steps)
+        # print ("in step,self._stage :",self._stage)
+        
         # print ("in step,self._total_road_steps * self.build_ration:",self._total_road_steps * self.build_ration)
         # print ("in step,self._full_connected_steps:",self._full_connected_steps)
         # print ("in step,self._connecting_steps:",self._connecting_steps)
+        # print ("self.stage2edges ",len(self._mg.stage2edges ))
 
         if self._done:
             raise RuntimeError('Action taken after episode is done.')
@@ -428,8 +440,10 @@ class RoadEnv:
             if self._stage == 'done':
                 self.save_step_data()
 
-        
-        converted_list = [float(arr[0]) for arr in self._action_history]
+
+        print ("reward",reward)
+
+        #converted_list = [float(arr[0]) for arr in self._action_history]
         #print ("self._action_history",converted_list)
 
         return self._get_obs(), reward, self._done, info
