@@ -107,10 +107,10 @@ def reward_info_function(mg: MyGraph, name: Text,
         travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
         # print ("name",name)
         # print ("travel_distance_POI",travel_distance_POI)
-        print ("f2f_avg",mg.f2f_avg)
-        print ("f2POI_avg",mg.f2POI_avg)
+        # print ("f2f_avg",mg.f2f_avg)
+        # print ("f2POI_avg",mg.f2POI_avg)
         
-        print ("Culdesac",mg.culdesacNum)    
+        # print ("Culdesac",mg.culdesacNum)    
         # print ("-------------")
     # print (mg.face2POI_avg())
     # print ("travel_distance_POI",travel_distance_POI)
@@ -123,8 +123,8 @@ def reward_info_function(mg: MyGraph, name: Text,
     total_road_cost = mg.total_cost()
 
     culdesacReward = mg.CuldesacReward()
-    print ("culdesacReward",culdesacReward)
-    print ("travel_distance_POI",travel_distance_POI)  
+    # print ("culdesacReward",culdesacReward)
+    # print ("travel_distance_POI",travel_distance_POI)  
     # print(connect_reward , travel_distance , road_cost)
     # print(face2face_avg,total_road_cost)
 
@@ -133,7 +133,7 @@ def reward_info_function(mg: MyGraph, name: Text,
     # print ("road_cost",travel_distance_POI)
     # print ("--------")
     
-
+    culdesacReward = 0
 
     return connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward, {
 
@@ -194,6 +194,13 @@ class RoadEnv:
         self._connecting_steps = 0
         self._full_connected_steps = 0
         self._stage = 'connecting'
+
+
+        if len(self._mg.interior_parcels) == 0:
+            self._stage = 'full_connected'     #####
+            print ("turn _stage to true, self.env._stage",self._stage)
+            
+
 
     def _compute_total_road_steps(self) -> None:
         """
@@ -441,10 +448,10 @@ class RoadEnv:
                 self.save_step_data()
 
 
-        print ("reward",reward)
+        # print ("reward",reward)
 
-        #converted_list = [float(arr[0]) for arr in self._action_history]
-        #print ("self._action_history",converted_list)
+        # converted_list = [float(arr[0]) for arr in self._action_history]
+        # print ("self._action_history",converted_list)
 
         return self._get_obs(), reward, self._done, info
 

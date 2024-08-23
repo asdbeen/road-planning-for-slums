@@ -46,6 +46,8 @@ class RoadPlanningAgent(AgentPPO):
             self.setup_env()
             self.setup_model()
             self.setup_optimizer()
+
+         
             if checkpoint != 0:
                 self.start_iteration = self.load_checkpoint(
                     checkpoint, restore_best_rewards,specificCheckPointPath)
@@ -104,7 +106,28 @@ class RoadPlanningAgent(AgentPPO):
                             policy_grad_clip=[(self.policy_net.parameters(), 1),
                                             (self.value_net.parameters(), 1)],
                             mini_batch_size=cfg.mini_batch_size)
+        
+        print ("---")
+
+        
+        def print_model_parameters(model):
+            """Print the parameters of a given model."""
+            for name, param in model.named_parameters():
+                if param.requires_grad:
+                    print(f"Parameter name: {name}")
+                    print(f"Shape: {param.shape}")
+                    print(f"Values: {param}")
+                    print()
             
+        print("Model parameters in policy_road_head:")
+        print_model_parameters(self.actor_critic_net.actor_net.policy_road_head)
+
+        print("-----------------------:")
+        print("-----------------------:")
+
+        print("Model parameters in value_head:")
+        print_model_parameters(self.actor_critic_net.value_net.value_head)
+
 
  
     def sample_worker(self, pid, queue, num_samples, mean_action):  # This is the one in use
@@ -114,7 +137,7 @@ class RoadPlanningAgent(AgentPPO):
 
         while logger.num_steps < num_samples:
             state = self.env.reset()
-
+ 
             last_info = dict()
             episode_success = False
             logger_messages = []
@@ -148,7 +171,8 @@ class RoadPlanningAgent(AgentPPO):
                     break
                 state = next_state
 
-            print ("sample_worker_episode_success",episode_success)
+            print ("sample_worker_episode_success",episode_success, "current logger.num_steps",logger.num_steps)
+
             if episode_success:
                 logger.start_episode(self.env)
                 for var in range(len(logger_messages)):
@@ -292,6 +316,10 @@ class RoadPlanningAgent(AgentPPO):
                                             self.current_rewards)
         self.current_plans = model_cp.get('current_plans', self.current_plans)
         start_iteration = model_cp['iteration'] + 1
+
+        #print ("in load_checkpoint",type(self.actor_critic_net))
+
+  
         return start_iteration
 
     def save_checkpoint(self, iteration):
@@ -341,11 +369,11 @@ class RoadPlanningAgent(AgentPPO):
             pickle.dump(log_eval.plans, f)
 
 
-    def optimize(self, iteration,fullConnected = False):
-        info = self.optimize_policy(iteration,fullConnected)
+    def optimize(self, iteration):
+        info = self.optimize_policy(iteration)
         self.log_optimize_policy(iteration, info)
 
-    def optimize_policy(self, iteration,fullConnected=False):
+    def optimize_policy(self, iteration):
         """generate multiple trajectories that reach the minimum batch_size"""
         t0 = time.time()
         
@@ -375,8 +403,26 @@ class RoadPlanningAgent(AgentPPO):
         print ("optimize_policy_ start update_params")  
         self.update_params(batch, iteration)
 
+        print ("after optimize_policy_ start update_params, check parameter ")  
         
-        
+        def print_model_parameters(model):
+            """Print the parameters of a given model."""
+            for name, param in model.named_parameters():
+                if param.requires_grad:
+                    print(f"Parameter name: {name}")
+                    print(f"Shape: {param.shape}")
+                    print(f"Values: {param}")
+                    print()
+            
+        print("Model parameters in policy_road_head:")
+        print_model_parameters(self.actor_critic_net.actor_net.policy_road_head)
+
+        print("-----------------------:")
+        print("-----------------------:")
+
+        print("Model parameters in value_head:")
+        print_model_parameters(self.actor_critic_net.value_net.value_head)
+
         t2 = time.time()
         """evaluate policy"""
         print ("optimize_policy_ start eval_agent")  
@@ -388,7 +434,7 @@ class RoadPlanningAgent(AgentPPO):
         else:
             pass
 
-        log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True,iteration=iteration,fullConnected=fullConnected)
+        log_eval = self.eval_agent(num_samples=1, mean_action=True,visualize=True,iteration=iteration)
         t3 = time.time()
         
 
@@ -626,7 +672,7 @@ class RoadPlanningAgent(AgentPPO):
         # print ("log.stats_loggers.n",log.stats_loggers['reward'].n)
 
 
-    def eval_agent(self, num_samples=1, mean_action=True, visualize=True,iteration = None,fullConnected = False):
+    def eval_agent(self, num_samples=1, mean_action=True, visualize=True,iteration = None):
         print ("eval_agent",iteration)
         t_start = time.time()
         to_test(*self.sample_modules)
@@ -637,8 +683,7 @@ class RoadPlanningAgent(AgentPPO):
                 
                 while logger.num_steps < num_samples:
                     state = self.env.reset()
-                    if fullConnected == True:
-                        self.env._stage = 'full_connected'     #####
+                  
                     if visualize:
                         if iteration == None:
                             os.makedirs(os.path.join(self.cfg.plan_dir,"eva_"), exist_ok=True)
@@ -715,10 +760,9 @@ class RoadPlanningAgent(AgentPPO):
         logger.sample_time = time.time() - t_start
         return logger
 
-    def eval_agent_infer(self, num_samples=1, mean_action=True, visualize=True,iteration = None,fullConnected = False):
+    def eval_agent_infer(self, num_samples=1, mean_action=True, visualize=True,iteration = None):
         print ("eval_agent_infer",iteration)
-        print ("self.env._mg.f2POI_avg",self.env._mg.f2POI_avg)
-        
+
         #print ("road_",self.env._mg.edge_list)
         # info = []
         # for edge in self.env._mg.edge_list:
@@ -740,10 +784,7 @@ class RoadPlanningAgent(AgentPPO):
                 
                 while logger.num_steps < num_samples:
                     state = self.env.reset()
-                    if fullConnected == True:
-                        self.env._stage == 'full_connected'     #####
-                        print ("trun _stage to true")
-                        print (self.env._stage)
+            
                     if visualize:
                         if iteration == None:
                             os.makedirs(os.path.join(self.cfg.plan_dir,"eva_infer"), exist_ok=True)
@@ -816,7 +857,6 @@ class RoadPlanningAgent(AgentPPO):
         self.env.train()
         logger.sample_time = time.time() - t_start
 
-        print ("self.env._mg.f2POI_avg",self.env._mg.f2POI_avg)
         return logger
     
     def infer(self,
@@ -825,12 +865,12 @@ class RoadPlanningAgent(AgentPPO):
               visualize=False,
               save_video=False,
               only_road=False,
-              fullConnected=False):
+              ):
         
         t_start = time.time()
         log_eval = self.eval_agent_infer(num_samples,
                                    mean_action=mean_action,
-                                   visualize=visualize,fullConnected=fullConnected)
+                                   visualize=visualize)
         t_eval = time.time() - t_start
 
         logger = self.logger

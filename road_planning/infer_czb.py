@@ -47,7 +47,7 @@ FLAGS = flags.FLAGS
 def train_one_iteration(agent: RoadPlanningAgent, iteration: int) -> None:
     
     """Train one iteration"""
-    agent.optimize(iteration,fullConnected=False)
+    agent.optimize(iteration)
     agent.save_checkpoint(iteration)
 
     """clean up gpu memory"""
@@ -75,14 +75,15 @@ def main_loop(_):
 
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p"
-    checkpoint = 46
-    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0046.p"
+    checkpoint = 1
+    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_1_withShortcut_withConfigAll/rl-ngnn/punggol_1_withShortcut_withConfigAll/0/models/iteration_0003.p"
+    #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0001.p"
     
     """create agent"""
     agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
                                training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards, specificCheckPointPath = specificCheckPointPath)
 
-    agent.infer(visualize=FLAGS.visualize,fullConnected=True)
+    agent.infer(visualize=FLAGS.visualize)
     print ("Done")
 
  

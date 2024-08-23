@@ -1836,8 +1836,8 @@ class MyGraph(object):
     def CuldesacReward(self) -> float:
         before = self.culdesacNum 
         now = self.CheckCuldesacNum()
-        print ("in CuldesacRewardbefore",before)
-        print ("in CuldesacRewardnow",now)
+        # print ("in CuldesacRewardbefore",before)
+        # print ("in CuldesacRewardnow",now)
 
         if before == 0 or before == now:
             culdesacReward = 0

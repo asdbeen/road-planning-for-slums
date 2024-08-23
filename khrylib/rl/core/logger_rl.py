@@ -62,8 +62,7 @@ class LoggerRL:
 
         logger.total_reward = logger.stats_loggers['reward'].total()
         logger.avg_episode_len = logger.stats_loggers['episode_len'].avg()
-        
-        print ("logger.stats_loggers.num_episodes",logger.stats_loggers['episode_len'].n)
+
   
 
         logger.avg_episode_reward = logger.stats_loggers['episode_reward_avg'].avg()

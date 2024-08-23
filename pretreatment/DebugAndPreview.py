@@ -176,3 +176,30 @@ def CheckSpecificFace(S0,faceCentroidX,POIEdgeNodeX):
                     print ("POIEdge",POIEdge)
                     print ("td_dict_faceToPOIEdge:",S0.td_dict_faceToPOIEdge[face][POIEdge])
                     print ("td_dict_faceToPOIEdge_TheNodePair:" ,S0.td_dict_faceToPOIEdge_TheNodePair[face][POIEdge])
+
+
+
+### Check model
+
+def print_model_parameters(model):
+    """Print the parameters of a given model."""
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            print(f"Parameter name: {name}")
+            print(f"Shape: {param.shape}")
+            print(f"Values: {param}")
+            print()
+    
+    # print("Model parameters in policy_road_head:")
+    # print_model_parameters(self.actor_critic_net.actor_net.policy_road_head)
+
+    # print("-----------------------:")
+    # print("-----------------------:")
+
+    # print("Model parameters in value_head:")
+    # print_model_parameters(self.actor_critic_net.value_net.value_head)
+
+
+def print_action_history(self):
+    converted_list = [float(arr) for arr in self.env._action_history]
+    print ("action history",converted_list)
