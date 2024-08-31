@@ -95,34 +95,42 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     if name == 'connecting':
         travel_distance_POI = 0
+        culdesacReward = 0
+
     elif name == 'full_connected':
-
+        
+        ####################################### 
         ### Do POI related computation
-        mg.td_dict_nodeToPOInode_init()
-        mg.td_dict_nodeToPOIEdge_init()
-        mg.td_dict_faceToPOIEdge_init()
-        mg.td_dict_ave_faceToPOIEdge_init()
+        #######################################   
+        # mg.td_dict_nodeToPOInode_init()
+        # mg.td_dict_nodeToPOIEdge_init()
+        # mg.td_dict_faceToPOIEdge_init()
+        # mg.td_dict_ave_faceToPOIEdge_init()
+        # travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
 
-
-        travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
         # print ("name",name)
         # print ("travel_distance_POI",travel_distance_POI)
         # print ("f2f_avg",mg.f2f_avg)
         # print ("f2POI_avg",mg.f2POI_avg)
-        
         # print ("Culdesac",mg.culdesacNum)    
         # print ("-------------")
-    # print (mg.face2POI_avg())
-    # print ("travel_distance_POI",travel_distance_POI)
+   
+        ####################################### 
+        ### Do POI related computation
+        ####################################### 
+        culdesacReward = mg.CuldesacReward()
+
     road_cost = road_cost_weight * mg.road_cost()
     connect_reward = mg.connected_ration()
 
     interior_parcels_num = len(mg.interior_parcels)
     connecting_steps = mg._get_full_connected_road_num()
-    # face2face_avg = mg.face2face_avg()
+    
     total_road_cost = mg.total_cost()
 
-    culdesacReward = mg.CuldesacReward()
+
+
+
     # print ("culdesacReward",culdesacReward)
     # print ("travel_distance_POI",travel_distance_POI)  
     # print(connect_reward , travel_distance , road_cost)
@@ -133,13 +141,17 @@ def reward_info_function(mg: MyGraph, name: Text,
     # print ("road_cost",travel_distance_POI)
     # print ("--------")
     
-    culdesacReward = 0
+    #culdesacReward = 0
 
-    return connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward, {
+
+    #finalReward = connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward
+    finalReward = connect_reward  + travel_distance + road_cost + culdesacReward    # for complete roadnetwork  
+
+    return finalReward, {
 
         'connect_reward': connect_reward,
         'travel_distance_reward': travel_distance,
-        'travel_distance_POI_reward': travel_distance_POI,   # New
+        #'travel_distance_POI_reward': travel_distance_POI,   # New
         'road_cost_reward': road_cost,
 
         'interior_parcels_num':interior_parcels_num,
@@ -198,7 +210,7 @@ class RoadEnv:
 
         if len(self._mg.interior_parcels) == 0:
             self._stage = 'full_connected'     #####
-            print ("turn _stage to true, self.env._stage",self._stage)
+            # print ("turn _stage to true, self.env._stage",self._stage)
             
 
 
@@ -437,10 +449,24 @@ class RoadEnv:
                 self.build_road(action,POIVersionTag = False)   #######
 
                 self._full_connected_steps += 1
-                if (self._full_connected_steps + self._connecting_steps >
-                        self._total_road_steps * self.build_ration):
+
+
+                # if (self._full_connected_steps + self._connecting_steps >              ##### original
+                #         self._total_road_steps * self.build_ration):
+                #     self.transition_stage()
+
+
+                # if (self._full_connected_steps + self._connecting_steps >                ##### test 2 diagonals
+                #         9):     
+                #             self.transition_stage()
+
+                # if (self._mg.culdesacNum==0  ):
+                #     self.transition_stage()
+                if (self._mg.culdesacNum==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
+
                     self.transition_stage()
-            
+
+
             # print ("in step:", "total_cost",self._mg.total_cost(),self._stage)
             # print ("in step:",'f2POI_dis_avg',self._mg.f2f_avg)
             reward, info = self.get_reward_info()

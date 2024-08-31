@@ -46,8 +46,9 @@ class MyNode(object):
         # Summarize added features
         self.onBoundary:bool = None
         self.external:bool = None
-        self.internal = None
-        self.isPOI = None
+        self.internal:bool = None
+        self.isPOI:bool = None
+        self.shortCutNode:bool = None
 
 
     def __repr__(self):
@@ -271,13 +272,13 @@ class MyGraph(object):
         # Summarize added features
         self.f2POI_avg = 10000
         self.f2POI_avg_min = 10000
-
+   
         if G is None:
             self.G = nx.Graph()
 
         else:
             self.G = G
-     
+
     def __repr__(self):
         return "Graph (%s) with %d nodes" % (self.name,
                                              self.G.number_of_nodes())
@@ -316,7 +317,7 @@ class MyGraph(object):
         return [self.G[e[0]][e[1]]["weight"] for e in self.G.edges()]
 
     # Be careful, only the graph itself is a DeepCopy
-    def copy(self):
+    def copy(self,recalculateTag=True):
         """  Relies fundamentally on nx.copy function.  This creates a copy of
         the nx graph, where the nodes and edges retain their properties.
         MyGraph properties have to be recalculated, because copy needs to make
@@ -325,6 +326,7 @@ class MyGraph(object):
 
         nx_copy = self.G.copy()
         copy = MyGraph(nx_copy)
+ 
         copy.name = self.name
         copy.rezero_vector = self.rezero_vector
         copy.rescale_vector = self.rescale_vector
@@ -338,8 +340,13 @@ class MyGraph(object):
         # outerface is a side effect of the creation of inner_facelist
         # so we operate on that in order to not CALL inner_facelist for every
         # copy.
-        if hasattr(self, 'outerface'):
+
+        if hasattr(self, 'outerface') and recalculateTag==True:
             copy.inner_facelist
+        else:
+            pass
+        
+
 
         # order matters.  road nodes before interior parcels
         if hasattr(self, 'road_nodes'):
@@ -354,10 +361,77 @@ class MyGraph(object):
         if hasattr(self, 'node_list'):
             copy.node_list = [n for n in copy.G.nodes() if n in self.node_list]
 
+        if recalculateTag==False:
+            # Manually duplicate the face
+            copy.inner_facelist = []
+            for originalFace in self.inner_facelist:
+                originalEdgeList = originalFace.ordered_edges
+                newEdgeList = []
+                for edge in originalEdgeList:
+                    edgeIndex = self.edge_list.index(edge)
+                    newEdgeList.append(copy.edge_list[edgeIndex])
+                copy.inner_facelist.append(MyFace(newEdgeList))
+
+            copy.outerface = None
+            for edge in self.outerface.ordered_edges:
+                edgeIndex = self.edge_list.index(edge)
+                newEdgeList.append(copy.edge_list[edgeIndex])
+            copy.outerface = MyFace(newEdgeList)
+
         if hasattr(self, 'interior_parcels'):
             copy.define_interior_parcels()
 
-  
+
+
+        ###################################
+        ######## Manual Duplicate #########
+        ###################################
+        copy.node_degree_road = {}
+        for node in self.node_list:
+            nodeIndex = self.node_list.index(node)
+            copy.node_degree_road[copy.node_list[nodeIndex]] = self.node_degree_road[node]
+
+
+        copy.node_isroad = {}
+        for node in self.node_isroad:
+            nodeIndex = self.node_list.index(node)
+            copy.node_isroad[copy.node_list[nodeIndex]] = self.node_isroad[node]
+
+        copy.inner_nodelist_True = []
+        for node in self.inner_nodelist_True:
+            nodeIndex = self.node_list.index(node)
+            copy.inner_nodelist_True.append(copy.node_list[nodeIndex])
+
+
+        copy.inner_facelist_True = []
+        for face in self.inner_facelist_True:
+            faceIndex = self.inner_facelist.index(face)
+            copy.inner_facelist_True.append(copy.inner_facelist[faceIndex])
+
+
+        copy.POIEdges = []
+        for edge in self.POIEdges:
+            edgeIndex = self.edge_list.index(edge)
+            copy.POIEdges.append(copy.edge_list[edgeIndex])
+
+        copy.shortcutEdges = []
+        for edge in self.shortcutEdges:
+            edgeIndex = self.edge_list.index(edge)
+            copy.shortcutEdges.append(copy.edge_list[edgeIndex])
+
+        copy.POINodes = []
+        for node in self.POINodes:
+            nodeIndex = self.node_list.index(node)
+            copy.POINodes.append(copy.node_list[nodeIndex])
+
+        copy.road_edges = []
+        for edge in self.road_edges:
+            edgeIndex = self.edge_list.index(edge)
+            copy.road_edges.append(copy.edge_list[edgeIndex])
+
+
+        copy.td_dict_POI_Related_init()
+
         return copy
     
     @lazy_property
@@ -1060,7 +1134,6 @@ class MyGraph(object):
 
         for n in edge.nodes:
             n.road = True
-
             self.node_degree_road[n] += 1
             self.node_isroad[n] = 1
             idx = self.node_list.index(n)
@@ -1214,6 +1287,8 @@ class MyGraph(object):
             e = self.road_edges[idx]
             roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
         td_dict = dict(nx.shortest_path_length(roadG.G, weight="weight"))
+
+
 ### init_td_dict
         node_length = len(self.node_list)
         # print('node:', node_length, 'edge:', len(self.edge_list))
@@ -1299,7 +1374,7 @@ class MyGraph(object):
                 sum += self.td_dict_face_min[i][j]
         self.f2f_avg_min = sum / (len(self.inner_facelist)*(len(self.inner_facelist)-1))
 
-        print('td_init')
+        #print('td_init')
 
     # update node2node & face2face distace
     # update node2node & face2face distace
@@ -1683,6 +1758,7 @@ class MyGraph(object):
 
     # The dict records each face's distance to all POI Edges
     def td_dict_faceToPOIEdge_init(self,infiniteDist = 10000):
+   
         self.td_dict_faceToPOIEdge = {}
         self.td_dict_faceToPOIEdge_TheNodePair = {} #[node on face, node on POIEdge]
         for f1 in self.inner_facelist_True:
@@ -1691,11 +1767,16 @@ class MyGraph(object):
             for POIEdge in self.POIEdges:
                 self.td_dict_faceToPOIEdge[f1][POIEdge] = {"POINode": None, "Dist":infiniteDist}
                 self.td_dict_faceToPOIEdge_TheNodePair[f1][POIEdge] = {"POINode":None,"node":None}
+                thisFaceInfo = []
+                for edge in f1.ordered_edges:
+                    for node in edge.nodes:
+                        thisFaceInfo.append(node.x)
+                        thisFaceInfo.append(node.y)
                 for node in f1.nodes:
                     if self.td_dict_faceToPOIEdge[f1][POIEdge]["Dist"] > self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"]:  
                         self.td_dict_faceToPOIEdge[f1][POIEdge] = {"POINode":self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"], "Dist":self.td_dict_nodeToPOIEdge[node][POIEdge]["Dist"] }  
                         self.td_dict_faceToPOIEdge_TheNodePair[f1][POIEdge] = {"POINode": self.td_dict_nodeToPOIEdge[node][POIEdge]["POINode"],"node":node}
-        
+
     # The dict records each face's ave distance to all POI Edges
     def td_dict_ave_faceToPOIEdge_init(self):
         self.td_dict_ave_faceToPOIEdge = {}
@@ -1782,6 +1863,7 @@ class MyGraph(object):
 
     # The overall function
     def td_dict_POI_Related_init(self):
+
         self.td_dict_nodeToPOInode_init()
         # td_dict_ave_nodeToPOInode_init(self)
         self.td_dict_nodeToPOIEdge_init()
@@ -1790,6 +1872,7 @@ class MyGraph(object):
         self.face2POI_avg()
         self.CheckCuldesacNum()
 
+        
         ####
         self.td_dict_nodeToPOInode_min_init()
         #self.td_dict_ave_nodeToPOInode_min_init()
@@ -2114,6 +2197,42 @@ class MyGraph(object):
         plt.imshow(matrix, cmap='jet', aspect='auto', vmin=vmin, vmax=vmax)
         plt.colorbar(label='Distance (m)')
         plt.show()
+
+
+############################
+# Selection for Shortcut
+############################
+    def AddShortCutInGraph(myG):
+        existingNodes = [node for node in myG.G.nodes()]
+        
+        for edge in myG.shortcutEdges:
+            myG.add_edge(edge)
+
+        myG.edge_list = myG.myedges()
+
+        myG.node_list = []
+
+        
+        for n in myG.G.nodes():
+            myG.node_list.append(n)
+            if n not in existingNodes:
+                n.shortCutNode = True
+
+        myG.max_road_num = len(myG.edge_list) - len(myG.road_edges)
+
+        myG.max_road_cost = max([
+            myG.G[e.nodes[0]][e.nodes[1]]['weight'] for e in myG.myedges()
+            if not e.road
+        ])
+
+
+        full_connected_road_num = 0
+        for edge in myG.edge_list:
+            if edge.internal == True and edge.isRoad == True:
+                full_connected_road_num+=1
+
+
+        myG.full_connected_road_num = full_connected_road_num
 
 
 ###################################

@@ -25,6 +25,27 @@ def tensorfy(np_list, device=torch.device('cpu')):
 
 class RoadPlanningAgent(AgentPPO):
 
+
+    def print_model_parameters_grad(self):
+        # Print Gradient Values
+        print("Gradients for each parameter:")
+        for name, param in self.policy_net.named_parameters():
+            if param.grad is not None:
+                print(f"Parameter: {name}")
+                #print(f"Gradient values: {param.grad}")
+                print(f"Gradient norm: {param.grad.norm().item()}")
+                print("-" * 50)
+
+    def print_model_parameters(self,model, file_path):
+        """Print the parameters of a given model to a file."""
+        with open(file_path, 'a') as f:
+            for name, param in model.named_parameters():
+                if param.requires_grad:
+                    f.write(f"Parameter name: {name}\n")
+                    f.write(f"Shape: {param.shape}\n")
+                    f.write(f"Values: {param}\n")
+                    f.write("\n")  # Add a blank line between parameters
+    
     def __init__(self,
                  cfg: Config,
                  dtype: torch.dtype,
@@ -107,26 +128,12 @@ class RoadPlanningAgent(AgentPPO):
                                             (self.value_net.parameters(), 1)],
                             mini_batch_size=cfg.mini_batch_size)
         
-        print ("---")
+        # print ("---")
 
         
-        def print_model_parameters(model):
-            """Print the parameters of a given model."""
-            for name, param in model.named_parameters():
-                if param.requires_grad:
-                    print(f"Parameter name: {name}")
-                    print(f"Shape: {param.shape}")
-                    print(f"Values: {param}")
-                    print()
-            
-        print("Model parameters in policy_road_head:")
-        print_model_parameters(self.actor_critic_net.actor_net.policy_road_head)
-
-        print("-----------------------:")
-        print("-----------------------:")
-
-        print("Model parameters in value_head:")
-        print_model_parameters(self.actor_critic_net.value_net.value_head)
+        file_path = '/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug/debug_init.txt'
+        self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
 
 
  
@@ -403,25 +410,13 @@ class RoadPlanningAgent(AgentPPO):
         print ("optimize_policy_ start update_params")  
         self.update_params(batch, iteration)
 
-        print ("after optimize_policy_ start update_params, check parameter ")  
         
-        def print_model_parameters(model):
-            """Print the parameters of a given model."""
-            for name, param in model.named_parameters():
-                if param.requires_grad:
-                    print(f"Parameter name: {name}")
-                    print(f"Shape: {param.shape}")
-                    print(f"Values: {param}")
-                    print()
-            
-        print("Model parameters in policy_road_head:")
-        print_model_parameters(self.actor_critic_net.actor_net.policy_road_head)
-
-        print("-----------------------:")
-        print("-----------------------:")
-
-        print("Model parameters in value_head:")
-        print_model_parameters(self.actor_critic_net.value_net.value_head)
+        ######################
+        ### Save the network
+        ###################### 
+        file_path = os.path.join('/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug', f'debug{iteration}.txt')
+        self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
 
         t2 = time.time()
         """evaluate policy"""
@@ -445,7 +440,7 @@ class RoadPlanningAgent(AgentPPO):
             'T_update': t2 - t1,
             'T_eval': t3 - t2,
             'T_total': t3 - t0,
-            'NewRecord':0
+            'f2POI_avg':self.env._mg.f2POI_avg
         }
         return info
 
@@ -457,6 +452,7 @@ class RoadPlanningAgent(AgentPPO):
         rewards = torch.from_numpy(batch.rewards).to(self.dtype)
         masks = torch.from_numpy(batch.masks).to(self.dtype)
         exps = torch.from_numpy(batch.exps).to(self.dtype)
+       
         with to_test(*self.update_modules):
             with torch.no_grad():
                 values = []
@@ -487,6 +483,8 @@ class RoadPlanningAgent(AgentPPO):
 
     def update_policy(self, states, actions, returns, advantages, exps,
                       iteration):
+
+
         """update policy"""
         with to_test(*self.update_modules):
             with torch.no_grad():
@@ -509,6 +507,7 @@ class RoadPlanningAgent(AgentPPO):
         total_surr_loss = 0.0
         total_entropy_loss = 0.0
         for epoch in range(self.opt_num_epochs):
+
             epoch_loss = 0.0
             epoch_value_loss = 0.0
             epoch_surr_loss = 0.0
@@ -523,6 +522,7 @@ class RoadPlanningAgent(AgentPPO):
                 advantages[perm].clone(), fixed_log_probs[perm].clone(), exps[perm].clone()
 
             if self.cfg.agent_specs.get('batch_stage', False):
+
                 perm_stage_np, perm_stage = self.get_perm_batch_stage(states)
                 states, actions, returns, advantages, fixed_log_probs, exps = \
                     index_select_list(states, perm_stage_np), actions[perm_stage].clone(), \
@@ -530,7 +530,9 @@ class RoadPlanningAgent(AgentPPO):
                     fixed_log_probs[perm_stage].clone(), exps[perm_stage].clone()
 
             optim_batch_num = int(math.floor(num_state / self.mini_batch_size))
+
             for i in range(optim_batch_num):
+                print ("In update_policy, updating parameters")
                 ind = slice(i * self.mini_batch_size,
                             min((i + 1) * self.mini_batch_size, num_state))
                 states_b, actions_b, advantages_b, returns_b, fixed_log_probs_b, exps_b = \
@@ -548,6 +550,10 @@ class RoadPlanningAgent(AgentPPO):
                 loss.backward()
                 self.clip_policy_grad()
                 self.optimizer.step()
+
+               
+
+
                 epoch_loss += loss.item()
                 epoch_value_loss += value_loss.item()
                 epoch_surr_loss += surr_loss.item()
@@ -600,8 +606,10 @@ class RoadPlanningAgent(AgentPPO):
 
     def log_optimize_policy(self, iteration, info):
         cfg = self.cfg
+  
         log, log_eval = info['log'], info['log_eval']
-        newRecord = info['NewRecord']
+       
+        f2POI_dis_avg = info['f2POI_avg']
         logger, tb_logger = self.logger, self.tb_logger
 
         log_str = f'{iteration}\tT_sample {info["T_sample"]:.2f}\tT_update {info["T_update"]:.2f}\t' \
@@ -609,7 +617,7 @@ class RoadPlanningAgent(AgentPPO):
                   f'ETA {get_eta_str(iteration, cfg.max_num_iterations, info["T_total"])}\t' \
                   f'train_R_eps {log.avg_episode_reward + self.reward_offset:.2f}\t'\
                   f'eval_R_eps {log_eval.avg_episode_reward + self.reward_offset:.2f}\t{cfg.id}\t'\
-                  f'New {newRecord + self.reward_offset:.2f}\t'
+                  f' {f2POI_dis_avg}\t'
                   
 
         logger.info(log_str)

@@ -41,6 +41,7 @@ class LoggerRL:
         self.stats_loggers['total_road_cost'].log(info['total_road_cost'])
 
         self.stats_loggers['f2POI_dis_avg'].log(info['f2POI_dis_avg'])          # "New added"
+
         # print ("------")
         # print ("end_episode")
         # print ("self.num_episodes",self.num_episodes)

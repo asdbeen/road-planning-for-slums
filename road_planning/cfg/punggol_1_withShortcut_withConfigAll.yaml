@@ -2,7 +2,7 @@
 reward_specs:
   dis_weight: 0.5
   cost_weight: 0.5
-  build_ration: 0.1
+  build_ration: 0.2
 
 # agent
 agent_specs:

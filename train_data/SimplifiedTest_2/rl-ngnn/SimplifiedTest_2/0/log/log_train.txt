@@ -1,0 +1,117 @@
+[2024-08-23 14:24:06,430] data_dir:data/SimplifiedTest_2
+[2024-08-23 14:24:06,430] id: SimplifiedTest_2
+[2024-08-23 14:24:06,430] seed: 0
+[2024-08-23 14:24:06,430] objectives_plan: 
+[2024-08-23 14:24:06,430] init_plan: 
+[2024-08-23 14:24:06,430] env_specs: {}
+[2024-08-23 14:24:06,430] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.1}
+[2024-08-23 14:24:06,430] obs_specs: {}
+[2024-08-23 14:24:06,430] agent_specs: {'batch_stage': False}
+[2024-08-23 14:24:06,430] gamma: 0.9
+[2024-08-23 14:24:06,430] tau: 0.0
+[2024-08-23 14:24:06,430] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-23 14:24:06,430] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-23 14:24:06,430] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-23 14:24:06,430] lr: 0.0004
+[2024-08-23 14:24:06,430] weightdecay: 0.0
+[2024-08-23 14:24:06,430] eps: 1e-05
+[2024-08-23 14:24:06,430] value_pred_coef: 0.5
+[2024-08-23 14:24:06,430] entropy_coef: 0.01
+[2024-08-23 14:24:06,430] clip_epsilon: 0.2
+[2024-08-23 14:24:06,430] max_num_iterations: 50
+[2024-08-23 14:24:06,430] num_episodes_per_iteration: 1200
+[2024-08-23 14:24:06,430] max_sequence_length: 33
+[2024-08-23 14:24:06,430] num_optim_epoch: 4
+[2024-08-23 14:24:06,430] mini_batch_size: 1024
+[2024-08-23 14:24:06,431] save_model_interval: 1
+[2024-08-23 14:29:11,220] 0	T_sample 295.50	T_update 8.07	T_eval 0.57	ETA 4:08:23	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 14:29:11,227] save best checkpoint with rewards -0.37!
+[2024-08-23 14:34:12,329] 1	T_sample 292.70	T_update 7.94	T_eval 0.42	ETA 4:00:51	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 14:34:12,333] save best checkpoint with rewards -0.36!
+[2024-08-23 14:39:09,974] 2	T_sample 289.77	T_update 7.39	T_eval 0.45	ETA 3:53:08	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 14:39:09,978] save best checkpoint with rewards -0.36!
+[2024-08-23 14:44:09,552] 3	T_sample 291.33	T_update 7.80	T_eval 0.41	ETA 3:49:39	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 14:48:49,950] data_dir:data/SimplifiedTest_2
+[2024-08-23 14:48:49,950] id: SimplifiedTest_2
+[2024-08-23 14:48:49,950] seed: 0
+[2024-08-23 14:48:49,950] objectives_plan: 
+[2024-08-23 14:48:49,950] init_plan: 
+[2024-08-23 14:48:49,950] env_specs: {}
+[2024-08-23 14:48:49,950] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.1}
+[2024-08-23 14:48:49,950] obs_specs: {}
+[2024-08-23 14:48:49,950] agent_specs: {'batch_stage': False}
+[2024-08-23 14:48:49,950] gamma: 0.9
+[2024-08-23 14:48:49,950] tau: 0.0
+[2024-08-23 14:48:49,950] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-23 14:48:49,950] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-23 14:48:49,950] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-23 14:48:49,950] lr: 0.0004
+[2024-08-23 14:48:49,950] weightdecay: 0.0
+[2024-08-23 14:48:49,950] eps: 1e-05
+[2024-08-23 14:48:49,950] value_pred_coef: 0.5
+[2024-08-23 14:48:49,950] entropy_coef: 0.01
+[2024-08-23 14:48:49,950] clip_epsilon: 0.2
+[2024-08-23 14:48:49,950] max_num_iterations: 50
+[2024-08-23 14:48:49,950] num_episodes_per_iteration: 1200
+[2024-08-23 14:48:49,950] max_sequence_length: 33
+[2024-08-23 14:48:49,950] num_optim_epoch: 4
+[2024-08-23 14:48:49,950] mini_batch_size: 1024
+[2024-08-23 14:48:49,950] save_model_interval: 1
+[2024-08-23 14:53:44,680] 0	T_sample 286.06	T_update 7.51	T_eval 0.53	ETA 4:00:11	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 14:53:44,685] save best checkpoint with rewards -0.37!
+[2024-08-23 14:58:42,248] 1	T_sample 289.54	T_update 7.60	T_eval 0.39	ETA 3:58:02	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 14:58:42,253] save best checkpoint with rewards -0.37!
+[2024-08-23 15:03:39,707] 2	T_sample 289.48	T_update 7.53	T_eval 0.41	ETA 3:52:59	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:08:36,814] 3	T_sample 289.15	T_update 7.54	T_eval 0.39	ETA 3:47:46	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:13:33,713] 4	T_sample 289.00	T_update 7.47	T_eval 0.40	ETA 3:42:39	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:18:31,193] 5	T_sample 289.46	T_update 7.61	T_eval 0.39	ETA 3:38:08	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:23:26,881] 6	T_sample 287.81	T_update 7.46	T_eval 0.39	ETA 3:31:54	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:28:24,087] 7	T_sample 289.30	T_update 7.49	T_eval 0.39	ETA 3:28:02	train_R_eps -0.36	eval_R_eps -0.37	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:33:21,986] 8	T_sample 289.71	T_update 7.77	T_eval 0.40	ETA 3:23:33	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:33:21,990] save best checkpoint with rewards -0.36!
+[2024-08-23 15:38:18,613] 9	T_sample 288.77	T_update 7.43	T_eval 0.39	ETA 3:17:44	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:43:16,083] 10	T_sample 289.54	T_update 7.52	T_eval 0.40	ETA 3:13:20	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:48:11,886] 11	T_sample 287.99	T_update 7.40	T_eval 0.40	ETA 3:07:20	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:53:08,538] 12	T_sample 288.77	T_update 7.45	T_eval 0.40	ETA 3:02:55	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:58:03,882] 13	T_sample 287.34	T_update 7.57	T_eval 0.40	ETA 2:57:11	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 15:58:03,886] save best checkpoint with rewards -0.36!
+[2024-08-23 16:03:00,412] 14	T_sample 288.65	T_update 7.45	T_eval 0.40	ETA 2:52:57	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:03:00,416] save best checkpoint with rewards -0.36!
+[2024-08-23 16:07:56,846] 15	T_sample 288.48	T_update 7.52	T_eval 0.40	ETA 2:47:58	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:12:53,168] 16	T_sample 288.42	T_update 7.48	T_eval 0.40	ETA 2:42:58	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:12:53,172] save best checkpoint with rewards -0.36!
+[2024-08-23 16:17:48,460] 17	T_sample 287.39	T_update 7.47	T_eval 0.40	ETA 2:37:28	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:24:04,632] 18	T_sample 367.58	T_update 8.15	T_eval 0.42	ETA 3:14:20	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:24:04,636] save best checkpoint with rewards -0.36!
+[2024-08-23 16:29:04,247] 19	T_sample 291.31	T_update 7.86	T_eval 0.41	ETA 2:29:47	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:34:01,742] 20	T_sample 289.18	T_update 7.88	T_eval 0.41	ETA 2:23:47	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:38:56,324] 21	T_sample 286.45	T_update 7.69	T_eval 0.42	ETA 2:17:28	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:43:55,998] 22	T_sample 291.35	T_update 7.88	T_eval 0.41	ETA 2:14:50	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:48:50,955] 23	T_sample 286.99	T_update 7.54	T_eval 0.40	ETA 2:07:48	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:53:44,125] 24	T_sample 285.14	T_update 7.59	T_eval 0.41	ETA 2:02:09	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 16:58:36,828] 25	T_sample 284.73	T_update 7.54	T_eval 0.42	ETA 1:57:04	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:03:30,924] 26	T_sample 286.09	T_update 7.57	T_eval 0.41	ETA 1:52:44	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:08:25,094] 27	T_sample 286.16	T_update 7.58	T_eval 0.40	ETA 1:47:51	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:13:19,261] 28	T_sample 285.99	T_update 7.74	T_eval 0.41	ETA 1:42:57	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:18:13,264] 29	T_sample 286.05	T_update 7.52	T_eval 0.41	ETA 1:38:00	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:23:06,712] 30	T_sample 285.37	T_update 7.61	T_eval 0.41	ETA 1:32:54	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:27:59,737] 31	T_sample 284.99	T_update 7.60	T_eval 0.40	ETA 1:27:54	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:32:52,858] 32	T_sample 285.18	T_update 7.49	T_eval 0.41	ETA 1:23:02	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:37:47,461] 33	T_sample 286.61	T_update 7.55	T_eval 0.42	ETA 1:18:33	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:42:41,401] 34	T_sample 285.93	T_update 7.58	T_eval 0.40	ETA 1:13:29	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:47:34,940] 35	T_sample 285.50	T_update 7.61	T_eval 0.41	ETA 1:08:29	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:52:28,850] 36	T_sample 285.91	T_update 7.57	T_eval 0.40	ETA 1:03:41	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:57:22,698] 37	T_sample 285.82	T_update 7.60	T_eval 0.40	ETA 0:58:46	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 17:57:22,702] save best checkpoint with rewards -0.36!
+[2024-08-23 18:18:53,810] 38	T_sample 1282.56	T_update 8.11	T_eval 0.41	ETA 3:56:42	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:23:50,330] 39	T_sample 288.51	T_update 7.57	T_eval 0.41	ETA 0:49:25	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:28:44,915] 40	T_sample 286.66	T_update 7.49	T_eval 0.41	ETA 0:44:11	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:33:38,641] 41	T_sample 285.59	T_update 7.70	T_eval 0.41	ETA 0:39:10	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:38:32,861] 42	T_sample 286.23	T_update 7.54	T_eval 0.42	ETA 0:34:19	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:43:26,985] 43	T_sample 285.68	T_update 8.01	T_eval 0.41	ETA 0:29:25	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:48:20,749] 44	T_sample 285.66	T_update 7.66	T_eval 0.41	ETA 0:24:29	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:53:14,352] 45	T_sample 285.58	T_update 7.59	T_eval 0.41	ETA 0:19:34	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 18:58:09,600] 46	T_sample 287.16	T_update 7.65	T_eval 0.41	ETA 0:14:46	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 19:03:03,780] 47	T_sample 286.17	T_update 7.57	T_eval 0.41	ETA 0:09:48	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 19:07:57,657] 48	T_sample 285.87	T_update 7.57	T_eval 0.41	ETA 0:04:54	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	
+[2024-08-23 20:20:00,655] 49	T_sample 4315.25	T_update 7.32	T_eval 0.41	ETA 0:00:00	train_R_eps -0.36	eval_R_eps -0.36	SimplifiedTest_2	New 0.00	

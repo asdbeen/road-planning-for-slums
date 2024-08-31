@@ -1,0 +1,61 @@
+[2024-08-23 12:35:30,092] data_dir:data/SimplifiedTest_1
+[2024-08-23 12:35:30,092] id: SimplifiedTest_1
+[2024-08-23 12:35:30,092] seed: 0
+[2024-08-23 12:35:30,092] objectives_plan: 
+[2024-08-23 12:35:30,092] init_plan: 
+[2024-08-23 12:35:30,092] env_specs: {}
+[2024-08-23 12:35:30,092] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-23 12:35:30,092] obs_specs: {}
+[2024-08-23 12:35:30,092] agent_specs: {'batch_stage': False}
+[2024-08-23 12:35:30,092] gamma: 0.9
+[2024-08-23 12:35:30,092] tau: 0.0
+[2024-08-23 12:35:30,092] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-23 12:35:30,092] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-23 12:35:30,092] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-23 12:35:30,092] lr: 0.0004
+[2024-08-23 12:35:30,092] weightdecay: 0.0
+[2024-08-23 12:35:30,092] eps: 1e-05
+[2024-08-23 12:35:30,092] value_pred_coef: 0.5
+[2024-08-23 12:35:30,092] entropy_coef: 0.01
+[2024-08-23 12:35:30,092] clip_epsilon: 0.2
+[2024-08-23 12:35:30,092] max_num_iterations: 50
+[2024-08-23 12:35:30,092] num_episodes_per_iteration: 1200
+[2024-08-23 12:35:30,092] max_sequence_length: 33
+[2024-08-23 12:35:30,092] num_optim_epoch: 4
+[2024-08-23 12:35:30,092] mini_batch_size: 1024
+[2024-08-23 12:35:30,092] save_model_interval: 1
+[2024-08-23 12:40:56,994] data_dir:data/SimplifiedTest_1
+[2024-08-23 12:40:56,995] id: SimplifiedTest_1
+[2024-08-23 12:40:56,995] seed: 0
+[2024-08-23 12:40:56,995] objectives_plan: 
+[2024-08-23 12:40:56,995] init_plan: 
+[2024-08-23 12:40:56,995] env_specs: {}
+[2024-08-23 12:40:56,995] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-08-23 12:40:56,995] obs_specs: {}
+[2024-08-23 12:40:56,995] agent_specs: {'batch_stage': False}
+[2024-08-23 12:40:56,995] gamma: 0.9
+[2024-08-23 12:40:56,995] tau: 0.0
+[2024-08-23 12:40:56,995] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-08-23 12:40:56,995] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-08-23 12:40:56,995] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-08-23 12:40:56,995] lr: 0.0004
+[2024-08-23 12:40:56,995] weightdecay: 0.0
+[2024-08-23 12:40:56,995] eps: 1e-05
+[2024-08-23 12:40:56,995] value_pred_coef: 0.5
+[2024-08-23 12:40:56,995] entropy_coef: 0.01
+[2024-08-23 12:40:56,995] clip_epsilon: 0.2
+[2024-08-23 12:40:56,995] max_num_iterations: 50
+[2024-08-23 12:40:56,995] num_episodes_per_iteration: 1200
+[2024-08-23 12:40:56,995] max_sequence_length: 33
+[2024-08-23 12:40:56,995] num_optim_epoch: 4
+[2024-08-23 12:40:56,995] mini_batch_size: 1024
+[2024-08-23 12:40:56,995] save_model_interval: 1
+[2024-08-23 12:47:34,254] 0	T_sample 375.36	T_update 12.84	T_eval 8.48	ETA 5:23:57	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 12:47:34,258] save best checkpoint with rewards -1.00!
+[2024-08-23 12:54:09,683] 1	T_sample 374.20	T_update 12.80	T_eval 8.41	ETA 5:16:19	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 13:00:45,146] 2	T_sample 374.24	T_update 12.79	T_eval 8.41	ETA 5:09:46	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 13:07:21,122] 3	T_sample 374.62	T_update 12.97	T_eval 8.36	ETA 5:03:34	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 13:13:57,066] 4	T_sample 374.50	T_update 12.91	T_eval 8.51	ETA 4:56:57	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 13:20:32,375] 5	T_sample 373.65	T_update 13.11	T_eval 8.53	ETA 4:49:53	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 13:27:07,737] 6	T_sample 373.80	T_update 13.12	T_eval 8.42	ETA 4:43:20	train_R_eps -1.00	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
+[2024-08-23 13:59:16,775] 7	T_sample 1907.19	T_update 13.16	T_eval 8.66	ETA 22:30:18	train_R_eps -0.99	eval_R_eps -1.00	SimplifiedTest_1	New 0.00	
