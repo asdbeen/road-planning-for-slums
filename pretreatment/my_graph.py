@@ -667,7 +667,7 @@ class MyGraph(object):
     
     # ok - double check
     def get_numerical_feature_size(self):
-        return 4
+        return 5   # original is 4, change it to 5 becasue of cul-de-sac num
 
     # what is 0.5 used for
     def _get_numerical(self):
@@ -687,8 +687,11 @@ class MyGraph(object):
         else:
             interior_ration = 0          # newly added for internal path cases
 
+        # include culdesacNum as one data
+        culdesacNum = self.culdesacNum
+
         # print(stage1_ration, stage2_ration, interior_ration)
-        return [0.5, stage1_ration, stage2_ration, interior_ration]
+        return [0.5, stage1_ration, stage2_ration, interior_ration,culdesacNum]
 
     # ok
     def _get_full_connected_road_num(self):

@@ -11,7 +11,7 @@ agent_specs:
 gamma: 0.9
 tau: 0.0
 state_encoder_specs:
-  state_encoder_hidden_size: [16, 4]
+  state_encoder_hidden_size: [16, 4]    
   gcn_node_dim: 16
   num_gcn_layers: 2
   num_edge_fc_layers: 1

@@ -513,6 +513,8 @@ class NGNNStateEncoder(nn.Module):
                     nn.Linear(cfg['state_encoder_hidden_size'][i - 1],
                               cfg['state_encoder_hidden_size'][i]))
             feature_encoder.add_module('tanh_{}'.format(i), nn.Tanh())
+
+
         return feature_encoder
 
     def create_edge_fc_layers1(self, cfg):

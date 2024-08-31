@@ -95,8 +95,9 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     if name == 'connecting':
         travel_distance_POI = 0
-        culdesacReward = 0
-
+        culdesacReward = mg.CuldesacReward()
+        culdesacReward = 0   # so it wont affect in stage 1
+        
     elif name == 'full_connected':
         
         ####################################### 
@@ -129,8 +130,7 @@ def reward_info_function(mg: MyGraph, name: Text,
     total_road_cost = mg.total_cost()
 
 
-
-
+   
     # print ("culdesacReward",culdesacReward)
     # print ("travel_distance_POI",travel_distance_POI)  
     # print(connect_reward , travel_distance , road_cost)
@@ -146,6 +146,7 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     #finalReward = connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward
     finalReward = connect_reward  + travel_distance + road_cost + culdesacReward    # for complete roadnetwork  
+    print ("name",name, "connect_reward",connect_reward,"culdesacReward",culdesacReward,"culdesacNum",mg.culdesacNum,"finalReward",finalReward)
 
     return finalReward, {
 

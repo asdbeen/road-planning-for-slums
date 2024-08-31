@@ -42,6 +42,7 @@ class UrbanPlanningPolicy(nn.Module):
 
     def forward(self, x):
         state_policy_road, _, edge_mask, stage = self.shared_net(x)
+
         if stage[:, 2].sum() == 0:
             road_logits = self.policy_road_head(state_policy_road)
             road_paddings = torch.ones_like(edge_mask, dtype=self.agent.dtype)*(-2.**32 + 1)
