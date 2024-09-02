@@ -518,7 +518,86 @@ class MyGraph(object):
         edge_part_feature = self._get_edge_part_feature()
         # edge_part_feature = np.zeros_like(edge_part_feature)
         edge_index = self.edge_index
-        edge_mask = self._get_edge_mask()
+
+        ############################
+        ####### new Adaption #######
+        #print (self.culdesacNum)
+        if self.culdesacNum == 0:                                                                        
+            edge_mask = self._get_edge_mask()
+        else:
+            # print ("--candidate---")
+            # info2 = []
+            # for edge in self.edge_list:
+            #     if edge not in self.road_edges:
+            #         for node in edge.nodes:
+            #             info2.append(node.x)
+            #             info2.append(node.y)
+
+            # print (info2)
+
+            # print ("---road_edges--")
+            # info3 = []
+            # for edge in self.edge_list:
+            #     if edge  in self.road_edges:
+            #         for node in edge.nodes:
+            #             info3.append(node.x)
+            #             info3.append(node.y)
+
+            # print (info3)
+
+            edge_mask = [0 for edge in self.edge_list]
+            originalRoadEdges = [e for e in self.edge_list if e.isRoad]
+            newAddedRoad = [e for e in self.road_edges if e not in originalRoadEdges]
+
+            # print ("---originalRoadEdges--")
+            # info8 = []
+            # for edge in originalRoadEdges:
+    
+            #     for node in edge.nodes:
+            #         info8.append(node.x)
+            #         info8.append(node.y)
+
+            # print (info8)
+
+     
+
+            new_roadNodeCollection = []
+            for edge in newAddedRoad:
+                new_roadNodeCollection.append(edge.nodes[0])
+                new_roadNodeCollection.append(edge.nodes[1])  
+
+            # print ("--newAddedRoad---")
+            # info5 = []
+            # for node in new_roadNodeCollection:
+            #     info5.append(node.x)
+            #     info5.append(node.y)
+            
+            # print (info5)
+
+            for i in range(len(self.edge_list)):
+                e = self.edge_list[i]
+                if e not in self.road_edges:
+                    if e.nodes[0] in new_roadNodeCollection or e.nodes[1] in new_roadNodeCollection:
+                        edge_mask[i] = 1
+            # print (edge_mask)
+
+
+            edge_mask = np.array(edge_mask)
+        #edge_mask = self._get_edge_mask()   #original
+        ############################
+
+        return numerical, node_feature, edge_part_feature, edge_index, edge_mask
+
+    def get_obs_stage2_culdesac(self):
+        numerical = self._get_numerical()
+        node_feature = np.concatenate(
+            [[self._get_node_feature(n) for n in self.node_list]], axis=1)          # [[1 x (numNodeFeature x numNode)]]
+        # node_feature = np.zeros_like(node_feature)
+
+        edge_part_feature = self._get_edge_part_feature()
+        # edge_part_feature = np.zeros_like(edge_part_feature)
+        edge_index = self.edge_index
+        edge_mask = self._get_edge_mask_stage2_culdesac()
 
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
 
@@ -580,7 +659,65 @@ class MyGraph(object):
             edge_mask[index_equ2] = 1
 
         return edge_mask
-    
+
+    def _get_edge_mask_stage2_culdesac(self):                   # so the edge selection can start for the cul-de-sac
+        edge_mask = [0 for edge in self.edge_list]
+
+        # print ("--candidate---")
+        # info2 = []
+        # for edge in self.edge_list:
+        #     if edge not in self.road_edges:
+        #         for node in edge.nodes:
+        #             info2.append(node.x)
+        #             info2.append(node.y)
+
+        # print (info2)
+
+        # print ("---road_edges--")
+        # info3 = []
+        # for edge in self.edge_list:
+        #     if edge  in self.road_edges:
+        #         for node in edge.nodes:
+        #             info3.append(node.x)
+        #             info3.append(node.y)
+
+        # print (info3)
+
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])
+
+  
+
+        for i in range(len(self.edge_list)):
+            e = self.edge_list[i]
+            if e not in self.road_edges:
+                repeatCount = 0
+                if e.nodes[0].road == True and e.nodes[1].road != True:
+                    repeatCount = roadNodeCollection.count(e.nodes[0])
+                elif e.nodes[0].road != True and e.nodes[1].road == True:
+                    repeatCount = roadNodeCollection.count(e.nodes[1])
+                elif e.nodes[0].road == True and e.nodes[1].road == True:
+                    if roadNodeCollection.count(e.nodes[1]) == 1 or roadNodeCollection.count(e.nodes[0]) == 1:
+                        repeatCount = 1
+                if repeatCount == 1:
+                    edge_mask[i] = 1
+        
+        # if 1 not in edge_mask:
+        #     for i in range(len(self.edge_list)):
+        #         e = self.edge_list[i]
+        #         if e not in self.road_edges:
+        #             if e.nodes[0].road == True and e.nodes[1].road == True:
+        #                 if roadNodeCollection.count(e.nodes[1]) == 1 or roadNodeCollection.count(e.nodes[0]) == 1:
+        #                     repeatCount = 1
+
+        #             if repeatCount == 1:
+        #                 edge_mask[i] = 1
+        #print (edge_mask)
+        edge_mask = np.array(edge_mask)
+        
+        return edge_mask
     # ok
     def _get_edge_face_interior(self):
         edge_face_interior=[]
@@ -1149,7 +1286,9 @@ class MyGraph(object):
         self.road_nodes_idx = rn_idx
         self.build_road_num += 1
         self.interior_parcels_update()
-       
+        
+        
+
     # ok 
     def add_all_road(self):
         for e in self.myedges():
@@ -1918,6 +2057,16 @@ class MyGraph(object):
         self.culdesacNum = num_single_neighbor_nodes
         return num_single_neighbor_nodes
 
+    def CheckCuldesacNum_NotAssign(self):
+        roadG = MyGraph()
+        for idx in range(len(self.road_edges)):
+            e = self.road_edges[idx]
+            roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
+
+        single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
+        num_single_neighbor_nodes = len(single_neighbor_nodes)
+  
+        return num_single_neighbor_nodes
 
     def CuldesacReward(self) -> float:
         before = self.culdesacNum 

@@ -131,9 +131,9 @@ class RoadPlanningAgent(AgentPPO):
         # print ("---")
 
         
-        file_path = '/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug/debug_init.txt'
-        self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
-        self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
+        # file_path = '/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug/debug_init.txt'
+        # self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        # self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
 
 
  
@@ -149,7 +149,8 @@ class RoadPlanningAgent(AgentPPO):
             episode_success = False
             logger_messages = []
             memory_messages = []
-            for t in range(10000):    
+            for t in range(10000):   
+                #print ("t",t) 
                 state_var = tensorfy([state])
                 #### self.noise_rate == 1 meaning it is totally depend on mean_action
                 use_mean_action = mean_action or torch.bernoulli(
@@ -159,9 +160,12 @@ class RoadPlanningAgent(AgentPPO):
                 action = self.policy_net.select_action(
                     state_var, use_mean_action).numpy().squeeze(0)
 
+                #print ("before step")
                 #print ("in sample_worker_action",action)
                 next_state, reward, done, info = self.env.step(
                     action, self.thread_loggers[pid])
+                
+                #print ("after step")
                 # cache logging
                 logger_messages.append([reward, info])
 
@@ -414,9 +418,9 @@ class RoadPlanningAgent(AgentPPO):
         ######################
         ### Save the network
         ###################### 
-        file_path = os.path.join('/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug', f'debug{iteration}.txt')
-        self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
-        self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
+        # file_path = os.path.join('/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug', f'debug{iteration}.txt')
+        # self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        # self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
 
         t2 = time.time()
         """evaluate policy"""

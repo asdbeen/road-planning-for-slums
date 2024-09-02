@@ -36,7 +36,7 @@ flags.DEFINE_integer('num_threads', 1, 'The number of threads for sampling traje
 flags.DEFINE_bool('use_nvidia_gpu', True, 'Whether to use Nvidia GPU for acceleration.')
 flags.DEFINE_integer('gpu_index', 0,'GPU ID.')
 flags.DEFINE_integer('global_seed', 0, 'Used in env and weight initialization, does not impact action sampling.')
-flags.DEFINE_string('iteration', '0', 'The start iteration. Can be number or best. If not 0, the agent will load from '
+flags.DEFINE_string('iteration', '1', 'The start iteration. Can be number or best. If not 0, the agent will load from '
                                       'a saved checkpoint.')
 flags.DEFINE_bool('restore_best_rewards', True, 'Whether to restore the best rewards from a saved checkpoint. '
                                                 'True for resume training. False for finetune with new reward.')

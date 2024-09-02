@@ -55,15 +55,19 @@ class UrbanPlanningPolicy(nn.Module):
         
 
     def select_action(self, x, mean_action=False):
+        #print ("select_action")
         road_dist, stage = self.forward(x)
+        # print ("road_dist",road_dist.probs)
+        # print ("mean_action",mean_action)
         batch_size = stage.shape[0]
         action = torch.zeros(batch_size, 1, dtype=self.agent.dtype, device=stage.device)
         if mean_action:
             road_action = road_dist.probs.argmax(dim=1).to(self.agent.dtype)
+            
         else:
             road_action = road_dist.sample().to(self.agent.dtype)
         action = road_action
-        
+        # print ("action",action)
         return action
 
     def get_log_prob_entropy(self, x, action):

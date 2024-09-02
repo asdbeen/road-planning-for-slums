@@ -146,7 +146,7 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     #finalReward = connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward
     finalReward = connect_reward  + travel_distance + road_cost + culdesacReward    # for complete roadnetwork  
-    print ("name",name, "connect_reward",connect_reward,"culdesacReward",culdesacReward,"culdesacNum",mg.culdesacNum,"finalReward",finalReward)
+    #print ("name",name, "connect_reward",connect_reward,"culdesacReward",culdesacReward,"culdesacNum",mg.culdesacNum,"finalReward",finalReward)
 
     return finalReward, {
 
@@ -354,6 +354,21 @@ class RoadEnv:
             numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage
         ]
 
+    def _get_obs_stage2_culdesac(self) -> List:
+        """
+        Returns the observation.  (stage2)
+
+        Returns:
+            observation (object): the observation
+        """
+
+        numerical, node_feature, edge_part_feature, edge_index, edge_mask = self._mg.get_obs_stage2_culdesac()
+        stage = self._get_stage_obs()
+        
+        return [
+            numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage
+        ]
+
     def build_road(self, action: List,POIVersionTag = False):
         """
         Builds the road.
@@ -377,6 +392,7 @@ class RoadEnv:
         self._mg.add_all_road()
 
     def transition_stage(self):
+        #print ("transition_stage")
         """
         Transition to the next stage.
         """
@@ -445,8 +461,9 @@ class RoadEnv:
                         self.build_ration) or self._full_connected():
                     self.transition_stage()
 
-            elif self._stage == 'full_connected':
+            elif self._stage == 'full_connected':    #### this might add 1 more edge than the ration result
                 self._action_history.append(action)
+                
                 self.build_road(action,POIVersionTag = False)   #######
 
                 self._full_connected_steps += 1
@@ -463,8 +480,11 @@ class RoadEnv:
 
                 # if (self._mg.culdesacNum==0  ):
                 #     self.transition_stage()
-                if (self._mg.culdesacNum==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
 
+                culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
+                #print ("culdesacNum_Check",culdesacNum_Check)
+                if (culdesacNum_Check==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
+                    #print ("if (culdesacNum_Check==0  or (self._full_connected_steps....")
                     self.transition_stage()
 
 
@@ -480,8 +500,22 @@ class RoadEnv:
         # converted_list = [float(arr[0]) for arr in self._action_history]
         # print ("self._action_history",converted_list)
 
-        return self._get_obs(), reward, self._done, info
+        culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
+        if self._stage == 'connecting':
+            #print ("if self._stage == 'connecting'")
+            return self._get_obs(), reward, self._done, info
 
+        elif self._stage == 'full_connected' and culdesacNum_Check == 0:
+            #print ("if self._stage == 'connecting_ else'",)
+            return self._get_obs(), reward, self._done, info
+
+        elif self._stage == 'full_connected' and culdesacNum_Check != 0:
+            #print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
+            return self._get_obs_stage2_culdesac(), reward, self._done, info
+        
+        elif self._stage == 'done':
+            return self._get_obs(), reward, self._done, info
+            
     def reset(self):
         """
         Resets the state of the environment and returns an initial observation.
