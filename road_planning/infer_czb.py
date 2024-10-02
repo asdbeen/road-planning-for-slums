@@ -4,9 +4,10 @@ cwd = os.getcwd()
 sys.path.append(cwd) 
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'khrylib')) # for server
-print (os.path.join(os.path.dirname(__file__), 'khrylib'))
+sys.path.append(os.path.join(cwd, 'khrylib'))  # 直接指向 khrylib
 
+ # for server
+print (os.path.join(os.path.join(cwd, 'khrylib')))
 import setproctitle
 
 
