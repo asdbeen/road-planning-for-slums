@@ -4,12 +4,9 @@ cwd = os.getcwd()
 sys.path.append(cwd) 
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
-sys.path.append(os.path.join(cwd, 'khrylib'))  # 直接指向 khrylib
 
- # for server
-print ("asd")
-print (os.path.join(os.path.join(cwd, 'khrylib')))
-print ("asd")
+sys.path.append('/home/chenzebin/road-planning-for-slums/khrylib')   # for server
+print (sys.path)
 import setproctitle
 
 
