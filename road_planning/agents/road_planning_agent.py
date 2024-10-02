@@ -157,15 +157,16 @@ class RoadPlanningAgent(AgentPPO):
                     torch.tensor([1 - self.noise_rate])).item()
                 # action = self.policy_net.select_action(state_var, use_mean_action).numpy().squeeze(0)
                 
+                # print ("select_action")
                 action = self.policy_net.select_action(
                     state_var, use_mean_action).numpy().squeeze(0)
 
-                #print ("before step")
+                # print ("before step")
                 #print ("in sample_worker_action",action)
                 next_state, reward, done, info = self.env.step(
                     action, self.thread_loggers[pid])
                 
-                #print ("after step")
+                # print ("after step")
                 # cache logging
                 logger_messages.append([reward, info])
 

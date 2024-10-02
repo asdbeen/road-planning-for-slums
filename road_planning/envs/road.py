@@ -502,15 +502,15 @@ class RoadEnv:
 
         culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
         if self._stage == 'connecting':
-            #print ("if self._stage == 'connecting'")
+            print ("if self._stage == 'connecting'")
             return self._get_obs(), reward, self._done, info
 
         elif self._stage == 'full_connected' and culdesacNum_Check == 0:
-            #print ("if self._stage == 'connecting_ else'",)
+            print ("if self._stage == 'connecting_ else'",)
             return self._get_obs(), reward, self._done, info
 
         elif self._stage == 'full_connected' and culdesacNum_Check != 0:
-            #print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
+            print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
             return self._get_obs_stage2_culdesac(), reward, self._done, info
         
         elif self._stage == 'done':

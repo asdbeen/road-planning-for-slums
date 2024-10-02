@@ -55,7 +55,7 @@ class UrbanPlanningPolicy(nn.Module):
         
 
     def select_action(self, x, mean_action=False):
-        #print ("select_action")
+        # print ("select_action")
         road_dist, stage = self.forward(x)
         # print ("road_dist",road_dist.probs)
         # print ("mean_action",mean_action)

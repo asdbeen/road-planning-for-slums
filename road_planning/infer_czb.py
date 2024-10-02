@@ -20,9 +20,9 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
-flags.DEFINE_string('slum_name', 'punggol_1_withShortcut_withConfigAll', 'data_dir')
+flags.DEFINE_string('slum_name', 'tengah_1', 'data_dir')
 #flags.DEFINE_string('slum_name', 'punggol_1', 'data_dir')
-flags.DEFINE_string('cfg', 'punggol', 'Configuration file of rl training.')
+flags.DEFINE_string('cfg', 'tengah_1', 'Configuration file of rl training.')
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', True, 'Train or Infer.')  #!!!!!!!!!!!!!!!!!
@@ -75,8 +75,8 @@ def main_loop(_):
 
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p"
-    checkpoint = 1
-    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_1_withShortcut_withConfigAll/rl-ngnn/punggol_1_withShortcut_withConfigAll/0/models/iteration_0003.p"
+    checkpoint = 56
+    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_1/rl-ngnn/punggol_1/0/models/iteration_0056.p"
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0001.p"
     
     """create agent"""

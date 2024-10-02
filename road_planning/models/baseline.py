@@ -107,6 +107,7 @@ class GAPolicy(NullModel):
         
         gene = torch.Tensor(gene)
         node_feature, edge_part_feature, edge_index, edge_mask = x[0][1], x[0][2], x[0][3], x[0][4]
+        print ("edge_mask",edge_mask)
         actions = torch.zeros(1)
 
         edge_feature = compute_edge_features(node_feature, edge_part_feature, edge_index)
