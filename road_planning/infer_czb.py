@@ -5,7 +5,7 @@ sys.path.append(cwd)
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
 sys.path.append('/home/chenzebin/road-planning-for-slums/road_planning/khrylib')   # for server
-
+print (sys.path)
 import setproctitle
 
 
@@ -46,57 +46,57 @@ flags.DEFINE_bool('restore_best_rewards', True, 'Whether to restore the best rew
 FLAGS = flags.FLAGS
 
 
-def train_one_iteration(agent: RoadPlanningAgent, iteration: int) -> None:
+# def train_one_iteration(agent: RoadPlanningAgent, iteration: int) -> None:
     
-    """Train one iteration"""
-    agent.optimize(iteration)
-    agent.save_checkpoint(iteration)
+#     """Train one iteration"""
+#     agent.optimize(iteration)
+#     agent.save_checkpoint(iteration)
 
-    """clean up gpu memory"""
-    torch.cuda.empty_cache()
+#     """clean up gpu memory"""
+#     torch.cuda.empty_cache()
 
 
-def main_loop(_):
+# def main_loop(_):
 
-    setproctitle.setproctitle(f'road_planning_{FLAGS.cfg}_{FLAGS.global_seed}@suhy')
+#     setproctitle.setproctitle(f'road_planning_{FLAGS.cfg}_{FLAGS.global_seed}@suhy')
 
-    cfg = Config(FLAGS.cfg, FLAGS.slum_name, FLAGS.global_seed, FLAGS.tmp, FLAGS.root_dir, FLAGS.agent)
+#     cfg = Config(FLAGS.cfg, FLAGS.slum_name, FLAGS.global_seed, FLAGS.tmp, FLAGS.root_dir, FLAGS.agent)
 
-    dtype = torch.float32
-    torch.set_default_dtype(dtype)
-    if FLAGS.use_nvidia_gpu and torch.cuda.is_available():
-        device = torch.device('cuda', index=FLAGS.gpu_index)
-    else:
-        device = torch.device('cpu')
-    if torch.cuda.is_available():
-        torch.cuda.set_device(FLAGS.gpu_index)
-    np.random.seed(cfg.seed)
-    torch.manual_seed(cfg.seed)
+#     dtype = torch.float32
+#     torch.set_default_dtype(dtype)
+#     if FLAGS.use_nvidia_gpu and torch.cuda.is_available():
+#         device = torch.device('cuda', index=FLAGS.gpu_index)
+#     else:
+#         device = torch.device('cpu')
+#     if torch.cuda.is_available():
+#         torch.cuda.set_device(FLAGS.gpu_index)
+#     np.random.seed(cfg.seed)
+#     torch.manual_seed(cfg.seed)
 
-    checkpoint = int(FLAGS.iteration) if FLAGS.iteration.isnumeric() else FLAGS.iteration
+#     checkpoint = int(FLAGS.iteration) if FLAGS.iteration.isnumeric() else FLAGS.iteration
 
-    #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
-    #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p"
-    checkpoint = 56
-    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_1/rl-ngnn/punggol_1/0/models/iteration_0056.p"
-    #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0001.p"
+#     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
+#     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p"
+#     checkpoint = 56
+#     specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol_1/rl-ngnn/punggol_1/0/models/iteration_0056.p"
+#     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0001.p"
     
-    """create agent"""
-    agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
-                               training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards, specificCheckPointPath = specificCheckPointPath)
+#     """create agent"""
+#     agent = RoadPlanningAgent(cfg=cfg, dtype=dtype, device=device, num_threads=FLAGS.num_threads,
+#                                training=True, checkpoint=checkpoint, restore_best_rewards=FLAGS.restore_best_rewards, specificCheckPointPath = specificCheckPointPath)
 
-    agent.infer(visualize=FLAGS.visualize)
-    print ("Done")
+#     agent.infer(visualize=FLAGS.visualize)
+#     print ("Done")
 
  
 
-if __name__ == '__main__':
-    # flags.mark_flags_as_required([
-    #   'cfg'
-    # ])
-    #print ("hi")
-    # print (FLAGS.iteration)
-    app.run(main_loop)
+# if __name__ == '__main__':
+#     # flags.mark_flags_as_required([
+#     #   'cfg'
+#     # ])
+#     #print ("hi")
+#     # print (FLAGS.iteration)
+#     app.run(main_loop)
 
 
 
