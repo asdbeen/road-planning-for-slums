@@ -4,6 +4,8 @@ cwd = os.getcwd()
 sys.path.append(cwd) 
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
+sys.path.append('/home/chenzebin/road-planning-for-slums/road_planning/khrylib')   # for server
+
 import setproctitle
 
 
