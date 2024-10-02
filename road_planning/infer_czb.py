@@ -5,8 +5,10 @@ sys.path.append(cwd)
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
 
-sys.path.append('/home/chenzebin/road-planning-for-slums/khrylib')   # for server
-print (sys.path)
+import sys
+sys.path.append('/home/chenzebin/road-planning-for-slums/khrylib')
+
+print ("asd")
 import setproctitle
 
 
