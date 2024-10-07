@@ -24,6 +24,8 @@ def get_file_path(file_path):
         file_path = os.path.join(cwd, file_path)
     elif hostname == 'JingZhi':
         file_path = os.path.join(cwd, file_path)
+    elif hostname == 'sutd-vlg-dana':
+        file_path = os.path.join(cwd, file_path)
 
     else:
         raise ValueError('Unknown hostname: {}'.format(socket.gethostname()))

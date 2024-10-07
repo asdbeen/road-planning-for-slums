@@ -1,11 +1,25 @@
+######################################################################
+############################## Add Path ##############################
+######################################################################
 import sys
 import os
 cwd = os.getcwd()
 sys.path.append(cwd) 
 sys.path.append(os.path.join(cwd,'road_planning/envs'))
 
-import setproctitle
 
+######################################################################
+#############################  Set up  ###############################
+######################################################################
+slum_name = 'punggol_1_withShortcut_withConfigAll_2diagonal_wCross'
+train_file_num = '1'
+iteration = '0'
+
+
+######################################################################
+#########################  Original Code #############################
+######################################################################
+import setproctitle
 
 
 import warnings
@@ -20,9 +34,9 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
-flags.DEFINE_string('slum_name', 'punggol_1', 'data_dir')                           # this is the name of ymal file 
-flags.DEFINE_string('cfg', 'punggol_1', 'Configuration file of rl training.')
-flags.DEFINE_string('train_file_num', '1', 'Number of trianing file.')              # this is the number of training file 
+flags.DEFINE_string('slum_name', slum_name, 'data_dir')                                                          # this is the name of ymal file 
+flags.DEFINE_string('cfg', slum_name, 'Configuration file of rl training.')
+flags.DEFINE_string('train_file_num', train_file_num, 'Number of trianing file.')                                # this is the number of training file 
 
 flags.DEFINE_bool('tmp', False, 'Whether to use temporary storage.')
 flags.DEFINE_bool('infer', False, 'Train or Infer.')
@@ -36,7 +50,7 @@ flags.DEFINE_integer('num_threads', 1, 'The number of threads for sampling traje
 flags.DEFINE_bool('use_nvidia_gpu', True, 'Whether to use Nvidia GPU for acceleration.')
 flags.DEFINE_integer('gpu_index', 0,'GPU ID.')
 flags.DEFINE_integer('global_seed', 0, 'Used in env and weight initialization, does not impact action sampling.')
-flags.DEFINE_string('iteration', '1', 'The start iteration. Can be number or best. If not 0, the agent will load from '
+flags.DEFINE_string('iteration', iteration, 'The start iteration. Can be number or best. If not 0, the agent will load from '
                                       'a saved checkpoint.')
 flags.DEFINE_bool('restore_best_rewards', True, 'Whether to restore the best rewards from a saved checkpoint. '
                                                 'True for resume training. False for finetune with new reward.')
@@ -73,6 +87,7 @@ def main_loop(_):
     torch.manual_seed(cfg.seed)
 
     checkpoint = int(FLAGS.iteration) if FLAGS.iteration.isnumeric() else FLAGS.iteration
+
     #checkpoint = "best"
 
     """create agent"""

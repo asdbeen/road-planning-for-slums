@@ -535,9 +535,10 @@ class RoadPlanningAgent(AgentPPO):
                     fixed_log_probs[perm_stage].clone(), exps[perm_stage].clone()
 
             optim_batch_num = int(math.floor(num_state / self.mini_batch_size))
-
+    
+       
             for i in range(optim_batch_num):
-                print ("In update_policy, updating parameters")
+                
                 ind = slice(i * self.mini_batch_size,
                             min((i + 1) * self.mini_batch_size, num_state))
                 states_b, actions_b, advantages_b, returns_b, fixed_log_probs_b, exps_b = \

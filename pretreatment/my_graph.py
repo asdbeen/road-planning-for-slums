@@ -580,7 +580,7 @@ class MyGraph(object):
                 if e not in self.road_edges:
                     if e.nodes[0] in new_roadNodeCollection or e.nodes[1] in new_roadNodeCollection:
                         edge_mask[i] = 1
-            print ("edge_mask",edge_mask)
+            #print ("edge_mask",edge_mask)
 
 
             edge_mask = np.array(edge_mask)
@@ -2055,13 +2055,13 @@ class MyGraph(object):
         single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
         num_single_neighbor_nodes = len(single_neighbor_nodes)
 
-        print ("single_neighbor_nodes",single_neighbor_nodes)
+        #print ("single_neighbor_nodes",single_neighbor_nodes)
         info = []
         for node in single_neighbor_nodes:
             info.append(node.x)
             info.append(node.y)
         
-        print (info)
+        #print (info)
         
         self.culdesacNum = num_single_neighbor_nodes
         return num_single_neighbor_nodes
