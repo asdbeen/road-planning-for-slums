@@ -521,12 +521,11 @@ class MyGraph(object):
 
         ############################
         ####### new Adaption #######
-        #print (self.culdesacNum)
-      
+     
         if self.culdesacNum == 0:                                                                        
             edge_mask = self._get_edge_mask()
         else:
-            # print ("--candidate---")
+    
             # info2 = []
             # for edge in self.edge_list:
             #     if edge not in self.road_edges:
@@ -717,7 +716,9 @@ class MyGraph(object):
         #                 edge_mask[i] = 1
         #print (edge_mask)
         edge_mask = np.array(edge_mask)
-        
+
+
+
         return edge_mask
     # ok
     def _get_edge_face_interior(self):
@@ -2067,6 +2068,7 @@ class MyGraph(object):
         return num_single_neighbor_nodes
 
     def CheckCuldesacNum_NotAssign(self):
+
         roadG = MyGraph()
         for idx in range(len(self.road_edges)):
             e = self.road_edges[idx]
@@ -2074,7 +2076,7 @@ class MyGraph(object):
 
         single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
         num_single_neighbor_nodes = len(single_neighbor_nodes)
-  
+
         return num_single_neighbor_nodes
 
     def CuldesacReward(self) -> float:

@@ -11,7 +11,7 @@ sys.path.append(os.path.join(cwd,'road_planning/envs'))
 ######################################################################
 #############################  Set up  ###############################
 ######################################################################
-slum_name = 'punggol_1_withShortcut_withConfigAll_2diagonal_wCross'
+slum_name = 'punggol_1_withShortcut_withConfigAll_StraightSkeleton'
 train_file_num = '1'
 iteration = '0'
 

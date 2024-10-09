@@ -469,9 +469,10 @@ class RoadEnv:
                 self._full_connected_steps += 1
 
 
-                # if (self._full_connected_steps + self._connecting_steps >              ##### original
-                #         self._total_road_steps * self.build_ration):
-                #     self.transition_stage()
+                if (self._full_connected_steps + self._connecting_steps >              ##### original
+                        self._total_road_steps * self.build_ration):
+           
+                    self.transition_stage()
 
 
                 # if (self._full_connected_steps + self._connecting_steps >                ##### test 2 diagonals
@@ -481,11 +482,27 @@ class RoadEnv:
                 # if (self._mg.culdesacNum==0  ):
                 #     self.transition_stage()
 
+                # print ("asd")
+                # print ("step---road_edges--")
+                # info3 = []
+                # for edge in self._mg.edge_list:
+                #     if edge  in self._mg.road_edges:
+                #         for node in edge.nodes:
+                #             info3.append(node.x)
+                #             info3.append(node.y)
+
+                # print (info3)
                 culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
                 #print ("culdesacNum_Check",culdesacNum_Check)
-                if (culdesacNum_Check==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
-                    #print ("if (culdesacNum_Check==0  or (self._full_connected_steps....")
-                    self.transition_stage()
+                ##########################################
+                ###### This Stop Condition: when all the parcel are connected, and finish cul-de-sac
+                ##########################################
+                # if (culdesacNum_Check==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
+                #     #print ("if (culdesacNum_Check==0  or (self._full_connected_steps....")
+                #     self.transition_stage()
+
+
+         
 
 
             # print ("in step:", "total_cost",self._mg.total_cost(),self._stage)
@@ -509,8 +526,17 @@ class RoadEnv:
             #print ("if self._stage == 'connecting_ else'",)
             return self._get_obs(), reward, self._done, info
 
-        elif self._stage == 'full_connected' and culdesacNum_Check != 0:
-            #print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
+        elif self._stage == 'full_connected' and culdesacNum_Check != 0:                     ##### for completing network
+            # print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
+    
+            # info3 = []
+            # for edge in self._mg.edge_list:
+            #     if edge  in self._mg.road_edges:
+            #         for node in edge.nodes:
+            #             info3.append(node.x)
+            #             info3.append(node.y)
+
+            # print (info3)
             return self._get_obs_stage2_culdesac(), reward, self._done, info
         
         elif self._stage == 'done':

@@ -98,7 +98,7 @@ class Agent:
 
                 
                 print ("orginal thread_num_samples",thread_num_samples)
-                thread_num_samples = 500  ######temp！！！
+                thread_num_samples = 1000  ######temp！！！
                 print ("change to temporarily thread_num_samples",thread_num_samples)
                 memories[0], loggers[0] = self.sample_worker(0, None, thread_num_samples, mean_action)
              

@@ -55,7 +55,7 @@ class UrbanPlanningPolicy(nn.Module):
         
 
     def select_action(self, x, mean_action=False):
-        # print ("select_action")
+       
         road_dist, stage = self.forward(x)
         # print ("road_dist",road_dist.probs)
         # print ("mean_action",mean_action)
@@ -67,7 +67,7 @@ class UrbanPlanningPolicy(nn.Module):
         else:
             road_action = road_dist.sample().to(self.agent.dtype)
         action = road_action
-        # print ("action",action)
+        
         return action
 
     def get_log_prob_entropy(self, x, action):
