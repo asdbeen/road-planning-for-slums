@@ -188,3 +188,31 @@
 [2024-10-07 16:35:10,574] save_model_interval: 1
 [2024-10-07 16:35:50,469] 0	T_sample 36.58	T_update 2.31	T_eval 0.44	ETA 0:00:00	train_R_eps -0.94	eval_R_eps -0.95	punggol_1_withShortcut_withConfigAll_2diagonal_wCross	 1.0791149705171736	
 [2024-10-07 16:35:50,474] save best checkpoint with rewards -0.95!
+[2024-10-15 12:39:34,714] data_dir:data/punggol_1_withShortcut_withConfigAll_2diagonal_wCross
+[2024-10-15 12:39:34,714] id: punggol_1_withShortcut_withConfigAll_2diagonal_wCross
+[2024-10-15 12:39:34,714] seed: 0
+[2024-10-15 12:39:34,714] objectives_plan: 
+[2024-10-15 12:39:34,714] init_plan: 
+[2024-10-15 12:39:34,714] env_specs: {}
+[2024-10-15 12:39:34,714] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-15 12:39:34,714] obs_specs: {}
+[2024-10-15 12:39:34,714] agent_specs: {'batch_stage': False}
+[2024-10-15 12:39:34,714] gamma: 0.9
+[2024-10-15 12:39:34,714] tau: 0.0
+[2024-10-15 12:39:34,714] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-15 12:39:34,714] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-15 12:39:34,714] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-15 12:39:34,714] lr: 0.0004
+[2024-10-15 12:39:34,714] weightdecay: 0.0
+[2024-10-15 12:39:34,714] eps: 1e-05
+[2024-10-15 12:39:34,714] value_pred_coef: 0.5
+[2024-10-15 12:39:34,714] entropy_coef: 0.01
+[2024-10-15 12:39:34,714] clip_epsilon: 0.2
+[2024-10-15 12:39:34,714] max_num_iterations: 1
+[2024-10-15 12:39:34,714] num_episodes_per_iteration: 1200
+[2024-10-15 12:39:34,714] max_sequence_length: 33
+[2024-10-15 12:39:34,714] num_optim_epoch: 4
+[2024-10-15 12:39:34,715] mini_batch_size: 100
+[2024-10-15 12:39:34,715] save_model_interval: 1
+[2024-10-15 12:42:44,080] 0	T_sample 165.41	T_update 1.62	T_eval 21.92	ETA 0:00:00	train_R_eps -2.84	eval_R_eps -2.97	punggol_1_withShortcut_withConfigAll_2diagonal_wCross	 1.0457591727317164	
+[2024-10-15 12:42:44,084] save best checkpoint with rewards -2.97!

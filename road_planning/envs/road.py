@@ -16,6 +16,7 @@ from road_planning.envs.my_graph import MyGraph
 from road_planning.utils.config import Config
 
 import os
+import sys
 
 class InfeasibleActionError(ValueError):
     """An infeasible action were passed to the env."""
@@ -39,18 +40,31 @@ class InfeasibleActionError(ValueError):
 
 def load_graph(slum):
     ## Check path
-    file_path = "data/{}.mg".format(slum)
-    full_path = os.path.abspath(file_path)
-    print(f"Loading graph from: {full_path}")
+    
+    cwd = os.getcwd()
+    if "road_planning" in cwd:      # for ssh remote terminal
+        parent_dir = os.path.dirname(cwd)
+        sys.path.append(parent_dir) 
+        full_path = os.path.join(parent_dir, 'data', f'{slum}.mg')
+        print(f"Loading graph from: {full_path}")
+        with open(full_path, 'rb') as mgfile:
+            mg = pickle.loads(mgfile.read())
 
-    with open("data/{}.mg".format(slum), 'rb') as mgfile:
-        mg = pickle.loads(mgfile.read())
+    else:
+        file_path = "data/{}.mg".format(slum)
+        full_path = os.path.abspath(file_path)
+
+        print(f"Loading graph from: {full_path}")
+
+        with open("data/{}.mg".format(slum), 'rb') as mgfile:
+            mg = pickle.loads(mgfile.read())
         #### This loaded file has been proceessed 
         
         # mg.define_roads()
         # mg.define_interior_parcels()
         # mg.td_dict_init()
         # mg.feature_init()
+    print ("This graph has ", len(mg.myedges())," edges")
     return mg
 
 
@@ -103,11 +117,11 @@ def reward_info_function(mg: MyGraph, name: Text,
         ####################################### 
         ### Do POI related computation
         #######################################   
-        # mg.td_dict_nodeToPOInode_init()
-        # mg.td_dict_nodeToPOIEdge_init()
-        # mg.td_dict_faceToPOIEdge_init()
-        # mg.td_dict_ave_faceToPOIEdge_init()
-        # travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
+        mg.td_dict_nodeToPOInode_init()
+        mg.td_dict_nodeToPOIEdge_init()
+        mg.td_dict_faceToPOIEdge_init()
+        mg.td_dict_ave_faceToPOIEdge_init()
+        travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
 
         # print ("name",name)
         # print ("travel_distance_POI",travel_distance_POI)
@@ -117,7 +131,7 @@ def reward_info_function(mg: MyGraph, name: Text,
         # print ("-------------")
    
         ####################################### 
-        ### Do POI related computation
+        ### Do culdesac related computation
         ####################################### 
         culdesacReward = mg.CuldesacReward()
 
@@ -145,7 +159,10 @@ def reward_info_function(mg: MyGraph, name: Text,
 
 
     #finalReward = connect_reward + travel_distance + travel_distance_POI +  road_cost + culdesacReward
-    finalReward = connect_reward  + travel_distance + road_cost + culdesacReward    # for complete roadnetwork  
+    #finalReward = connect_reward  + travel_distance + travel_distance_POI + road_cost  # + culdesacReward    # for complete roadnetwork  
+
+    finalReward = travel_distance_POI   # Consider POI only
+
     #print ("name",name, "connect_reward",connect_reward,"culdesacReward",culdesacReward,"culdesacNum",mg.culdesacNum,"finalReward",finalReward)
 
     return finalReward, {
@@ -336,6 +353,7 @@ class RoadEnv:
         Returns:
             obs (int): the current stage index.
         """
+
         return np.eye(len(self._all_stages))[self._all_stages.index(
             self._stage)]
 
@@ -350,6 +368,7 @@ class RoadEnv:
         numerical, node_feature, edge_part_feature, edge_index, edge_mask = self._mg.get_obs()
         stage = self._get_stage_obs()
         
+        # print ("_get_obs",[numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage])
         return [
             numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage
         ]
@@ -365,6 +384,8 @@ class RoadEnv:
         numerical, node_feature, edge_part_feature, edge_index, edge_mask = self._mg.get_obs_stage2_culdesac()
         stage = self._get_stage_obs()
         
+        # print ("_get_obs_stage2_culdesac",[numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage])
+
         return [
             numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage
         ]
@@ -419,7 +440,7 @@ class RoadEnv:
         }
         return self._get_obs(), self.FAILURE_REWARD, True, info
 
-    def step(self, action: List,
+    def step_SAVE(self, action: List,
              logger: logging.Logger) -> Tuple[List, float, bool, Dict]:
         """
         Run one timestep of the environment's dynamics. When end of episode
@@ -541,7 +562,59 @@ class RoadEnv:
         
         elif self._stage == 'done':
             return self._get_obs(), reward, self._done, info
-            
+
+
+    def step(self, action: List,
+                logger: logging.Logger) -> Tuple[List, float, bool, Dict]:
+            """
+            Run one timestep of the environment's dynamics. When end of episode
+            is reached, you are responsible for calling `reset()` to reset
+            the environment's state.
+            Accepts an action and returns a tuple (observation, reward, done, info).
+            Args:
+                action (np.ndarray of size 2): The action to take.
+                                            1 is the land_use placement action.
+                                            1 is the building road action.
+                logger (Logger): The logger.
+            Returns:
+                observation (object): agent's observation of the current environment
+                reward (float) : amount of reward returned after previous action
+                done (bool): whether the episode has ended, in which case further step() calls will return undefined results
+                info (dict): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)
+            """
+            # print ("in step,self._stage :",self._stage)
+            # print ("in step,self._total_road_steps * self.build_ration:",self._total_road_steps * self.build_ration)
+            # print ("in step,self._full_connected_steps:",self._full_connected_steps)
+            # print ("in step,self._connecting_steps:",self._connecting_steps)
+            # print ("self.stage2edges ",len(self._mg.stage2edges ))
+            if self._done:
+                raise RuntimeError('Action taken after episode is done.')
+            else:
+                if self._stage == 'connecting':
+                    self._action_history.append(action)
+                    self.build_road(action,POIVersionTag = False)  ########
+                    self._connecting_steps += 1
+                    if self._connecting_steps >= math.floor(
+                            self._total_road_steps *
+                            self.build_ration) or self._full_connected():
+                        self.transition_stage()
+                elif self._stage == 'full_connected':
+                    self._action_history.append(action)
+                    self.build_road(action,POIVersionTag = False)   #######
+                    self._full_connected_steps += 1
+                    if (self._full_connected_steps + self._connecting_steps >
+                            self._total_road_steps * self.build_ration):
+                        self.transition_stage()
+                # print ("in step:", "total_cost",self._mg.total_cost(),self._stage)
+                # print ("in step:",'f2POI_dis_avg',self._mg.f2f_avg)
+                reward, info = self.get_reward_info()
+                if self._stage == 'done':
+                    self.save_step_data()
+            # print ("reward",reward)
+            # converted_list = [float(arr[0]) for arr in self._action_history]
+            # print ("self._action_history",converted_list)
+            return self._get_obs(), reward, self._done, info
+
     def reset(self):
         """
         Resets the state of the environment and returns an initial observation.

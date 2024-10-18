@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch
 
-
 class UrbanPlanningValue(nn.Module):
     """
     Value network for urban planning.
@@ -12,6 +11,7 @@ class UrbanPlanningValue(nn.Module):
         self.agent = agent
         self.shared_net = shared_net
         self.value_head = self.create_value_head(cfg)
+
 
     def create_value_head(self, cfg):
         """Create the value head."""
@@ -33,7 +33,8 @@ class UrbanPlanningValue(nn.Module):
                     nn.Tanh()
                 )
         return value_head
-
+    
+    
     def forward(self, x):
         _, state_value, _ , _ = self.shared_net(x)
         value = self.value_head(state_value.to(torch.float32))

@@ -2,7 +2,7 @@
 reward_specs:
   dis_weight: 0.5
   cost_weight: 0.5
-  build_ration: 0.5
+  build_ration: 0.1
 
 # agent
 agent_specs:
@@ -32,7 +32,7 @@ entropy_coef: 0.01
 clip_epsilon: 0.2
 
 
-max_num_iterations: 3  # 100
+max_num_iterations: 2  # 100
 #num_episodes_per_iteration: 500
 num_episodes_per_iteration: 1200
 #max_sequence_length: 100

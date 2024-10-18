@@ -143,3 +143,346 @@
 [2024-10-02 16:48:24,233] cost: 7.0487658740298365
 [2024-10-02 16:48:24,233] eval_0.9&0.1: -2.6525628098803953
 [2024-10-02 16:48:24,233] save plan to file: /Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/tengah_1/rl-ngnn/tengah_1/0/plan/plan.p
+[2024-10-15 16:49:24,012] data_dir:data/tengah_1
+[2024-10-15 16:49:24,012] id: tengah_1
+[2024-10-15 16:49:24,012] seed: 0
+[2024-10-15 16:49:24,012] objectives_plan: 
+[2024-10-15 16:49:24,012] init_plan: 
+[2024-10-15 16:49:24,012] env_specs: {}
+[2024-10-15 16:49:24,012] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-15 16:49:24,012] obs_specs: {}
+[2024-10-15 16:49:24,012] agent_specs: {'batch_stage': False}
+[2024-10-15 16:49:24,012] gamma: 0.9
+[2024-10-15 16:49:24,012] tau: 0.0
+[2024-10-15 16:49:24,012] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-15 16:49:24,012] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-15 16:49:24,012] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-15 16:49:24,012] lr: 0.0004
+[2024-10-15 16:49:24,012] weightdecay: 0.0
+[2024-10-15 16:49:24,012] eps: 1e-05
+[2024-10-15 16:49:24,012] value_pred_coef: 0.5
+[2024-10-15 16:49:24,012] entropy_coef: 0.01
+[2024-10-15 16:49:24,012] clip_epsilon: 0.2
+[2024-10-15 16:49:24,012] max_num_iterations: 50
+[2024-10-15 16:49:24,012] num_episodes_per_iteration: 1200
+[2024-10-15 16:49:24,012] max_sequence_length: 33
+[2024-10-15 16:49:24,012] num_optim_epoch: 4
+[2024-10-15 16:49:24,013] mini_batch_size: 1024
+[2024-10-15 16:49:24,013] save_model_interval: 1
+[2024-10-15 16:50:40,771] data_dir:data/tengah_1
+[2024-10-15 16:50:40,771] id: tengah_1
+[2024-10-15 16:50:40,771] seed: 0
+[2024-10-15 16:50:40,771] objectives_plan: 
+[2024-10-15 16:50:40,771] init_plan: 
+[2024-10-15 16:50:40,771] env_specs: {}
+[2024-10-15 16:50:40,771] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-15 16:50:40,771] obs_specs: {}
+[2024-10-15 16:50:40,771] agent_specs: {'batch_stage': False}
+[2024-10-15 16:50:40,771] gamma: 0.9
+[2024-10-15 16:50:40,771] tau: 0.0
+[2024-10-15 16:50:40,771] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-15 16:50:40,771] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-15 16:50:40,771] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-15 16:50:40,771] lr: 0.0004
+[2024-10-15 16:50:40,771] weightdecay: 0.0
+[2024-10-15 16:50:40,771] eps: 1e-05
+[2024-10-15 16:50:40,771] value_pred_coef: 0.5
+[2024-10-15 16:50:40,771] entropy_coef: 0.01
+[2024-10-15 16:50:40,771] clip_epsilon: 0.2
+[2024-10-15 16:50:40,771] max_num_iterations: 50
+[2024-10-15 16:50:40,771] num_episodes_per_iteration: 1200
+[2024-10-15 16:50:40,771] max_sequence_length: 33
+[2024-10-15 16:50:40,771] num_optim_epoch: 4
+[2024-10-15 16:50:40,771] mini_batch_size: 1024
+[2024-10-15 16:50:40,771] save_model_interval: 1
+[2024-10-15 16:53:37,576] 0	T_sample 153.79	T_update 0.52	T_eval 22.01	ETA 2:24:00	train_R_eps -1213.34	eval_R_eps -340.94	tengah_1	 397.63039867504943	
+[2024-10-15 16:53:37,580] save best checkpoint with rewards -340.94!
+[2024-10-15 16:56:36,460] 1	T_sample 156.37	T_update 0.39	T_eval 22.11	ETA 2:23:05	train_R_eps -894.33	eval_R_eps -340.94	tengah_1	 397.63039867504943	
+[2024-10-15 16:59:34,396] data_dir:data/tengah_1
+[2024-10-15 16:59:34,396] id: tengah_1
+[2024-10-15 16:59:34,396] seed: 0
+[2024-10-15 16:59:34,396] objectives_plan: 
+[2024-10-15 16:59:34,396] init_plan: 
+[2024-10-15 16:59:34,396] env_specs: {}
+[2024-10-15 16:59:34,396] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-15 16:59:34,396] obs_specs: {}
+[2024-10-15 16:59:34,396] agent_specs: {'batch_stage': False}
+[2024-10-15 16:59:34,396] gamma: 0.9
+[2024-10-15 16:59:34,396] tau: 0.0
+[2024-10-15 16:59:34,396] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-15 16:59:34,396] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-15 16:59:34,396] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-15 16:59:34,396] lr: 0.0004
+[2024-10-15 16:59:34,396] weightdecay: 0.0
+[2024-10-15 16:59:34,396] eps: 1e-05
+[2024-10-15 16:59:34,396] value_pred_coef: 0.5
+[2024-10-15 16:59:34,396] entropy_coef: 0.01
+[2024-10-15 16:59:34,396] clip_epsilon: 0.2
+[2024-10-15 16:59:34,396] max_num_iterations: 50
+[2024-10-15 16:59:34,396] num_episodes_per_iteration: 1200
+[2024-10-15 16:59:34,396] max_sequence_length: 33
+[2024-10-15 16:59:34,396] num_optim_epoch: 4
+[2024-10-15 16:59:34,396] mini_batch_size: 1024
+[2024-10-15 16:59:34,396] save_model_interval: 1
+[2024-10-15 17:02:30,723] 0	T_sample 153.47	T_update 0.57	T_eval 21.81	ETA 2:23:36	train_R_eps -1213.34	eval_R_eps -340.94	tengah_1	 397.63039867504943	
+[2024-10-15 17:02:30,727] save best checkpoint with rewards -340.94!
+[2024-10-15 17:21:35,462] data_dir:data/tengah_1
+[2024-10-15 17:21:35,462] id: tengah_1
+[2024-10-15 17:21:35,462] seed: 0
+[2024-10-15 17:21:35,462] objectives_plan: 
+[2024-10-15 17:21:35,462] init_plan: 
+[2024-10-15 17:21:35,462] env_specs: {}
+[2024-10-15 17:21:35,462] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-15 17:21:35,462] obs_specs: {}
+[2024-10-15 17:21:35,462] agent_specs: {'batch_stage': False}
+[2024-10-15 17:21:35,462] gamma: 0.9
+[2024-10-15 17:21:35,462] tau: 0.0
+[2024-10-15 17:21:35,462] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-15 17:21:35,462] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-15 17:21:35,462] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-15 17:21:35,462] lr: 0.0004
+[2024-10-15 17:21:35,462] weightdecay: 0.0
+[2024-10-15 17:21:35,462] eps: 1e-05
+[2024-10-15 17:21:35,462] value_pred_coef: 0.5
+[2024-10-15 17:21:35,462] entropy_coef: 0.01
+[2024-10-15 17:21:35,462] clip_epsilon: 0.2
+[2024-10-15 17:21:35,462] max_num_iterations: 50
+[2024-10-15 17:21:35,462] num_episodes_per_iteration: 1200
+[2024-10-15 17:21:35,462] max_sequence_length: 33
+[2024-10-15 17:21:35,462] num_optim_epoch: 4
+[2024-10-15 17:21:35,462] mini_batch_size: 1024
+[2024-10-15 17:21:35,462] save_model_interval: 1
+[2024-10-15 17:24:52,246] data_dir:data/tengah_1
+[2024-10-15 17:24:52,246] id: tengah_1
+[2024-10-15 17:24:52,246] seed: 0
+[2024-10-15 17:24:52,246] objectives_plan: 
+[2024-10-15 17:24:52,246] init_plan: 
+[2024-10-15 17:24:52,246] env_specs: {}
+[2024-10-15 17:24:52,246] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-15 17:24:52,246] obs_specs: {}
+[2024-10-15 17:24:52,246] agent_specs: {'batch_stage': False}
+[2024-10-15 17:24:52,246] gamma: 0.9
+[2024-10-15 17:24:52,246] tau: 0.0
+[2024-10-15 17:24:52,246] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-15 17:24:52,246] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-15 17:24:52,246] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-15 17:24:52,246] lr: 0.0004
+[2024-10-15 17:24:52,246] weightdecay: 0.0
+[2024-10-15 17:24:52,246] eps: 1e-05
+[2024-10-15 17:24:52,246] value_pred_coef: 0.5
+[2024-10-15 17:24:52,246] entropy_coef: 0.01
+[2024-10-15 17:24:52,246] clip_epsilon: 0.2
+[2024-10-15 17:24:52,246] max_num_iterations: 50
+[2024-10-15 17:24:52,246] num_episodes_per_iteration: 1200
+[2024-10-15 17:24:52,246] max_sequence_length: 33
+[2024-10-15 17:24:52,246] num_optim_epoch: 4
+[2024-10-15 17:24:52,246] mini_batch_size: 1024
+[2024-10-15 17:24:52,246] save_model_interval: 1
+[2024-10-16 15:46:38,394] data_dir:data/tengah_1
+[2024-10-16 15:46:38,394] id: tengah_1
+[2024-10-16 15:46:38,394] seed: 0
+[2024-10-16 15:46:38,394] objectives_plan: 
+[2024-10-16 15:46:38,394] init_plan: 
+[2024-10-16 15:46:38,394] env_specs: {}
+[2024-10-16 15:46:38,394] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-16 15:46:38,394] obs_specs: {}
+[2024-10-16 15:46:38,394] agent_specs: {'batch_stage': False}
+[2024-10-16 15:46:38,394] gamma: 0.9
+[2024-10-16 15:46:38,394] tau: 0.0
+[2024-10-16 15:46:38,394] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-16 15:46:38,394] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-16 15:46:38,394] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-16 15:46:38,394] lr: 0.0004
+[2024-10-16 15:46:38,394] weightdecay: 0.0
+[2024-10-16 15:46:38,394] eps: 1e-05
+[2024-10-16 15:46:38,394] value_pred_coef: 0.5
+[2024-10-16 15:46:38,394] entropy_coef: 0.01
+[2024-10-16 15:46:38,394] clip_epsilon: 0.2
+[2024-10-16 15:46:38,394] max_num_iterations: 50
+[2024-10-16 15:46:38,394] num_episodes_per_iteration: 1200
+[2024-10-16 15:46:38,394] max_sequence_length: 33
+[2024-10-16 15:46:38,394] num_optim_epoch: 4
+[2024-10-16 15:46:38,394] mini_batch_size: 1024
+[2024-10-16 15:46:38,394] save_model_interval: 1
+[2024-10-16 15:47:05,347] data_dir:data/tengah_1
+[2024-10-16 15:47:05,347] id: tengah_1
+[2024-10-16 15:47:05,347] seed: 0
+[2024-10-16 15:47:05,347] objectives_plan: 
+[2024-10-16 15:47:05,347] init_plan: 
+[2024-10-16 15:47:05,347] env_specs: {}
+[2024-10-16 15:47:05,347] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-16 15:47:05,347] obs_specs: {}
+[2024-10-16 15:47:05,347] agent_specs: {'batch_stage': False}
+[2024-10-16 15:47:05,347] gamma: 0.9
+[2024-10-16 15:47:05,347] tau: 0.0
+[2024-10-16 15:47:05,347] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-16 15:47:05,347] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-16 15:47:05,347] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-16 15:47:05,347] lr: 0.0004
+[2024-10-16 15:47:05,347] weightdecay: 0.0
+[2024-10-16 15:47:05,347] eps: 1e-05
+[2024-10-16 15:47:05,347] value_pred_coef: 0.5
+[2024-10-16 15:47:05,347] entropy_coef: 0.01
+[2024-10-16 15:47:05,347] clip_epsilon: 0.2
+[2024-10-16 15:47:05,347] max_num_iterations: 50
+[2024-10-16 15:47:05,347] num_episodes_per_iteration: 1200
+[2024-10-16 15:47:05,347] max_sequence_length: 33
+[2024-10-16 15:47:05,347] num_optim_epoch: 4
+[2024-10-16 15:47:05,347] mini_batch_size: 1024
+[2024-10-16 15:47:05,347] save_model_interval: 1
+[2024-10-16 15:51:22,302] data_dir:data/tengah_1
+[2024-10-16 15:51:22,302] id: tengah_1
+[2024-10-16 15:51:22,302] seed: 0
+[2024-10-16 15:51:22,302] objectives_plan: 
+[2024-10-16 15:51:22,302] init_plan: 
+[2024-10-16 15:51:22,302] env_specs: {}
+[2024-10-16 15:51:22,302] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-16 15:51:22,302] obs_specs: {}
+[2024-10-16 15:51:22,302] agent_specs: {'batch_stage': False}
+[2024-10-16 15:51:22,302] gamma: 0.9
+[2024-10-16 15:51:22,302] tau: 0.0
+[2024-10-16 15:51:22,302] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-16 15:51:22,302] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-16 15:51:22,302] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-16 15:51:22,302] lr: 0.0004
+[2024-10-16 15:51:22,302] weightdecay: 0.0
+[2024-10-16 15:51:22,302] eps: 1e-05
+[2024-10-16 15:51:22,302] value_pred_coef: 0.5
+[2024-10-16 15:51:22,302] entropy_coef: 0.01
+[2024-10-16 15:51:22,302] clip_epsilon: 0.2
+[2024-10-16 15:51:22,302] max_num_iterations: 50
+[2024-10-16 15:51:22,302] num_episodes_per_iteration: 1200
+[2024-10-16 15:51:22,302] max_sequence_length: 33
+[2024-10-16 15:51:22,302] num_optim_epoch: 4
+[2024-10-16 15:51:22,302] mini_batch_size: 1024
+[2024-10-16 15:51:22,302] save_model_interval: 1
+[2024-10-16 15:52:58,615] data_dir:data/tengah_1
+[2024-10-16 15:52:58,615] id: tengah_1
+[2024-10-16 15:52:58,615] seed: 0
+[2024-10-16 15:52:58,615] objectives_plan: 
+[2024-10-16 15:52:58,615] init_plan: 
+[2024-10-16 15:52:58,615] env_specs: {}
+[2024-10-16 15:52:58,615] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-16 15:52:58,615] obs_specs: {}
+[2024-10-16 15:52:58,615] agent_specs: {'batch_stage': False}
+[2024-10-16 15:52:58,615] gamma: 0.9
+[2024-10-16 15:52:58,615] tau: 0.0
+[2024-10-16 15:52:58,615] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-16 15:52:58,615] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-16 15:52:58,615] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-16 15:52:58,615] lr: 0.0004
+[2024-10-16 15:52:58,615] weightdecay: 0.0
+[2024-10-16 15:52:58,615] eps: 1e-05
+[2024-10-16 15:52:58,615] value_pred_coef: 0.5
+[2024-10-16 15:52:58,615] entropy_coef: 0.01
+[2024-10-16 15:52:58,615] clip_epsilon: 0.2
+[2024-10-16 15:52:58,615] max_num_iterations: 50
+[2024-10-16 15:52:58,615] num_episodes_per_iteration: 1200
+[2024-10-16 15:52:58,615] max_sequence_length: 33
+[2024-10-16 15:52:58,615] num_optim_epoch: 4
+[2024-10-16 15:52:58,615] mini_batch_size: 1024
+[2024-10-16 15:52:58,616] save_model_interval: 1
+[2024-10-16 15:54:13,155] data_dir:data/tengah_1
+[2024-10-16 15:54:13,155] id: tengah_1
+[2024-10-16 15:54:13,156] seed: 0
+[2024-10-16 15:54:13,156] objectives_plan: 
+[2024-10-16 15:54:13,156] init_plan: 
+[2024-10-16 15:54:13,156] env_specs: {}
+[2024-10-16 15:54:13,156] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-16 15:54:13,156] obs_specs: {}
+[2024-10-16 15:54:13,156] agent_specs: {'batch_stage': False}
+[2024-10-16 15:54:13,156] gamma: 0.9
+[2024-10-16 15:54:13,156] tau: 0.0
+[2024-10-16 15:54:13,156] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-16 15:54:13,156] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-16 15:54:13,156] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-16 15:54:13,156] lr: 0.0004
+[2024-10-16 15:54:13,156] weightdecay: 0.0
+[2024-10-16 15:54:13,156] eps: 1e-05
+[2024-10-16 15:54:13,156] value_pred_coef: 0.5
+[2024-10-16 15:54:13,156] entropy_coef: 0.01
+[2024-10-16 15:54:13,156] clip_epsilon: 0.2
+[2024-10-16 15:54:13,156] max_num_iterations: 50
+[2024-10-16 15:54:13,156] num_episodes_per_iteration: 1200
+[2024-10-16 15:54:13,156] max_sequence_length: 33
+[2024-10-16 15:54:13,156] num_optim_epoch: 4
+[2024-10-16 15:54:13,156] mini_batch_size: 1024
+[2024-10-16 15:54:13,156] save_model_interval: 1
+[2024-10-16 15:54:42,333] data_dir:data/tengah_1
+[2024-10-16 15:54:42,333] id: tengah_1
+[2024-10-16 15:54:42,333] seed: 0
+[2024-10-16 15:54:42,333] objectives_plan: 
+[2024-10-16 15:54:42,333] init_plan: 
+[2024-10-16 15:54:42,333] env_specs: {}
+[2024-10-16 15:54:42,333] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-16 15:54:42,333] obs_specs: {}
+[2024-10-16 15:54:42,333] agent_specs: {'batch_stage': False}
+[2024-10-16 15:54:42,333] gamma: 0.9
+[2024-10-16 15:54:42,333] tau: 0.0
+[2024-10-16 15:54:42,333] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-16 15:54:42,333] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-16 15:54:42,333] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-16 15:54:42,333] lr: 0.0004
+[2024-10-16 15:54:42,333] weightdecay: 0.0
+[2024-10-16 15:54:42,333] eps: 1e-05
+[2024-10-16 15:54:42,333] value_pred_coef: 0.5
+[2024-10-16 15:54:42,333] entropy_coef: 0.01
+[2024-10-16 15:54:42,333] clip_epsilon: 0.2
+[2024-10-16 15:54:42,333] max_num_iterations: 50
+[2024-10-16 15:54:42,333] num_episodes_per_iteration: 1200
+[2024-10-16 15:54:42,333] max_sequence_length: 33
+[2024-10-16 15:54:42,333] num_optim_epoch: 4
+[2024-10-16 15:54:42,333] mini_batch_size: 1024
+[2024-10-16 15:54:42,333] save_model_interval: 1
+[2024-10-17 13:05:29,025] data_dir:data/tengah_1
+[2024-10-17 13:05:29,025] id: tengah_1
+[2024-10-17 13:05:29,025] seed: 0
+[2024-10-17 13:05:29,025] objectives_plan: 
+[2024-10-17 13:05:29,025] init_plan: 
+[2024-10-17 13:05:29,025] env_specs: {}
+[2024-10-17 13:05:29,025] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-17 13:05:29,025] obs_specs: {}
+[2024-10-17 13:05:29,025] agent_specs: {'batch_stage': False}
+[2024-10-17 13:05:29,025] gamma: 0.9
+[2024-10-17 13:05:29,025] tau: 0.0
+[2024-10-17 13:05:29,025] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-17 13:05:29,025] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-17 13:05:29,025] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-17 13:05:29,025] lr: 0.0004
+[2024-10-17 13:05:29,025] weightdecay: 0.0
+[2024-10-17 13:05:29,025] eps: 1e-05
+[2024-10-17 13:05:29,025] value_pred_coef: 0.5
+[2024-10-17 13:05:29,025] entropy_coef: 0.01
+[2024-10-17 13:05:29,025] clip_epsilon: 0.2
+[2024-10-17 13:05:29,025] max_num_iterations: 50
+[2024-10-17 13:05:29,025] num_episodes_per_iteration: 1200
+[2024-10-17 13:05:29,025] max_sequence_length: 33
+[2024-10-17 13:05:29,025] num_optim_epoch: 4
+[2024-10-17 13:05:29,026] mini_batch_size: 1024
+[2024-10-17 13:05:29,026] save_model_interval: 1
+[2024-10-17 13:06:29,498] data_dir:data/tengah_1
+[2024-10-17 13:06:29,498] id: tengah_1
+[2024-10-17 13:06:29,498] seed: 0
+[2024-10-17 13:06:29,498] objectives_plan: 
+[2024-10-17 13:06:29,498] init_plan: 
+[2024-10-17 13:06:29,498] env_specs: {}
+[2024-10-17 13:06:29,498] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-10-17 13:06:29,498] obs_specs: {}
+[2024-10-17 13:06:29,498] agent_specs: {'batch_stage': False}
+[2024-10-17 13:06:29,498] gamma: 0.9
+[2024-10-17 13:06:29,499] tau: 0.0
+[2024-10-17 13:06:29,499] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-17 13:06:29,499] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-17 13:06:29,499] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-17 13:06:29,499] lr: 0.0004
+[2024-10-17 13:06:29,499] weightdecay: 0.0
+[2024-10-17 13:06:29,499] eps: 1e-05
+[2024-10-17 13:06:29,499] value_pred_coef: 0.5
+[2024-10-17 13:06:29,499] entropy_coef: 0.01
+[2024-10-17 13:06:29,499] clip_epsilon: 0.2
+[2024-10-17 13:06:29,499] max_num_iterations: 50
+[2024-10-17 13:06:29,499] num_episodes_per_iteration: 1200
+[2024-10-17 13:06:29,499] max_sequence_length: 33
+[2024-10-17 13:06:29,499] num_optim_epoch: 4
+[2024-10-17 13:06:29,499] mini_batch_size: 1024
+[2024-10-17 13:06:29,499] save_model_interval: 1

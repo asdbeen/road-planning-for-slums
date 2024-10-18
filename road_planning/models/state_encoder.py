@@ -640,6 +640,7 @@ class NGNNStateEncoder(nn.Module):
         # h_edges = (edge_fc_layer2(h_edges_12.to(torch.float32)) +
         #            edge_fc_layer2(h_edges_21.to(torch.float32))) / 2
 
+
         return h_edges, h_edges_12, h_edges_21
 
     def scatter_to_nodes(self, h_edges, edge_index, max_num_nodes):
@@ -702,8 +703,32 @@ class NGNNStateEncoder(nn.Module):
         numerical, node_feature, edge_part_feature, edge_index, edge_mask, stage = self.batch_data(x)
         h_numerical_features = self.numerical_feature_encoder(numerical)
 
+    
+        # print (edge_part_feature.shape)
+        # last_edge_data = edge_part_feature[0, -1]  # 获取最后一条边的数据
+        # print(last_edge_data)
+        # print("====================")
+
+   
+        # last_edge_data = edge_part_feature[0, 1]  # 获取最后一条边的数据. 太大了
+        # print("第一条边last_edge_data:",last_edge_data)
+        # last_edge_data = edge_part_feature[0, -1]  # 获取最后一条边的数据. 太大了
+        # print("最后一条边last_edge_data:",last_edge_data)
+
         h_road_nodes = self.road_node_encoder(node_feature.to(torch.float32))
         h_edge_part = self.edge_part_encoder(edge_part_feature.to(torch.float32))
+
+    
+        # print (h_edge_part.shape)
+        
+        # last_edge_data = h_edge_part[0, -1]  # 获取最后一条边的数据. 太大了
+        # print("第一条边last_edge_data:",last_edge_data)
+        # print(last_edge_data)
+        # print("最后一条边last_edge_data:",last_edge_data)
+        #print (h_road_nodes.shape)
+
+
+        # print("====================")
 
         for road_edge_fc_layer2 in self.road_edge_fc_layers2:
             h_road_edges = self.gather_to_edges(h_road_nodes,
@@ -713,16 +738,50 @@ class NGNNStateEncoder(nn.Module):
                                                      node_feature.shape[1])
             h_road_nodes = h_road_nodes + h_road_nodes_new
 
+        # print (h_road_edges[1].shape)
+        # last_edge_data = h_road_edges[0][0, -1]  # 获取最后一条边的数据
+        # print(last_edge_data)
+        # count = 0
+        # count2 = 0
+        # dispatch = []
+        # for i in range(len(h_road_edges[0])):
+        #     last_edge_data = h_road_edges[0][0, i]  
+        #     # print (h_road_edges[0].shape)
+        #     # print (last_edge_data)
+        #     if torch.all((last_edge_data == 1) | (last_edge_data == -1)):
+        #         count+=1
+        #         dispatch.append(1)
+        #     else:
+        #         count2 +=1
+        #         dispatch.append(0)
+        # if count==1 or count2==1:
+        #     pass
+        # else:
+        #     print ("len(h_road_edges[0])",len(h_road_edges[0]))
+        #     print ("len(h_road_edges[0])",len(h_road_edges[0]))
+        #     print ("failCount",count)
+        #     print ("successCount2",count2)
+        #     print ("dispatch",dispatch)
+        #     print("====================")
+
         h_road_edges_mean = self.mean_features(h_road_edges[0])
         h_road_nodes_mean = self.mean_features(h_road_nodes)
 
+        
         state_value = torch.cat([
             h_numerical_features, h_road_nodes_mean, h_road_edges_mean, stage
         ],
                                 dim=-1)
         state_policy_road = torch.cat([h_road_edges[0].to(torch.float32)],
                                       dim=-1)
+        
 
+        # ########################
+        # #### debug
+        # ########################
+        # last_edge_data = state_policy_road[0, -1]  # 获取最后一条边的数据
+        # print(last_edge_data)
+        # print("====================")
         return state_policy_road, state_value, edge_mask, stage
 
 

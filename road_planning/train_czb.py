@@ -3,15 +3,30 @@
 ######################################################################
 import sys
 import os
+
 cwd = os.getcwd()
-sys.path.append(cwd) 
-sys.path.append(os.path.join(cwd,'road_planning/envs'))
+
+if "road_planning" in cwd:      # for ssh remote terminal
+    sys.path.append(os.path.join(cwd,'envs'))
+    parent_dir = os.path.dirname(cwd)
+    sys.path.append(parent_dir) 
+    cwd = parent_dir
+
+else:
+    sys.path.append(cwd) 
+    sys.path.append(os.path.join(cwd,'road_planning'))
+    sys.path.append(os.path.join(cwd,'road_planning/envs'))
+
+
 
 
 ######################################################################
 #############################  Set up  ###############################
 ######################################################################
-slum_name = 'punggol_1_withShortcut_withConfigAll_StraightSkeleton'
+slum_name = 'punggol_1_withShortcut_withConfigAll_2diagonal_woCross'
+
+#slum_name = "tengah_1"
+#slum_name = "punggol_1"
 train_file_num = '1'
 iteration = '0'
 
@@ -34,6 +49,7 @@ from road_planning.agents.road_planning_agent import RoadPlanningAgent
 
 flags.DEFINE_string('root_dir', os.path.join(cwd,'train_data') , 'Root directory for writing '
                                                                       'logs/summaries/checkpoints.')
+
 flags.DEFINE_string('slum_name', slum_name, 'data_dir')                                                          # this is the name of ymal file 
 flags.DEFINE_string('cfg', slum_name, 'Configuration file of rl training.')
 flags.DEFINE_string('train_file_num', train_file_num, 'Number of trianing file.')                                # this is the number of training file 
@@ -122,6 +138,6 @@ if __name__ == '__main__':
 
 
 
-#tensorboard --logdir=/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/tb
-#ps aux | grep tensorboard
-#kill <PID>
+# # tensorboard --logdir=/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/tb
+# # ps aux | grep tensorboard
+# # kill <PID>

@@ -15,6 +15,8 @@ from road_planning.models.baseline import RandomPolicy, RoadCostPolicy,  GAPolic
 from road_planning.utils.tools import TrajBatchDisc
 from road_planning.utils.config import Config
 
+import os
+import sys
 
 def tensorfy(np_list, device=torch.device('cpu')):
     if isinstance(np_list[0], list):
@@ -26,18 +28,22 @@ def tensorfy(np_list, device=torch.device('cpu')):
 class RoadPlanningAgent(AgentPPO):
 
 
-    def print_model_parameters_grad(self):
+    def print_model_parameters_grad(self,model, file_path):
         # Print Gradient Values
-        print("Gradients for each parameter:")
-        for name, param in self.policy_net.named_parameters():
-            if param.grad is not None:
-                print(f"Parameter: {name}")
-                #print(f"Gradient values: {param.grad}")
-                print(f"Gradient norm: {param.grad.norm().item()}")
-                print("-" * 50)
+        # print ("print_model_parameters_grad")
+        with open(file_path, 'a') as f:
+            for name, param in model.named_parameters():
+  
+                if param.grad is not None:
+                    f.write(f"Parameter name: {name}\n")
+                    f.write(f"Gradient norm: {param.grad.norm().item()}")
+                    f.write("\n") 
+                    #print (f"Gradient norm: {param.grad.norm().item()}")
 
     def print_model_parameters(self,model, file_path):
+
         """Print the parameters of a given model to a file."""
+        #print ("print_model_parameters_grad")
         with open(file_path, 'a') as f:
             for name, param in model.named_parameters():
                 if param.requires_grad:
@@ -131,9 +137,25 @@ class RoadPlanningAgent(AgentPPO):
         # print ("---")
 
         
-        # file_path = '/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug/debug_init.txt'
-        # self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
-        # self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
+        cwd = os.getcwd()
+        if "road_planning" in cwd:      # for ssh remote terminal
+            cwd = os.path.dirname(cwd)
+        else:
+            cwd = cwd
+        
+
+        #### Check the model parameters
+        
+        file_path = os.path.join(cwd,'debug','debug_init.txt')
+        self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
+
+        #### Check the model parameters grad
+        file_path = os.path.join(cwd,'debug','debug_init_grad.txt')
+        self.print_model_parameters_grad(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        self.print_model_parameters_grad(self.actor_critic_net.value_net.value_head,file_path)
+
+
 
 
  
@@ -144,13 +166,13 @@ class RoadPlanningAgent(AgentPPO):
        
         while logger.num_steps < num_samples:
             state = self.env.reset()
- 
+            
             last_info = dict()
             episode_success = False
             logger_messages = []
             memory_messages = []
             for t in range(10000):   
-                #print ("t",t) 
+              
                 state_var = tensorfy([state])
                 #### self.noise_rate == 1 meaning it is totally depend on mean_action
                 use_mean_action = mean_action or torch.bernoulli(
@@ -160,7 +182,7 @@ class RoadPlanningAgent(AgentPPO):
                 #print ("select_action")
                 action = self.policy_net.select_action(
                     state_var, use_mean_action).numpy().squeeze(0)
-
+                
                 #print ("before step")
                 #print ("in sample_worker_action",action)
                 next_state, reward, done, info = self.env.step(
@@ -176,7 +198,7 @@ class RoadPlanningAgent(AgentPPO):
                 # cache memory
                 memory_messages.append(
                     [state, action, mask, next_state, reward, exp])
-
+                
                 if done:
                     episode_success = (reward != self.env.FAILURE_REWARD) and (
                         reward != self.env.INTERMEDIATE_REWARD)
@@ -184,7 +206,14 @@ class RoadPlanningAgent(AgentPPO):
                     break
                 state = next_state
 
+
             print ("sample_worker_episode_success",episode_success, "current logger.num_steps",logger.num_steps)
+
+            # try:
+            #     print ("self._action_history", [arr.item() for arr in self.env._action_history])
+             
+            # except:
+            #     pass
 
             if episode_success:
                 logger.start_episode(self.env)
@@ -192,6 +221,7 @@ class RoadPlanningAgent(AgentPPO):
                     logger.step(self.env, *logger_messages[var])
                     self.push_memory(memory, *memory_messages[var])
                 logger.end_episode(last_info)
+                
             #     self.thread_loggers[pid].info(
             #         'worker {} finished episode {}.'.format(
             #             pid, logger.num_episodes))
@@ -199,7 +229,8 @@ class RoadPlanningAgent(AgentPPO):
             #     self.thread_loggers[pid].info(
             #         '[!]worker {} failed episode {}.'.format(
             #             pid, logger.num_episodes))
-            
+
+        print ("logger.num_steps",logger.num_steps)   
         if queue is not None:
             queue.put([pid, memory, logger])
         else:
@@ -266,7 +297,7 @@ class RoadPlanningAgent(AgentPPO):
             self.actor_critic_net = ActorCritic(self.policy_net,
                                                 self.value_net)
             to_device(self.device, self.actor_critic_net)
-        elif cfg.agent == 'rl-ngnn':
+        elif cfg.agent == 'rl-ngnn':                                            #using this one
             self.policy_net, self.value_net = create_ngnn_model(cfg, self)
             self.actor_critic_net = ActorCritic(self.policy_net,
                                                 self.value_net)
@@ -392,7 +423,7 @@ class RoadPlanningAgent(AgentPPO):
         
         num_samples = self.cfg.num_episodes_per_iteration * self.cfg.max_sequence_length
         print ("optimize_policy_ start sample")    
-        
+        print ("self.env._mg.road_edges",len(self.env._mg.road_edges))
         if self.cfg.train_file_num != 1:
             for i in range (len(self.multi_envs)):     # shift the environment
                 self.env = self.multi_envs[i]    
@@ -414,15 +445,28 @@ class RoadPlanningAgent(AgentPPO):
 
     
         print ("optimize_policy_ start update_params")  
+        print ("self.env._mg.road_edges",len(self.env._mg.road_edges))
         self.update_params(batch, iteration)
 
         
         ######################
         ### Save the network
         ###################### 
-        # file_path = os.path.join('/Users/chenzebin/Documents/GitHub/road-planning-for-slums/debug', f'debug{iteration}.txt')
-        # self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
-        # self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
+
+        #### Check the model parameters
+        cwd = os.getcwd()   
+        if "road_planning" in cwd:      # for ssh remote terminal
+            cwd = os.path.dirname(cwd)
+        else:
+            cwd = cwd
+        file_path = os.path.join(cwd,'debug',f'debug{iteration}.txt')
+        self.print_model_parameters(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        self.print_model_parameters(self.actor_critic_net.value_net.value_head,file_path)
+
+        #### Check the model parameters grad
+        file_path = os.path.join(cwd,'debug',f'debug{iteration}_grad.txt')
+        self.print_model_parameters_grad(self.actor_critic_net.actor_net.policy_road_head,file_path)
+        self.print_model_parameters_grad(self.actor_critic_net.value_net.value_head,file_path)
 
         t2 = time.time()
         """evaluate policy"""
@@ -535,9 +579,9 @@ class RoadPlanningAgent(AgentPPO):
                     returns[perm_stage].clone(), advantages[perm_stage].clone(), \
                     fixed_log_probs[perm_stage].clone(), exps[perm_stage].clone()
 
-            optim_batch_num = int(math.floor(num_state / self.mini_batch_size))
-    
-       
+            # optim_batch_num = int(math.floor(num_state / self.mini_batch_size))
+            # print ("optim_batch_num ",optim_batch_num )
+            optim_batch_num  =  1 # Temporarily set to 1
             for i in range(optim_batch_num):
                 
                 ind = slice(i * self.mini_batch_size,
@@ -554,12 +598,51 @@ class RoadPlanningAgent(AgentPPO):
                     states_b, actions_b, advantages_b, fixed_log_probs_b, ind)
                 loss = surr_loss + self.value_pred_coef * value_loss + self.entropy_coef * entropy_loss
                 self.optimizer.zero_grad()
+                
+                
+                # print ("loss",loss)
+                # print("Before backward:")
+                # print ("actor_net")
+                # for name, param in self.actor_critic_net.actor_net.policy_road_head.named_parameters():
+                #     if param.requires_grad:
+                #         print(f"Parameter name: {name}\n")
+                #         print(f"Shape: {param.shape}\n")
+                #         print(f"Values: {param}\n")
+                #         print("\n")  # Add a blank line between parameters
+                # print ("value_net")
+                # for name, param in self.actor_critic_net.value_net.value_head.named_parameters():
+                #     if param.requires_grad:
+                #         print(f"Parameter name: {name}\n")
+                #         print(f"Shape: {param.shape}\n")
+                #         print(f"Values: {param}\n")
+                #         print("\n")  # Add a blank line between parameters   
                 loss.backward()
+
+                # print ("----------")
+                # print("Before backward:")
+                # print ("actor_net")
+                # for name, param in self.actor_critic_net.actor_net.policy_road_head.named_parameters():
+                #     if param.requires_grad:
+                #         print(f"Parameter name: {name}\n")
+                #         print(f"Shape: {param.shape}\n")
+                #         print(f"Values: {param}\n")
+                #         print("\n")  # Add a blank line between parameters
+                # print ("value_net")
+                # for name, param in self.actor_critic_net.value_net.value_head.named_parameters():
+                #     if param.requires_grad:
+                #         print(f"Parameter name: {name}\n")
+                #         print(f"Shape: {param.shape}\n")
+                #         print(f"Values: {param}\n")
+                #         print("\n")  # Add a blank line between parameters   
+                
+
+
                 self.clip_policy_grad()
                 self.optimizer.step()
 
-               
 
+
+                  
 
                 epoch_loss += loss.item()
                 epoch_value_loss += value_loss.item()
@@ -574,6 +657,7 @@ class RoadPlanningAgent(AgentPPO):
                                      self.loss_iter)
                 self.loss_iter += 1
 
+                #print ("loss.item()",loss.item(), "value_loss.item()",value_loss.item(), "surr_loss.item()",surr_loss.item(),"entropy_loss.item()",entropy_loss.item())
             total_loss += epoch_loss
             total_value_loss += epoch_value_loss
             total_surr_loss += epoch_surr_loss

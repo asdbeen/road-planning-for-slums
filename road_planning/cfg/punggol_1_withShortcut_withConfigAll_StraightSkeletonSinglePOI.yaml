@@ -2,7 +2,7 @@
 reward_specs:
   dis_weight: 0.5
   cost_weight: 0.5
-  build_ration: 0.1
+  build_ration: 0.08
 
 # agent
 agent_specs:
@@ -23,7 +23,7 @@ policy_specs:
   policy_road_head_hidden_size: [32, 1]
 value_specs:
   value_head_hidden_size: [32, 32, 1]
-lr: 4.0e-4
+lr: 4.0e-3  # 4.0e-4 original
 weightdecay: 0.0
 eps: 1.0e-5
 
@@ -32,12 +32,12 @@ entropy_coef: 0.01
 clip_epsilon: 0.2
 
 
-max_num_iterations: 50  # 100
+max_num_iterations:  100 # 100
 #num_episodes_per_iteration: 500
 num_episodes_per_iteration: 1200
 #max_sequence_length: 100
 max_sequence_length: 33                     # will it limited？
-num_optim_epoch: 4
+num_optim_epoch: 4          
 #mini_batch_size: 1024
 mini_batch_size: 1024
 save_model_interval: 1

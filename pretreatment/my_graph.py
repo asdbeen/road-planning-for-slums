@@ -21,7 +21,7 @@ import random,time
 from matplotlib.lines import Line2D
 from matplotlib.collections import LineCollection
 
-
+from shapely.geometry import Point, Polygon
 #import plotly.plotly as py
 #from plotly.graph_objs import *
 
@@ -478,16 +478,36 @@ class MyGraph(object):
             self.edge_index.append([idx1, idx2])
             self.edge_length.append(self.G[e.nodes[0]][e.nodes[1]]['weight'])
 
+    #### Adapted for shorted path edge in the parcel
     def _cal_edge_face_index(self):
         self.edge_face_index = []
-        for e in self.edge_list:                                                    ##### if e is the shortcut egde, this will not be calculated
+        for e in self.edge_list:                                                    ##### if e is the shortcut egde, this will still be calculated
             pair = []
             for f in self.inner_facelist:
                 if len(set(e.nodes).intersection(set(f.nodes))) == 2:
                     pair.append(f)
                 if len(pair) == 2:
                     break
+                        
+            if pair == []:
+
+                for f in self.inner_facelist:
+                
+                # meaning this is the shortcut edge
+                    polygon_points = []
+                    for edge in f.ordered_edges:
+                        polygon_points.append(Point(edge.nodes[0].x, edge.nodes[0].y))
+                    polygon_points.append(polygon_points[0])
+                    polygon = Polygon(polygon_points)
+                    point0 = Point(e.nodes[0].x, e.nodes[0].y)
+                    point1 = Point(e.nodes[1].x, e.nodes[1].y)
+                    if polygon.contains(point0) or polygon.contains(point1):
+                        pair.append(f)
+                        break
+          
+
             self.edge_face_index.append(pair)
+
 
     def _cal_graph_node_feature(self,withPOITag = False):
         self.graph_node_feature = {}
@@ -610,6 +630,7 @@ class MyGraph(object):
             edge_face_interior = np.array(self._get_edge_face_interior()).reshape(-1, 1)
             # edge_face_interior = np.zeros_like(edge_face_interior)
             edge_avg_dis = np.array(self._get_edge_avg_dis()).reshape(-1, 1)
+            
             # edge_avg_dis = np.zeros_like(edge_avg_dis)
             # edge_outerface_dis = np.array(self._get_edge_outerface_dis()).reshape(-1, 1)
             edge_ration_dis = np.array(self._get_edge_ration_dis()).reshape(-1, 1)
@@ -723,7 +744,8 @@ class MyGraph(object):
     # ok
     def _get_edge_face_interior(self):
         edge_face_interior=[]
-        for pair in self.edge_face_index:          ##### if e is the shortcut egde, this will not be calculated
+        #pairLength = []
+        for pair in self.edge_face_index:          ##### if e is the shortcut egde, this will still be calculated
             if len(pair) == 1:
                 edge_face_interior.append(0)
             elif len(pair) == 2:
@@ -736,10 +758,13 @@ class MyGraph(object):
                     inter += 1
                 
                 edge_face_interior.append(inter/2)
-
-            elif len(pair) == 0:  # new case
-                edge_face_interior.append(0)
+            
+            #pairLength.append(len(pair) )
+            # elif len(pair) == 0:  # new case
+            #     edge_face_interior.append(0)
         # return np.zeros_like(edge_face_interior)
+        # print (pairLength)
+        # print ("edge_face_interior",len(edge_face_interior))
         return edge_face_interior
     
     # ok
@@ -769,7 +794,8 @@ class MyGraph(object):
 
             face_mean_dis[f1] = self.td_face_min[f1]/(dis/(count-1))
 
-        for pair in self.edge_face_index:                                       ##### if e is the shortcut egde, this will not be calculated
+        #pairLength = []
+        for pair in self.edge_face_index:                                       ##### if e is the shortcut egde, this will still be calculated
             if len(pair) == 1:
                 f = pair[0]
                 mean_dis = face_mean_dis[f]
@@ -777,10 +803,14 @@ class MyGraph(object):
                 f1 = pair[0]
                 f2 = pair[1]
                 mean_dis = (face_mean_dis[f1] + face_mean_dis[f2]) / 2
-            elif len(pair) == 0:
-                mean_dis = 10000
+            # elif len(pair) == 0:
+            #     # then this should be consider the same as len(pair) == 1
+            #     mean_dis = 10000
+            #pairLength.append(len(pair) )
             edge_dis.append(mean_dis)
 
+        # print (pairLength)
+        # print ("edge_dis",len(edge_dis))
         return edge_dis
 
     # ok
@@ -1363,9 +1393,13 @@ class MyGraph(object):
 # REWARD FUNCTIONS
 ############################
     def save_step_data(self):    # For now it only save the last one
-        cwd = os.getcwd()
-        #path = os.path.join(cwd,r'\road_planning\data\data.csv')
-        path = os.path.join(cwd, 'road_planning', 'data', 'step_data.csv')
+
+        if "road_planning" in cwd:      # for ssh remote terminal
+            path = os.path.join(cwd,'data',"data.csv")
+
+        else:
+            path = os.path.join(cwd,"road_planning",'data',"data.csv")
+
         data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])
         data.to_csv(path,encoding='gbk')
 

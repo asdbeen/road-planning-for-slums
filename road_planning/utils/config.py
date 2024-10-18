@@ -19,18 +19,23 @@ class Config:
             cfg = cfg_dict
         else:
             cwd = os.getcwd()
-            #file_path = os.path.join(cwd,'road_planning/cfg/punggol.yaml')   # change to punggol.yaml
-            file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
+
+            if "road_planning" in cwd:      # for ssh remote terminal
+                file_path = os.path.join(cwd, 'cfg', f'{self.slum}.yaml')
+            else:
+                file_path = os.path.join(cwd, 'road_planning', 'cfg', f'{self.slum}.yaml')
 
             try:
                 cfg = load_yaml(file_path)
             except:
                 print ("file_path:",file_path)
          
-        # create dirs
+ 
         self.root_dir = os.path.join(cwd,'tmp') if tmp else root_dir
+
         self.data_dir = os.path.join("data",self.slum)                  #* Change
         self.cfg_dir = os.path.join(self.root_dir, self.slum, agent,self.id, str(self.seed))
+     
         self.model_dir = os.path.join(self.cfg_dir, 'models')
         self.log_dir = os.path.join(self.cfg_dir, 'log')
         self.tb_dir = os.path.join(self.cfg_dir, 'tb')

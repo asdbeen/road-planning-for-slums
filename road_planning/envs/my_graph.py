@@ -12,6 +12,9 @@ import pandas as pd
 import random
 from typing import Tuple, Dict, List, Text, Callable
 import time
+
+import os
+import sys
 #import plotly.plotly as py
 #from plotly.graph_objs import *
 """
@@ -433,6 +436,7 @@ class MyGraph(object):
         edge_face_interior = np.array(self._get_edge_face_interior()).reshape(-1, 1)
         # edge_face_interior = np.zeros_like(edge_face_interior)
         edge_avg_dis = np.array(self._get_edge_avg_dis()).reshape(-1, 1)
+
         # edge_avg_dis = np.zeros_like(edge_avg_dis)
         # edge_outerface_dis = np.array(self._get_edge_outerface_dis()).reshape(-1, 1)
         edge_ration_dis = np.array(self._get_edge_ration_dis()).reshape(-1, 1)
@@ -1030,8 +1034,17 @@ class MyGraph(object):
 # REWARD FUNCTIONS
 ############################
     def save_step_data(self):
-        #path = '/data2/suhongyuan/road_planning/data.csv'
-        path = r'C:\Users\asdbe\OneDrive\Documents\GitHub\road-planning-for-slums\road_planning\data\data.csv'
+   
+        cwd = os.getcwd()
+
+        if "road_planning" in cwd:      # for ssh remote terminal
+          
+            path = os.path.join(cwd,'data',"data.csv")
+
+        else:
+           
+            path = os.path.join(cwd,"road_planning",'data',"data.csv")
+
         data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])
         data.to_csv(path,encoding='gbk')
 
