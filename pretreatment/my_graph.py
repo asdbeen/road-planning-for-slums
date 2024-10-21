@@ -2076,8 +2076,11 @@ class MyGraph(object):
             before = self.face2POI_avg()
             return 0
         else:
+      
             before = self.f2POI_avg
+
             now = self.face2POI_avg()
+  
             # print ("self.f2POI_avg_min",self.f2POI_avg_min)
             return  (before-now)/(before-self.f2POI_avg_min)
 

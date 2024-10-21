@@ -31,8 +31,9 @@ class LoggerRL:
         self.stats_loggers['episode_len'].log(self.episode_len)
 
         
-        self.stats_loggers['episode_reward_avg'].log(-0.9*info['f2f_dis_avg'] - 0.1*info['total_road_cost'])
-        self.stats_loggers['episode_reward_dis'].log(-info['f2f_dis_avg'])            # Now consider travel dist to POI also
+        #self.stats_loggers['episode_reward_avg'].log(-0.9*info['f2f_dis_avg'] - 0.1*info['total_road_cost'])
+        self.stats_loggers['episode_reward_avg'].log(-info['f2POI_dis_avg'])       # Now consider travel dist to POI also
+        self.stats_loggers['episode_reward_dis'].log(-info['f2f_dis_avg'])            
         self.stats_loggers['episode_reward_cost'].log(-info['total_road_cost'])
 
         self.stats_loggers['interior_parcels_num'].log(info['interior_parcels_num'])

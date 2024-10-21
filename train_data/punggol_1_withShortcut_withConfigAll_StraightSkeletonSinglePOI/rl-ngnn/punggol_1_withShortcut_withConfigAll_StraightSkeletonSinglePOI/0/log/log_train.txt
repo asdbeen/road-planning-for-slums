@@ -155,3 +155,169 @@
 [2024-10-17 22:49:41,560] 97	T_sample 132.19	T_update 1.64	T_eval 3.33	ETA 0:04:34	train_R_eps -1.14	eval_R_eps -1.12	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
 [2024-10-17 22:51:59,801] 98	T_sample 133.26	T_update 1.64	T_eval 3.31	ETA 0:02:18	train_R_eps -1.14	eval_R_eps -1.12	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
 [2024-10-17 22:54:17,605] 99	T_sample 132.69	T_update 1.74	T_eval 3.33	ETA 0:00:00	train_R_eps -1.13	eval_R_eps -1.12	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 14:54:30,276] data_dir:data/punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI
+[2024-10-18 14:54:30,276] id: punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI
+[2024-10-18 14:54:30,276] seed: 0
+[2024-10-18 14:54:30,276] objectives_plan: 
+[2024-10-18 14:54:30,276] init_plan: 
+[2024-10-18 14:54:30,276] env_specs: {}
+[2024-10-18 14:54:30,276] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.08}
+[2024-10-18 14:54:30,276] obs_specs: {}
+[2024-10-18 14:54:30,276] agent_specs: {'batch_stage': False}
+[2024-10-18 14:54:30,276] gamma: 0.9
+[2024-10-18 14:54:30,277] tau: 0.0
+[2024-10-18 14:54:30,277] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-18 14:54:30,277] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-18 14:54:30,277] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-18 14:54:30,277] lr: 0.04
+[2024-10-18 14:54:30,277] weightdecay: 0.0
+[2024-10-18 14:54:30,277] eps: 1e-05
+[2024-10-18 14:54:30,277] value_pred_coef: 0.5
+[2024-10-18 14:54:30,277] entropy_coef: 0.01
+[2024-10-18 14:54:30,277] clip_epsilon: 0.2
+[2024-10-18 14:54:30,277] max_num_iterations: 100
+[2024-10-18 14:54:30,277] num_episodes_per_iteration: 1200
+[2024-10-18 14:54:30,277] max_sequence_length: 33
+[2024-10-18 14:54:30,277] num_optim_epoch: 4
+[2024-10-18 14:54:30,277] mini_batch_size: 1024
+[2024-10-18 14:54:30,277] save_model_interval: 1
+[2024-10-18 14:55:30,642] 0	T_sample 54.99	T_update 1.45	T_eval 3.47	ETA 1:38:52	train_R_eps 0.72	eval_R_eps 0.71	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7063703748521074	
+[2024-10-18 14:55:30,646] save best checkpoint with rewards 0.71!
+[2024-10-18 14:56:31,077] 1	T_sample 55.81	T_update 1.17	T_eval 3.41	ETA 1:38:39	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 14:56:31,081] save best checkpoint with rewards 0.72!
+[2024-10-18 14:57:30,904] 2	T_sample 55.17	T_update 1.16	T_eval 3.45	ETA 1:36:39	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 14:58:31,009] 3	T_sample 55.48	T_update 1.12	T_eval 3.47	ETA 1:36:07	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 14:59:30,786] 4	T_sample 55.14	T_update 1.12	T_eval 3.48	ETA 1:34:35	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:00:31,040] 5	T_sample 55.64	T_update 1.18	T_eval 3.40	ETA 1:34:21	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:01:31,687] 6	T_sample 56.04	T_update 1.12	T_eval 3.45	ETA 1:33:57	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:02:32,213] 7	T_sample 55.90	T_update 1.12	T_eval 3.48	ETA 1:32:45	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:03:33,297] 8	T_sample 56.46	T_update 1.12	T_eval 3.47	ETA 1:32:35	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:04:33,673] 9	T_sample 55.74	T_update 1.12	T_eval 3.49	ETA 1:30:31	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:05:33,888] 10	T_sample 55.62	T_update 1.11	T_eval 3.45	ETA 1:29:16	train_R_eps 0.72	eval_R_eps 0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:08:08,711] data_dir:data/punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI
+[2024-10-18 15:08:08,711] id: punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI
+[2024-10-18 15:08:08,711] seed: 0
+[2024-10-18 15:08:08,711] objectives_plan: 
+[2024-10-18 15:08:08,711] init_plan: 
+[2024-10-18 15:08:08,711] env_specs: {}
+[2024-10-18 15:08:08,711] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.08}
+[2024-10-18 15:08:08,711] obs_specs: {}
+[2024-10-18 15:08:08,711] agent_specs: {'batch_stage': False}
+[2024-10-18 15:08:08,711] gamma: 0.9
+[2024-10-18 15:08:08,711] tau: 0.0
+[2024-10-18 15:08:08,711] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-18 15:08:08,711] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-18 15:08:08,711] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-18 15:08:08,711] lr: 0.04
+[2024-10-18 15:08:08,711] weightdecay: 0.0
+[2024-10-18 15:08:08,711] eps: 1e-05
+[2024-10-18 15:08:08,711] value_pred_coef: 0.5
+[2024-10-18 15:08:08,711] entropy_coef: 0.01
+[2024-10-18 15:08:08,711] clip_epsilon: 0.2
+[2024-10-18 15:08:08,711] max_num_iterations: 100
+[2024-10-18 15:08:08,711] num_episodes_per_iteration: 1200
+[2024-10-18 15:08:08,711] max_sequence_length: 33
+[2024-10-18 15:08:08,711] num_optim_epoch: 4
+[2024-10-18 15:08:08,711] mini_batch_size: 1024
+[2024-10-18 15:08:08,711] save_model_interval: 1
+[2024-10-18 15:09:09,720] 0	T_sample 55.59	T_update 1.48	T_eval 3.49	ETA 1:39:55	train_R_eps -0.72	eval_R_eps -0.71	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7063703748521074	
+[2024-10-18 15:09:09,724] save best checkpoint with rewards -0.71!
+[2024-10-18 15:10:10,527] 1	T_sample 56.19	T_update 1.17	T_eval 3.41	ETA 1:39:15	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:11:10,896] 2	T_sample 55.74	T_update 1.12	T_eval 3.48	ETA 1:37:32	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:12:11,168] 3	T_sample 55.65	T_update 1.12	T_eval 3.47	ETA 1:36:23	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:13:11,257] 4	T_sample 55.44	T_update 1.11	T_eval 3.51	ETA 1:35:05	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:14:11,871] 5	T_sample 55.98	T_update 1.18	T_eval 3.42	ETA 1:34:54	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:15:12,782] 6	T_sample 56.29	T_update 1.12	T_eval 3.47	ETA 1:34:21	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:16:13,409] 7	T_sample 56.02	T_update 1.11	T_eval 3.45	ETA 1:32:55	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:17:14,471] 8	T_sample 56.41	T_update 1.11	T_eval 3.50	ETA 1:32:33	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:18:14,774] 9	T_sample 55.67	T_update 1.11	T_eval 3.49	ETA 1:30:24	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:19:14,742] 10	T_sample 55.40	T_update 1.11	T_eval 3.42	ETA 1:28:54	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:20:15,756] 11	T_sample 56.31	T_update 1.18	T_eval 3.49	ETA 1:29:26	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:21:16,078] 12	T_sample 55.65	T_update 1.18	T_eval 3.46	ETA 1:27:25	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:22:16,947] 13	T_sample 56.19	T_update 1.13	T_eval 3.52	ETA 1:27:12	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:23:17,560] 14	T_sample 55.89	T_update 1.22	T_eval 3.47	ETA 1:25:49	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:24:18,410] 15	T_sample 56.17	T_update 1.17	T_eval 3.48	ETA 1:25:08	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:25:18,889] 16	T_sample 55.87	T_update 1.17	T_eval 3.40	ETA 1:23:37	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:26:19,297] 17	T_sample 55.73	T_update 1.15	T_eval 3.50	ETA 1:22:31	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:27:19,835] 18	T_sample 55.90	T_update 1.12	T_eval 3.48	ETA 1:21:41	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:28:20,675] 19	T_sample 56.22	T_update 1.19	T_eval 3.40	ETA 1:21:04	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:29:20,682] 20	T_sample 55.40	T_update 1.11	T_eval 3.46	ETA 1:18:58	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:30:21,158] 21	T_sample 55.85	T_update 1.11	T_eval 3.48	ETA 1:18:34	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:31:21,668] 22	T_sample 55.87	T_update 1.17	T_eval 3.44	ETA 1:17:37	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:32:21,949] 23	T_sample 55.69	T_update 1.17	T_eval 3.38	ETA 1:16:19	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:33:21,996] 24	T_sample 55.43	T_update 1.12	T_eval 3.46	ETA 1:15:01	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:34:22,456] 25	T_sample 55.86	T_update 1.11	T_eval 3.45	ETA 1:14:31	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:35:22,746] 26	T_sample 55.64	T_update 1.18	T_eval 3.43	ETA 1:13:19	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:36:22,988] 27	T_sample 55.57	T_update 1.12	T_eval 3.52	ETA 1:12:15	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:37:23,599] 28	T_sample 55.91	T_update 1.17	T_eval 3.50	ETA 1:11:41	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:38:24,229] 29	T_sample 55.96	T_update 1.17	T_eval 3.46	ETA 1:10:42	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:39:24,362] 30	T_sample 55.49	T_update 1.11	T_eval 3.49	ETA 1:09:07	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:40:24,506] 31	T_sample 55.52	T_update 1.17	T_eval 3.42	ETA 1:08:07	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:41:24,673] 32	T_sample 55.58	T_update 1.17	T_eval 3.38	ETA 1:07:09	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:42:25,231] 33	T_sample 55.94	T_update 1.11	T_eval 3.47	ETA 1:06:34	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:43:25,764] 34	T_sample 55.86	T_update 1.16	T_eval 3.48	ETA 1:05:32	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:44:26,180] 35	T_sample 55.78	T_update 1.12	T_eval 3.49	ETA 1:04:24	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:45:27,240] 36	T_sample 56.44	T_update 1.13	T_eval 3.45	ETA 1:04:05	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:46:28,137] 37	T_sample 56.20	T_update 1.19	T_eval 3.47	ETA 1:02:53	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7221529159907567	
+[2024-10-18 15:47:28,708] 38	T_sample 55.94	T_update 1.20	T_eval 3.40	ETA 1:01:33	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7229574020847618	
+[2024-10-18 15:48:29,157] 39	T_sample 55.82	T_update 1.11	T_eval 3.48	ETA 1:00:25	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:49:29,928] 40	T_sample 56.18	T_update 1.11	T_eval 3.45	ETA 0:59:43	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:50:30,606] 41	T_sample 56.09	T_update 1.17	T_eval 3.38	ETA 0:58:37	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:51:30,906] 42	T_sample 55.67	T_update 1.11	T_eval 3.48	ETA 0:57:15	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:52:31,496] 43	T_sample 55.92	T_update 1.17	T_eval 3.46	ETA 0:56:31	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:53:32,159] 44	T_sample 55.97	T_update 1.17	T_eval 3.48	ETA 0:55:35	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:54:32,426] 45	T_sample 55.63	T_update 1.13	T_eval 3.47	ETA 0:54:13	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:55:32,678] 46	T_sample 55.65	T_update 1.12	T_eval 3.45	ETA 0:53:12	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:56:33,304] 47	T_sample 55.95	T_update 1.17	T_eval 3.47	ETA 0:52:31	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:57:33,922] 48	T_sample 56.01	T_update 1.11	T_eval 3.46	ETA 0:51:30	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:58:34,550] 49	T_sample 56.00	T_update 1.11	T_eval 3.49	ETA 0:50:30	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 15:59:34,913] 50	T_sample 55.75	T_update 1.12	T_eval 3.46	ETA 0:49:16	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:00:36,345] 51	T_sample 56.78	T_update 1.19	T_eval 3.42	ETA 0:49:07	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:01:37,356] 52	T_sample 56.39	T_update 1.12	T_eval 3.46	ETA 0:47:46	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:02:38,040] 53	T_sample 56.05	T_update 1.11	T_eval 3.49	ETA 0:46:30	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:03:38,815] 54	T_sample 56.14	T_update 1.17	T_eval 3.42	ETA 0:45:33	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:04:39,830] 55	T_sample 56.39	T_update 1.11	T_eval 3.48	ETA 0:44:43	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:05:40,383] 56	T_sample 55.89	T_update 1.11	T_eval 3.51	ETA 0:43:22	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:06:41,020] 57	T_sample 56.03	T_update 1.18	T_eval 3.39	ETA 0:42:25	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:07:41,250] 58	T_sample 55.61	T_update 1.11	T_eval 3.47	ETA 0:41:08	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:08:42,167] 59	T_sample 56.23	T_update 1.14	T_eval 3.51	ETA 0:40:35	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:09:42,917] 60	T_sample 56.12	T_update 1.12	T_eval 3.48	ETA 0:39:28	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:10:43,752] 61	T_sample 56.08	T_update 1.19	T_eval 3.49	ETA 0:38:29	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:11:44,588] 62	T_sample 56.22	T_update 1.17	T_eval 3.41	ETA 0:37:30	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:12:45,311] 63	T_sample 56.08	T_update 1.11	T_eval 3.49	ETA 0:36:25	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:13:45,898] 64	T_sample 55.97	T_update 1.11	T_eval 3.47	ETA 0:35:19	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:14:46,499] 65	T_sample 55.90	T_update 1.17	T_eval 3.49	ETA 0:34:19	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:15:47,177] 66	T_sample 56.06	T_update 1.12	T_eval 3.47	ETA 0:33:21	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:16:47,876] 67	T_sample 56.09	T_update 1.12	T_eval 3.46	ETA 0:32:21	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:17:48,535] 68	T_sample 56.00	T_update 1.18	T_eval 3.44	ETA 0:31:19	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:18:49,186] 69	T_sample 56.00	T_update 1.12	T_eval 3.49	ETA 0:30:18	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:19:49,658] 70	T_sample 55.83	T_update 1.12	T_eval 3.49	ETA 0:29:13	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:20:50,355] 71	T_sample 56.04	T_update 1.11	T_eval 3.51	ETA 0:28:19	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:21:51,126] 72	T_sample 56.14	T_update 1.11	T_eval 3.48	ETA 0:27:20	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:22:51,317] 73	T_sample 55.59	T_update 1.11	T_eval 3.46	ETA 0:26:04	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:23:51,585] 74	T_sample 55.68	T_update 1.17	T_eval 3.38	ETA 0:25:06	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:24:52,221] 75	T_sample 56.02	T_update 1.11	T_eval 3.46	ETA 0:24:14	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:25:52,624] 76	T_sample 55.75	T_update 1.11	T_eval 3.51	ETA 0:23:08	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:26:53,182] 77	T_sample 55.90	T_update 1.16	T_eval 3.46	ETA 0:22:12	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:27:53,992] 78	T_sample 56.10	T_update 1.22	T_eval 3.46	ETA 0:21:16	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:28:54,277] 79	T_sample 55.63	T_update 1.21	T_eval 3.41	ETA 0:20:05	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:29:54,836] 80	T_sample 55.91	T_update 1.11	T_eval 3.50	ETA 0:19:10	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:30:55,271] 81	T_sample 55.83	T_update 1.11	T_eval 3.45	ETA 0:18:07	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:31:56,032] 82	T_sample 56.11	T_update 1.11	T_eval 3.51	ETA 0:17:12	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:32:56,377] 83	T_sample 55.64	T_update 1.18	T_eval 3.49	ETA 0:16:05	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:33:56,554] 84	T_sample 55.58	T_update 1.17	T_eval 3.39	ETA 0:15:02	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:34:56,895] 85	T_sample 55.70	T_update 1.11	T_eval 3.49	ETA 0:14:04	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:35:56,885] 86	T_sample 55.41	T_update 1.18	T_eval 3.37	ETA 0:12:59	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:36:57,322] 87	T_sample 55.86	T_update 1.12	T_eval 3.43	ETA 0:12:05	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:37:57,640] 88	T_sample 55.67	T_update 1.11	T_eval 3.50	ETA 0:11:03	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:38:58,266] 89	T_sample 55.98	T_update 1.12	T_eval 3.50	ETA 0:10:06	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:39:58,764] 90	T_sample 55.84	T_update 1.12	T_eval 3.51	ETA 0:09:04	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:40:59,173] 91	T_sample 55.75	T_update 1.11	T_eval 3.51	ETA 0:08:03	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:41:59,256] 92	T_sample 55.44	T_update 1.11	T_eval 3.49	ETA 0:07:00	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:43:00,153] 93	T_sample 56.19	T_update 1.17	T_eval 3.50	ETA 0:06:05	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:44:00,426] 94	T_sample 55.63	T_update 1.17	T_eval 3.43	ETA 0:05:01	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:45:01,177] 95	T_sample 56.13	T_update 1.11	T_eval 3.48	ETA 0:04:03	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:46:02,017] 96	T_sample 56.10	T_update 1.22	T_eval 3.49	ETA 0:03:02	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:47:03,035] 97	T_sample 56.32	T_update 1.22	T_eval 3.44	ETA 0:02:02	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:48:04,104] 98	T_sample 56.41	T_update 1.11	T_eval 3.51	ETA 0:01:01	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	
+[2024-10-18 16:49:04,790] 99	T_sample 55.95	T_update 1.18	T_eval 3.52	ETA 0:00:00	train_R_eps -0.72	eval_R_eps -0.72	punggol_1_withShortcut_withConfigAll_StraightSkeletonSinglePOI	 0.7235026646831034	

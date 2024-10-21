@@ -23,7 +23,7 @@ policy_specs:
   policy_road_head_hidden_size: [32, 1]
 value_specs:
   value_head_hidden_size: [32, 32, 1]
-lr: 4.0e-4
+lr: 4.0e-2
 weightdecay: 0.0
 eps: 1.0e-5
 
