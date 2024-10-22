@@ -49,7 +49,7 @@ class MyNode(object):
         self.internal:bool = None
         self.isPOI:bool = None
         self.shortCutNode:bool = None
-
+        self.POI_Cat:str = None
 
     def __repr__(self):
         if self.name:
@@ -210,6 +210,13 @@ class MyGraph(object):
         self.f2f_data: list[float] = []
         self.cost_data: list[float] = []
         self.parcels_data: list[int] = []
+
+
+        self.POI_A_data: list[float] = []
+        self.POI_B_data: list[float] = []
+        self.POI_C_data: list[float] = []
+        self.POI_Mean_data: list[float] = []
+        self.save_step_dataCount: int  = 0
 
         self.road_nodes: list[MyNode] = [] 
         self.road_nodes_idx: list[int] = []
@@ -1393,15 +1400,21 @@ class MyGraph(object):
 # REWARD FUNCTIONS
 ############################
     def save_step_data(self):    # For now it only save the last one
-
-        if "road_planning" in cwd:      # for ssh remote terminal
-            path = os.path.join(cwd,'data',"data.csv")
-
+        
+        if "road_planning" in cwd:  # for ssh remote terminal
+            path = os.path.join(cwd, 'data', "data.csv")
         else:
-            path = os.path.join(cwd,"road_planning",'data',"data.csv")
+            path = os.path.join(cwd, "road_planning", 'data', "data.csv")
+        # if "road_planning" in cwd:  # for ssh remote terminal
+        #     path = os.path.join(cwd, 'data', f"data_{self.save_step_dataCount}.csv")
+        # else:
+        #     path = os.path.join(cwd, "road_planning", 'data', f"data_{self.save_step_dataCount}.csv")
 
-        data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])
+        #data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])  original
+        data=pd.DataFrame(data=[self.POI_A_data,self.POI_B_data,self.POI_C_data,self.POI_Mean_data])
         data.to_csv(path,encoding='gbk')
+        # self.save_step_dataCount +=1
+        # print (self.save_step_dataCount)
 
     def road_cost(self):
         self.cost_data.append(self.total_road_cost)
@@ -2041,7 +2054,6 @@ class MyGraph(object):
 
     # The overall function
     def td_dict_POI_Related_init(self):
-
         self.td_dict_nodeToPOInode_init()
         # td_dict_ave_nodeToPOInode_init(self)
         self.td_dict_nodeToPOIEdge_init()
@@ -2059,6 +2071,25 @@ class MyGraph(object):
         self.td_dict_ave_faceToPOIEdge_min_init()
         self.face2POI_avg_min()
 
+
+    def td_dict_POI_Related_init_New(self):
+        #### use road network to calculate the distance
+        self.td_dict_nodeToPOInode_MultiCat_init()
+        self.td_dict_faceToPOInode_MultiCat_init()
+        self.td_dict_faceToPOInode_EachCat_init()   #### Closest one, becasue one parcel only need to go to the closest POI for each category
+        self.face2POI_EachCat_avg()
+        self.face2POI_EachCat_avg_mean()
+        self.CheckCuldesacNum()
+
+        #### use all network to calculate the distance
+        self.td_dict_nodeToPOInode_MultiCat_min_init()
+        self.td_dict_faceToPOInode_MultiCat_min_init()
+        self.td_dict_faceToPOInode_EachCat_min_init()
+        self.face2POI_EachCat_avg_min()
+        self.face2POI_EachCat_avg_min_mean()
+
+        
+
     def face2POI_avg(self):
         ave = sum(self.td_dict_ave_faceToPOIEdge[f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
         self.f2POI_avg = ave
@@ -2071,6 +2102,7 @@ class MyGraph(object):
         self.f2POI_avg_min = ave
         return ave
 
+
     def travel_distance_forPOI(self) -> float:
         if len(self.interior_parcels) or self.del_parcel_num:
             before = self.face2POI_avg()
@@ -2078,11 +2110,20 @@ class MyGraph(object):
         else:
       
             before = self.f2POI_avg
-
             now = self.face2POI_avg()
-  
             # print ("self.f2POI_avg_min",self.f2POI_avg_min)
             return  (before-now)/(before-self.f2POI_avg_min)
+
+    def travel_distance_forPOI_New(self) -> float:
+        if len(self.interior_parcels) or self.del_parcel_num:
+            before = self.face2POI_EachCat_avg_mean()
+            return 0
+        else:
+            before = self.f2POI_avg_EachCat_mean
+            now = self.face2POI_EachCat_avg_mean()
+     
+            return  (before-now)/(before-self.f2POI_avg_EachCat_min_mean)
+        
 
     def CheckCuldesacNum(self):
         roadG = MyGraph()
@@ -2130,6 +2171,310 @@ class MyGraph(object):
             culdesacReward = 1
         return  culdesacReward  
 
+
+############################
+# REWARD FUNCTIONS _ NEW FOR POI _ MultiCat
+############################
+    #####################
+    # Didnt consider one parcel only need to access one POI for each category
+    ####################
+    def td_dict_nodeToPOInode_MultiCat_init(self,infiniteDist = 10000):
+        # Create a current road graph
+        roadG = MyGraph()
+        for idx in range(len(self.road_edges)):
+            e = self.road_edges[idx]
+            roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
+
+
+        ### init_td_dict_nodeToPOI
+        td_dict_nodeToPOInode_MultiCat = {}
+        td_dict_nodeToPOInode_MultiCat["A"] = {}
+        td_dict_nodeToPOInode_MultiCat["B"] = {}
+        td_dict_nodeToPOInode_MultiCat["C"] = {}
+
+        for node in self.inner_nodelist_True:
+            td_dict_nodeToPOInode_MultiCat["A"][node] = {}
+            td_dict_nodeToPOInode_MultiCat["B"][node] = {}
+            td_dict_nodeToPOInode_MultiCat["C"][node] = {}
+            for nodePOI in self.POINodes:   
+                if node in roadG.G:
+                    length = nx.shortest_path_length(roadG.G,source=node, target=nodePOI, weight="weight")
+                else:
+                    length = infiniteDist
+                
+                td_dict_nodeToPOInode_MultiCat[nodePOI.POI_Cat][node][nodePOI] = length
+
+        self.td_dict_nodeToPOInode_MultiCat = td_dict_nodeToPOInode_MultiCat
+
+    def td_dict_faceToPOInode_MultiCat_init(self,infiniteDist = 10000):
+        self.td_dict_faceToPOInode_MultiCat = {}
+        self.td_dict_faceToPOInode_MultiCat["A"] = {}
+        self.td_dict_faceToPOInode_MultiCat["B"] = {}
+        self.td_dict_faceToPOInode_MultiCat["C"] = {}        
+
+        for f1 in self.inner_facelist_True:
+            self.td_dict_faceToPOInode_MultiCat["A"][f1] = {}
+            self.td_dict_faceToPOInode_MultiCat["B"][f1] = {}
+            self.td_dict_faceToPOInode_MultiCat["C"][f1] = {}
+            for nodePOI in self.POINodes:
+
+                for node in f1.nodes:
+                    if nodePOI.POI_Cat == "A":
+                        self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI] = {"Node": node, "Dist":infiniteDist}
+                        if self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat["A"][node][nodePOI]:  
+                            self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat["A"][node][nodePOI]}    # record the node in the face
+             
+                    if nodePOI.POI_Cat == "B":
+                        self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                        if self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat["B"][node][nodePOI]:  
+                            self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat["B"][node][nodePOI]}    # record the node in the face
+
+                    if nodePOI.POI_Cat == "C":
+                        self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                        if self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat["C"][node][nodePOI]:  
+                            self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat["C"][node][nodePOI]}    # record the node in the face
+    
+    # Not in use, becasue consider one parcel only need to access one POI for each category
+    def td_dict_ave_faceToPOInode_MultiCat_init(self):
+        self.td_dict_ave_faceToPOInode_MultiCat = {}
+        self.td_dict_ave_faceToPOInode_MultiCat["A"] = {}
+        self.td_dict_ave_faceToPOInode_MultiCat["B"] = {}
+        self.td_dict_ave_faceToPOInode_MultiCat["C"] = {}
+
+        for f1 in self.inner_facelist_True:
+
+            sumDist_A = 0
+            sumDist_B = 0
+            sumDist_C = 0
+
+            sumPOI_A = 0
+            sumPOI_B = 0
+            sumPOI_C = 0
+
+        
+            for nodePOI in self.POINodes:
+                if nodePOI.POI_Cat == "A":
+                    sumDist_A += self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI]["Dist"]
+                    sumPOI_A += 1
+
+                if nodePOI.POI_Cat == "B":
+                    sumDist_B += self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]["Dist"]
+                    sumPOI_B += 1
+
+                if nodePOI.POI_Cat == "C":
+                    sumDist_C += self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]["Dist"]
+                    sumPOI_C += 1
+
+         
+            ave_A = sumDist_A/sumPOI_A   
+            self.td_dict_ave_faceToPOInode_MultiCat["A"][f1] = ave_A
+            ave_B = sumDist_B/sumPOI_B   
+            self.td_dict_ave_faceToPOInode_MultiCat["B"][f1] = ave_B
+            ave_C = sumDist_C/sumPOI_C   
+            self.td_dict_ave_faceToPOInode_MultiCat["C"][f1] = ave_C
+    # Not in use, becasue consider one parcel only need to access one POI for each category
+    def face2POI_MultiCat_avg(self):
+
+        ave_A = sum(self.td_dict_ave_faceToPOInode_MultiCat["A"][f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_MultiCat_A = ave_A
+        ave_B = sum(self.td_dict_ave_faceToPOInode_MultiCat["B"][f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_MultiCat_B = ave_B
+        ave_C = sum(self.td_dict_ave_faceToPOInode_MultiCat["C"][f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_MultiCat_C = ave_C
+        
+        return ave_A,ave_B,ave_C
+
+    def td_dict_nodeToPOInode_MultiCat_min_init(self,infiniteDist = 10000):
+        ### init_td_dict_nodeToPOI
+        td_dict_nodeToPOInode_MultiCat_min = {}
+        td_dict_nodeToPOInode_MultiCat_min["A"] = {}
+        td_dict_nodeToPOInode_MultiCat_min["B"] = {}
+        td_dict_nodeToPOInode_MultiCat_min["C"] = {}
+
+        for node in self.inner_nodelist_True:
+            td_dict_nodeToPOInode_MultiCat_min["A"][node] = {}
+            td_dict_nodeToPOInode_MultiCat_min["B"][node] = {}
+            td_dict_nodeToPOInode_MultiCat_min["C"][node] = {}
+            for nodePOI in self.POINodes:   
+                if node in self.G:
+                    length = nx.shortest_path_length(self.G,source=node, target=nodePOI, weight="weight")
+                else:
+                    length = infiniteDist
+                
+                td_dict_nodeToPOInode_MultiCat_min[nodePOI.POI_Cat][node][nodePOI] = length
+
+        self.td_dict_nodeToPOInode_MultiCat_min = td_dict_nodeToPOInode_MultiCat_min
+
+    def td_dict_faceToPOInode_MultiCat_min_init(self,infiniteDist = 10000):
+        self.td_dict_faceToPOInode_MultiCat_min = {}
+        self.td_dict_faceToPOInode_MultiCat_min["A"] = {}
+        self.td_dict_faceToPOInode_MultiCat_min["B"] = {}
+        self.td_dict_faceToPOInode_MultiCat_min["C"] = {}        
+
+        for f1 in self.inner_facelist_True:
+            self.td_dict_faceToPOInode_MultiCat_min["A"][f1] = {}
+            self.td_dict_faceToPOInode_MultiCat_min["B"][f1] = {}
+            self.td_dict_faceToPOInode_MultiCat_min["C"][f1] = {}
+            for nodePOI in self.POINodes:
+
+                for node in f1.nodes:
+                    if nodePOI.POI_Cat == "A":
+                        self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI] = {"Node": node, "Dist":infiniteDist}
+                        if self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat_min["A"][node][nodePOI]:  
+                            self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat_min["A"][node][nodePOI]}    # record the node in the face
+             
+                    if nodePOI.POI_Cat == "B":
+                        self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                        if self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat_min["B"][node][nodePOI]:  
+                            self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat_min["B"][node][nodePOI]}    # record the node in the face
+
+                    if nodePOI.POI_Cat == "C":
+                        self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                        if self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat_min["C"][node][nodePOI]:  
+                            self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat_min["C"][node][nodePOI]}    # record the node in the face
+    
+    def td_dict_ave_faceToPOInode_MultiCat_min_init(self):
+        self.td_dict_ave_faceToPOInode_MultiCat_min = {}
+        self.td_dict_ave_faceToPOInode_MultiCat_min["A"] = {}
+        self.td_dict_ave_faceToPOInode_MultiCat_min["B"] = {}
+        self.td_dict_ave_faceToPOInode_MultiCat_min["C"] = {}
+
+        for f1 in self.inner_facelist_True:
+
+            sumDist_A = 0
+            sumDist_B = 0
+            sumDist_C = 0
+
+            sumPOI_A = 0
+            sumPOI_B = 0
+            sumPOI_C = 0
+
+            for nodePOI in self.POINodes:
+                if nodePOI.POI_Cat == "A":
+                    sumDist_A += self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI]["Dist"]
+                    sumPOI_A += 1
+
+                if nodePOI.POI_Cat == "B":
+                    sumDist_B += self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]["Dist"]
+                    sumPOI_B += 1
+
+                if nodePOI.POI_Cat == "C":
+                    sumDist_C += self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]["Dist"]
+                    sumPOI_C += 1
+
+         
+            ave_A = sumDist_A/sumPOI_A   
+            self.td_dict_ave_faceToPOInode_MultiCat_min["A"][f1] = ave_A
+            ave_B = sumDist_B/sumPOI_B   
+            self.td_dict_ave_faceToPOInode_MultiCat_min["B"][f1] = ave_B
+            ave_C = sumDist_C/sumPOI_C   
+            self.td_dict_ave_faceToPOInode_MultiCat_min["C"][f1] = ave_C
+    
+    def face2POI_MultiCat_min_avg(self):
+
+        ave_A_min = sum(self.td_dict_ave_faceToPOInode_MultiCat_min["A"][f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_MultiCat_A_min = ave_A_min
+        ave_B_min = sum(self.td_dict_ave_faceToPOInode_MultiCat_min["B"][f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_MultiCat_B_min = ave_B_min
+        ave_C_min = sum(self.td_dict_ave_faceToPOInode_MultiCat_min["C"][f1] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_MultiCat_C_min = ave_C_min
+        
+        return ave_A_min,ave_B_min,ave_C_min
+
+
+    #####################
+    # Consider one parcel only need to access one POI for each category
+    ####################
+    def td_dict_faceToPOInode_EachCat_init(self,infiniteDist = 10000):
+        self.td_dict_faceToPOInode_EachCat = {}
+        self.td_dict_faceToPOInode_EachCat["A"] = {}
+        self.td_dict_faceToPOInode_EachCat["B"] = {}
+        self.td_dict_faceToPOInode_EachCat["C"] = {}    
+
+        for f1 in self.inner_facelist_True:
+            self.td_dict_faceToPOInode_EachCat["A"][f1] = {"POINode": None, "Node": None, "Dist": infiniteDist}
+            self.td_dict_faceToPOInode_EachCat["B"][f1] = {"POINode": None, "Node": None, "Dist": infiniteDist}
+            self.td_dict_faceToPOInode_EachCat["C"][f1] = {"POINode": None, "Node": None, "Dist": infiniteDist}
+
+            for nodePOI in self.td_dict_faceToPOInode_MultiCat["A"][f1].keys():
+                if self.td_dict_faceToPOInode_EachCat["A"][f1]["Dist"] > self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI]["Dist"]:
+                    self.td_dict_faceToPOInode_EachCat["A"][f1]["Dist"] = self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI]["Dist"]
+                    self.td_dict_faceToPOInode_EachCat["A"][f1]["POINode"] = nodePOI
+                    self.td_dict_faceToPOInode_EachCat["A"][f1]["Node"]  = self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI]["Node"]
+
+            for nodePOI in self.td_dict_faceToPOInode_MultiCat["B"][f1].keys():
+                if self.td_dict_faceToPOInode_EachCat["B"][f1]["Dist"] > self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]["Dist"]:
+                    self.td_dict_faceToPOInode_EachCat["B"][f1]["Dist"] = self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]["Dist"]
+                    self.td_dict_faceToPOInode_EachCat["B"][f1]["POINode"] = nodePOI
+                    self.td_dict_faceToPOInode_EachCat["B"][f1]["Node"]  = self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]["Node"]
+            
+            for nodePOI in self.td_dict_faceToPOInode_MultiCat["C"][f1].keys():
+                if self.td_dict_faceToPOInode_EachCat["C"][f1]["Dist"] > self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]["Dist"]:
+                    self.td_dict_faceToPOInode_EachCat["C"][f1]["Dist"] = self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]["Dist"]
+                    self.td_dict_faceToPOInode_EachCat["C"][f1]["POINode"] = nodePOI
+                    self.td_dict_faceToPOInode_EachCat["C"][f1]["Node"]  = self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]["Node"]
+
+    # Consider one parcel only need to access one POI for each category
+    def face2POI_EachCat_avg(self):
+        ave_A = sum(self.td_dict_faceToPOInode_EachCat["A"][f1]["Dist"] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_EachCat_A = ave_A
+        ave_B = sum(self.td_dict_faceToPOInode_EachCat["B"][f1]["Dist"] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_EachCat_B = ave_B
+        ave_C = sum(self.td_dict_faceToPOInode_EachCat["C"][f1]["Dist"] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_EachCat_C = ave_C
+
+        self.POI_A_data.append(ave_A)
+        self.POI_B_data.append(ave_B)
+        self.POI_C_data.append(ave_C)
+        
+    def face2POI_EachCat_avg_mean(self,wA=1,wB=1,wC=1):
+        self.f2POI_avg_EachCat_mean = wA * self.f2POI_avg_EachCat_A + wB * self.f2POI_avg_EachCat_B + wC * self.f2POI_avg_EachCat_C
+        self.POI_Mean_data.append(self.f2POI_avg_EachCat_mean)
+        return self.f2POI_avg_EachCat_mean
+
+    def td_dict_faceToPOInode_EachCat_min_init(self,infiniteDist = 10000):
+        self.td_dict_faceToPOInode_EachCat_min = {}
+        self.td_dict_faceToPOInode_EachCat_min["A"] = {}
+        self.td_dict_faceToPOInode_EachCat_min["B"] = {}
+        self.td_dict_faceToPOInode_EachCat_min["C"] = {}        
+
+        for f1 in self.inner_facelist_True:
+            self.td_dict_faceToPOInode_EachCat_min["A"][f1] = {"POINode": None, "Node": None, "Dist": infiniteDist}
+            self.td_dict_faceToPOInode_EachCat_min["B"][f1] = {"POINode": None, "Node": None, "Dist": infiniteDist}
+            self.td_dict_faceToPOInode_EachCat_min["C"][f1] = {"POINode": None, "Node": None, "Dist": infiniteDist}
+
+            for nodePOI in self.td_dict_faceToPOInode_MultiCat_min["A"][f1].keys():
+                if self.td_dict_faceToPOInode_EachCat_min["A"][f1]["Dist"] > self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI]["Dist"]:
+                    self.td_dict_faceToPOInode_EachCat_min["A"][f1]["Dist"] = self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI]["Dist"]
+                    self.td_dict_faceToPOInode_EachCat_min["A"][f1]["POINode"] = nodePOI
+                    self.td_dict_faceToPOInode_EachCat_min["A"][f1]["Node"]  = self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI]["Node"]
+
+            for nodePOI in self.td_dict_faceToPOInode_MultiCat_min["B"][f1].keys():
+                if self.td_dict_faceToPOInode_EachCat_min["B"][f1]["Dist"] > self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]["Dist"]:
+                    self.td_dict_faceToPOInode_EachCat_min["B"][f1]["Dist"] = self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]["Dist"]
+                    self.td_dict_faceToPOInode_EachCat_min["B"][f1]["POINode"] = nodePOI
+                    self.td_dict_faceToPOInode_EachCat_min["B"][f1]["Node"]  = self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]["Node"]
+            
+            for nodePOI in self.td_dict_faceToPOInode_MultiCat_min["C"][f1].keys():
+                if self.td_dict_faceToPOInode_EachCat_min["C"][f1]["Dist"] > self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]["Dist"]:
+                    self.td_dict_faceToPOInode_EachCat_min["C"][f1]["Dist"] = self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]["Dist"]
+                    self.td_dict_faceToPOInode_EachCat_min["C"][f1]["POINode"] = nodePOI
+                    self.td_dict_faceToPOInode_EachCat_min["C"][f1]["Node"]  = self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]["Node"]
+
+    def face2POI_EachCat_avg_min(self):
+        ave_A = sum(self.td_dict_faceToPOInode_EachCat_min["A"][f1]["Dist"] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_EachCat_A_min= ave_A
+        ave_B = sum(self.td_dict_faceToPOInode_EachCat_min["B"][f1]["Dist"] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_EachCat_B_min = ave_B
+        ave_C = sum(self.td_dict_faceToPOInode_EachCat_min["C"][f1]["Dist"] for f1 in self.inner_facelist_True) / len(self.inner_facelist_True)
+        self.f2POI_avg_EachCat_C_min = ave_C
+
+
+
+    def face2POI_EachCat_avg_min_mean(self,wA=1,wB=1,wC=1):
+        self.f2POI_avg_EachCat_min_mean = wA * self.f2POI_avg_EachCat_A_min + wB * self.f2POI_avg_EachCat_B_min + wC * self.f2POI_avg_EachCat_C_min 
+        
+        return self.f2POI_avg_EachCat_min_mean
 
 ###################################
 #      PLOTTING FUNCTIONS

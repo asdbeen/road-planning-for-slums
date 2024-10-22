@@ -115,14 +115,23 @@ def reward_info_function(mg: MyGraph, name: Text,
     elif name == 'full_connected':
         
         ####################################### 
-        ### Do POI related computation
+        ### Do POI related computation   - Version 1
         #######################################   
-        mg.td_dict_nodeToPOInode_init()
-        mg.td_dict_nodeToPOIEdge_init()
-        mg.td_dict_faceToPOIEdge_init()
-        mg.td_dict_ave_faceToPOIEdge_init()
-        travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
+        # mg.td_dict_nodeToPOInode_init()
+        # mg.td_dict_nodeToPOIEdge_init()
+        # mg.td_dict_faceToPOIEdge_init()
+        # mg.td_dict_ave_faceToPOIEdge_init()
+        # travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI() 
 
+        ####################################### 
+        ### Do POI related computation   - Version 2
+        #######################################   
+       
+        mg.td_dict_nodeToPOInode_MultiCat_init()
+        mg.td_dict_faceToPOInode_MultiCat_init()
+        mg.td_dict_faceToPOInode_EachCat_init()   #### Closest one, becasue one parcel only need to go to the closest POI for each category
+        mg.face2POI_EachCat_avg()
+        travel_distance_POI = travel_distance_POI_weight * mg.travel_distance_forPOI_New() 
         # print ("name",name)
         # print ("travel_distance_POI",travel_distance_POI)
         # print ("f2f_avg",mg.f2f_avg)
@@ -181,8 +190,8 @@ def reward_info_function(mg: MyGraph, name: Text,
         'road_cost_weight':road_cost_weight,
 
         'f2POI_dis_avg':mg.f2POI_avg,        # New
-        'culdesacReward':culdesacReward        # New
-
+        'culdesacReward':culdesacReward,        # New
+        'f2POI_avg_EachCat_mean':mg.f2POI_avg_EachCat_mean        # New
 
     }
 
