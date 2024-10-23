@@ -436,9 +436,11 @@ class MyGraph(object):
             edgeIndex = self.edge_list.index(edge)
             copy.road_edges.append(copy.edge_list[edgeIndex])
 
-
-        copy.td_dict_POI_Related_init()
-
+        try:
+            copy.td_dict_POI_Related_init()
+        except:
+            copy.td_dict_POI_Related_init_New()
+    
         return copy
     
     @lazy_property
