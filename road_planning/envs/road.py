@@ -611,8 +611,12 @@ class RoadEnv:
                     self._action_history.append(action)
                     self.build_road(action,POIVersionTag = False)   #######
                     self._full_connected_steps += 1
-                    if (self._full_connected_steps + self._connecting_steps >
-                            self._total_road_steps * self.build_ration):
+                    # if (self._full_connected_steps + self._connecting_steps >        # original
+                    #         self._total_road_steps * self.build_ration):
+    
+                    if (self._full_connected_steps + self._connecting_steps >      
+                            9):
+                                            
                         self.transition_stage()
                 # print ("in step:", "total_cost",self._mg.total_cost(),self._stage)
                 # print ("in step:",'f2POI_dis_avg',self._mg.f2f_avg)
