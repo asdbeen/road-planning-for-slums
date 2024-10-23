@@ -2219,20 +2219,22 @@ class MyGraph(object):
             self.td_dict_faceToPOInode_MultiCat["B"][f1] = {}
             self.td_dict_faceToPOInode_MultiCat["C"][f1] = {}
             for nodePOI in self.POINodes:
-
+                self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI] = {"Node": None, "Dist":infiniteDist}
+                self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI] = {"Node": None, "Dist":infiniteDist}
+                self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI] = {"Node": None, "Dist":infiniteDist}
                 for node in f1.nodes:
                     if nodePOI.POI_Cat == "A":
-                        self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI] = {"Node": node, "Dist":infiniteDist}
+                        
                         if self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat["A"][node][nodePOI]:  
                             self.td_dict_faceToPOInode_MultiCat["A"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat["A"][node][nodePOI]}    # record the node in the face
              
                     if nodePOI.POI_Cat == "B":
-                        self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                      
                         if self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat["B"][node][nodePOI]:  
                             self.td_dict_faceToPOInode_MultiCat["B"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat["B"][node][nodePOI]}    # record the node in the face
 
                     if nodePOI.POI_Cat == "C":
-                        self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                       
                         if self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat["C"][node][nodePOI]:  
                             self.td_dict_faceToPOInode_MultiCat["C"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat["C"][node][nodePOI]}    # record the node in the face
     
@@ -2318,20 +2320,22 @@ class MyGraph(object):
             self.td_dict_faceToPOInode_MultiCat_min["B"][f1] = {}
             self.td_dict_faceToPOInode_MultiCat_min["C"][f1] = {}
             for nodePOI in self.POINodes:
-
+                self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI] = {"Node": None, "Dist":infiniteDist}
+                self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI] = {"Node": None, "Dist":infiniteDist}
+                self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI] = {"Node": None, "Dist":infiniteDist}
                 for node in f1.nodes:
                     if nodePOI.POI_Cat == "A":
-                        self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI] = {"Node": node, "Dist":infiniteDist}
+                        
                         if self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat_min["A"][node][nodePOI]:  
                             self.td_dict_faceToPOInode_MultiCat_min["A"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat_min["A"][node][nodePOI]}    # record the node in the face
              
                     if nodePOI.POI_Cat == "B":
-                        self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                
                         if self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat_min["B"][node][nodePOI]:  
                             self.td_dict_faceToPOInode_MultiCat_min["B"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat_min["B"][node][nodePOI]}    # record the node in the face
 
                     if nodePOI.POI_Cat == "C":
-                        self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]  = {"Node": node, "Dist":infiniteDist}
+                     
                         if self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI]["Dist"] > self.td_dict_nodeToPOInode_MultiCat_min["C"][node][nodePOI]:  
                             self.td_dict_faceToPOInode_MultiCat_min["C"][f1][nodePOI] = {"Node":node, "Dist":self.td_dict_nodeToPOInode_MultiCat_min["C"][node][nodePOI]}    # record the node in the face
     
