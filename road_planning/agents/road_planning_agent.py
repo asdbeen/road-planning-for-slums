@@ -491,7 +491,7 @@ class RoadPlanningAgent(AgentPPO):
             'T_eval': t3 - t2,
             'T_total': t3 - t0,
             'f2POI_avg':self.env._mg.f2POI_avg,
-            'f2POI_avg_EachCat_mean':self.env._mg.f2POI_avg_EachCat_mean
+            #'f2POI_avg_EachCat_mean':self.env._mg.f2POI_avg_EachCat_mean
         }
         return info
 
@@ -705,7 +705,7 @@ class RoadPlanningAgent(AgentPPO):
         log, log_eval = info['log'], info['log_eval']
        
         f2POI_dis_avg = info['f2POI_avg']
-        f2POI_avg_EachCat_mean = info['f2POI_avg_EachCat_mean']
+        #f2POI_avg_EachCat_mean = info['f2POI_avg_EachCat_mean']
         logger, tb_logger = self.logger, self.tb_logger
 
         log_str = f'{iteration}\tT_sample {info["T_sample"]:.2f}\tT_update {info["T_update"]:.2f}\t' \
@@ -713,7 +713,7 @@ class RoadPlanningAgent(AgentPPO):
                   f'ETA {get_eta_str(iteration, cfg.max_num_iterations, info["T_total"])}\t' \
                   f'train_R_eps {log.avg_episode_reward + self.reward_offset:.2f}\t'\
                   f'eval_R_eps {log_eval.avg_episode_reward + self.reward_offset:.2f}\t{cfg.id}\t'\
-                  f' {f2POI_avg_EachCat_mean}\t'
+                  #f' {f2POI_avg_EachCat_mean}\t'
                   
 
         logger.info(log_str)
@@ -764,14 +764,14 @@ class RoadPlanningAgent(AgentPPO):
                             iteration)
         
         ####### Each category POI distance
-        tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_A',
-                             self.env._mg.f2POI_avg_EachCat_A, iteration)
-        tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_B',
-                            self.env._mg.f2POI_avg_EachCat_B, iteration)
-        tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_C',
-                             self.env._mg.f2POI_avg_EachCat_C, iteration)
-        tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_mean',
-                             self.env._mg.f2POI_avg_EachCat_mean, iteration)
+        # tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_A',
+        #                      self.env._mg.f2POI_avg_EachCat_A, iteration)
+        # tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_B',
+        #                     self.env._mg.f2POI_avg_EachCat_B, iteration)
+        # tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_C',
+        #                      self.env._mg.f2POI_avg_EachCat_C, iteration)
+        # tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_mean',
+        #                      self.env._mg.f2POI_avg_EachCat_mean, iteration)
         
         # print("log 属性:")
         # for attr in vars(log):

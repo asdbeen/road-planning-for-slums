@@ -23,7 +23,7 @@ else:
 ######################################################################
 #############################  Set up  ###############################
 ######################################################################
-slum_name = 'punggol_1_withShortcut_withConfigAll_2diagonal_woCross_multiPOICat'
+slum_name = 'punggol_1'
 
 #slum_name = "tengah_1"
 #slum_name = "punggol_1"

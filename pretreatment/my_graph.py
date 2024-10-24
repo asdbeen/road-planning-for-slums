@@ -279,7 +279,7 @@ class MyGraph(object):
         # Summarize added features
         self.f2POI_avg = 10000
         self.f2POI_avg_min = 10000
-   
+        self.f2POI_avg_EachCat_mean = 10000    
         if G is None:
             self.G = nx.Graph()
 
@@ -588,8 +588,6 @@ class MyGraph(object):
 
             # print (info8)
 
-     
-
             new_roadNodeCollection = []
             for edge in newAddedRoad:
                 new_roadNodeCollection.append(edge.nodes[0])
@@ -611,7 +609,16 @@ class MyGraph(object):
             #print ("edge_mask",edge_mask)
 
 
+          
+
             edge_mask = np.array(edge_mask)
+
+        #Avoid Selecting shortcut edge for both case
+        for i in range(len(self.edge_list)):
+            e = self.edge_list[i]
+            if e.isShortCut:
+                edge_mask[i] = 0
+
         #edge_mask = self._get_edge_mask()   #original
         ############################
 
@@ -688,6 +695,8 @@ class MyGraph(object):
             edge_mask = np.zeros(len(edge_mask))
             edge_mask[index_equ2] = 1
 
+
+
         return edge_mask
 
     def _get_edge_mask_stage2_culdesac(self):                   # so the edge selection can start for the cul-de-sac
@@ -733,6 +742,10 @@ class MyGraph(object):
                         repeatCount = 1
                 if repeatCount == 1:
                     edge_mask[i] = 1
+            
+            #Avoid Selecting shortcut edge
+            if e.isShortCut:
+                edge_mask[i] = 0
         
         # if 1 not in edge_mask:
         #     for i in range(len(self.edge_list)):
@@ -1244,7 +1257,7 @@ class MyGraph(object):
                 self.max_del_interior_parcels = max(
                     len(list(self.G.neighbors(n))),
                     self.max_del_interior_parcels)
-            self.max_del_interior_parcels = self.max_del_interior_parcels - 2     # -2 is a designed adjustment， i guess
+            self.max_del_interior_parcels = self.max_del_interior_parcels - 2     # -2 is a designed adjustment， reduce the existing accessible parcel
 
         self.td_dict_init()
         # print "define interior parcels called"
@@ -1910,7 +1923,7 @@ class MyGraph(object):
         for node in self.inner_nodelist_True:
             td_dict_nodeToPOInode[node] = {}
             for nodePOI in self.POINodes:   
-                if node in roadG.G:
+                if node in roadG.G:            # For POI edge, use node,  # For POInode, use POI node
                     length = nx.shortest_path_length(roadG.G,source=node, target=nodePOI, weight="weight")
                 else:
                     length = infiniteDist
@@ -2075,6 +2088,7 @@ class MyGraph(object):
 
 
     def td_dict_POI_Related_init_New(self):
+
         #### use road network to calculate the distance
         self.td_dict_nodeToPOInode_MultiCat_init()
         self.td_dict_faceToPOInode_MultiCat_init()
@@ -2173,7 +2187,55 @@ class MyGraph(object):
             culdesacReward = 1
         return  culdesacReward  
 
+    def AngleReward(self):
+        newEdge = self.road_edges[-1]
+        connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
+        minAngle = None
+        angles = []
+        for oldEdge in connectedEdges:
+            if oldEdge == newEdge:
+                continue
+           
+            if oldEdge.nodes[0] == newEdge.nodes[0]:
+                mutualPt = newEdge.nodes[0]
+                nonMutualPt_New = newEdge.nodes[1]
+                nonMutualPt_Old = oldEdge.nodes[1]
 
+            elif oldEdge.nodes[1] == newEdge.nodes[0]:
+                mutualPt = newEdge.nodes[0]
+                nonMutualPt_New = newEdge.nodes[1]
+                nonMutualPt_Old = oldEdge.nodes[0]
+
+            elif oldEdge.nodes[0] == newEdge.nodes[1]:
+                mutualPt = newEdge.nodes[1]
+                nonMutualPt_New = newEdge.nodes[0]
+                nonMutualPt_Old = oldEdge.nodes[1]
+
+            elif oldEdge.nodes[1] == newEdge.nodes[1]:
+                mutualPt = newEdge.nodes[1]
+                nonMutualPt_New = newEdge.nodes[0]
+                nonMutualPt_Old = oldEdge.nodes[0]  
+
+            vec0 = [nonMutualPt_New.x -mutualPt.x, nonMutualPt_New.y - mutualPt.y]
+            vec1 = [mutualPt.x - nonMutualPt_Old.x, mutualPt.y - nonMutualPt_Old.y]
+
+            # 向量的点积
+            dot_product = vec0[0] * vec1[0] + vec0[1] * vec1[1]
+
+            length_vec0 = math.sqrt(vec0[0]**2 + vec0[1]**2)
+            length_vec1 = math.sqrt(vec1[0]**2 + vec1[1]**2)
+
+
+            angle_radians = math.acos(dot_product / (length_vec0 * length_vec1))
+            angle_degrees = math.degrees(angle_radians)
+
+            angles.append(angle_degrees)
+
+        minAngle = min(angles)
+        minAngle_remap = (minAngle - 0) / (180 - 0) * (1 - 0) + 0
+
+        return minAngle,minAngle_remap
+    
 ############################
 # REWARD FUNCTIONS _ NEW FOR POI _ MultiCat
 ############################
@@ -2199,7 +2261,7 @@ class MyGraph(object):
             td_dict_nodeToPOInode_MultiCat["B"][node] = {}
             td_dict_nodeToPOInode_MultiCat["C"][node] = {}
             for nodePOI in self.POINodes:   
-                if node in roadG.G:
+                if nodePOI in roadG.G:
                     length = nx.shortest_path_length(roadG.G,source=node, target=nodePOI, weight="weight")
                 else:
                     length = infiniteDist
@@ -2392,6 +2454,7 @@ class MyGraph(object):
     # Consider one parcel only need to access one POI for each category
     ####################
     def td_dict_faceToPOInode_EachCat_init(self,infiniteDist = 10000):
+        print ("td_dict_faceToPOInode_EachCat_init")
         self.td_dict_faceToPOInode_EachCat = {}
         self.td_dict_faceToPOInode_EachCat["A"] = {}
         self.td_dict_faceToPOInode_EachCat["B"] = {}
@@ -2580,7 +2643,97 @@ class MyGraph(object):
                 #                  edge_color='black', width=old_road_width)
             
             #plt.show()
+
+
+    def plot_roads_and_POIs(self,
+                    master=None,
+                    update=False,
+                    parcel_labels=False,
+                    title="",
+                    new_plot=True,
+                    new_road_color="blue",
+                    new_road_width=1.5,
+                    old_node_size=25,
+                    old_road_width=6,
+                    barriers=True,
+                    base_width=1,
+                    stage=0):
             
+            plt.figure(figsize=(10, 10))  
+            plt.axes().set_aspect(aspect=1)
+            plt.axis('off')
+
+            nlocs = self.location_dict()
+
+            if update:
+                # self.define_roads()
+                # self.define_interior_parcels()
+                pass
+
+            # if new_plot:
+            #     plt.figure()
+
+            edge_colors = [
+                'blue' if e in self.road_edges and e not in self.stage2edges 
+                else 'orange' if e in self.stage2edges 
+                else 'red' if e.interior 
+                else 'green'
+                for e in self.myedges()
+            ]
+
+            edge_width = [
+                1.5 * new_road_width if e.road else 1.5 *
+                new_road_width if e.barrier else 1.5 *
+                new_road_width if e.interior else 1 for e in self.myedges()
+            ]
+
+            node_colors = []
+            for n in self.G.nodes():
+        
+                if n.POI_Cat=="A":
+                    node_colors.append ('blue')
+                elif n.POI_Cat=="B":
+                    node_colors.append ('purple')
+                elif n.POI_Cat=="C":
+                    node_colors.append ('magenta')    
+                else:
+                    node_colors.append ('black')
+            
+            node_sizes = []
+            for n in self.G.nodes():
+                if n.isPOI:
+                    node_sizes.append(20)
+                else:
+                    node_sizes.append(1.4)
+
+         
+
+            # plot current graph
+            nx.draw(self.G,
+                            pos=nlocs,
+                            with_labels=False,
+                            node_size=node_sizes,
+                            node_color=node_colors,
+                            edge_color=edge_colors,
+                            width=edge_width)
+        
+            # plot original roads
+            if master:
+                copy = master.copy()
+                noffroad = [n for n in copy.G.nodes() if not n.road]
+                for n in noffroad:
+                    copy.G.remove_node(n)
+                eoffroad = [e for e in copy.myedges() if not e.road]
+                for e in eoffroad:
+                    copy.G.remove_edge(e.nodes[0], e.nodes[1])
+
+                # nx.draw_networkx(copy.G, pos=nlocs, with_labels=False,
+                #                  node_size=old_node_size, node_color='black',
+                #                  edge_color='black', width=old_road_width)
+            
+            #plt.show()
+
+
     def plot_all_paths(self, all_paths, update=False):
         """ plots the shortest paths from all interior parcels to the road.
         Optional to update road geometery based on changes in network geometry.

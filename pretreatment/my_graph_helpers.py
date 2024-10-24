@@ -1448,6 +1448,10 @@ def GraphFromJSON_Customized_IgnoreShortCut_MultiPOICat(jsonPath,scaleTag = True
 
     # Assign as POI node
     POINodes = []
+    
+    for nID in myNodeDict.keys():
+        myNodeDict[nID].POI_Cat = None 
+
     for nID in myNodeDict.keys():
         myN = myNodeDict[nID]
         for index in ptIndices_Cat1:
@@ -1459,18 +1463,22 @@ def GraphFromJSON_Customized_IgnoreShortCut_MultiPOICat(jsonPath,scaleTag = True
 
         for index in ptIndices_Cat2:
             if nID == int(index):
+    
                 myN.isPOI = True
                 myN.POI_Cat = "B"
                 POINodes.append(myNodeDict[nID])
+            
+
 
         for index in ptIndices_Cat3:
             if nID == int(index):
                 myN.isPOI = True
                 myN.POI_Cat = "C"
                 POINodes.append(myNodeDict[nID])
+
    
     myG.POINodes = POINodes
-    
+   
     ### Record the faces and nodes that truly inside 
     inner_facelist_True = []
     for face in myG.inner_facelist:

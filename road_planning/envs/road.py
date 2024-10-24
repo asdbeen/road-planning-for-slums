@@ -83,7 +83,7 @@ def load_graph(slum):
 #         mg.feature_init()
 #     return mg
 
-def reward_info_function(mg: MyGraph, name: Text,
+def reward_info_function_saveForVersion2(mg: MyGraph, name: Text,
                          travel_distance_weight: float,
                          road_cost_weight: float,
                          travel_distance_POI_weight: float=0.5) -> Tuple[float, Dict]:
@@ -192,6 +192,99 @@ def reward_info_function(mg: MyGraph, name: Text,
         'f2POI_dis_avg':mg.f2POI_avg,        # New
         'culdesacReward':culdesacReward,        # New
         'f2POI_avg_EachCat_mean':mg.f2POI_avg_EachCat_mean        # New
+
+    }
+
+
+def reward_info_function(mg: MyGraph, name: Text,
+                         travel_distance_weight: float,
+                         road_cost_weight: float,
+                         travel_distance_POI_weight: float=0.5,
+                         action = None) -> Tuple[float, Dict]:
+    """Returns the RL reward and info.
+
+    Args:
+        plc: Plan client object.
+        name: Reward name, can be land_use, road, or intermediate.
+        road_network_weight:  Weight of road network in the reward function.
+        life_circle_weight: Weight of 15-min life circle in the reward function.
+        greeness_weight: Weight of greeness in the reward function.
+        concept_weight: Weight of planning concept in the reward function.
+        calculate_road_style: Whether to calculate the road style.
+
+    Returns:
+        The RL reward.
+        Info dictionary.
+    """
+
+
+
+    travel_distance = travel_distance_weight * mg.travel_distance()
+
+    if name == 'connecting':
+        travel_distance_POI = 0
+        culdesacReward = mg.CuldesacReward()
+        culdesacReward = 0   # so it wont affect in stage 1
+        
+
+    elif name == 'full_connected':
+
+   
+        ####################################### 
+        ### Do culdesac related computation
+        ####################################### 
+        culdesacReward = mg.CuldesacReward()
+
+    road_cost = road_cost_weight * mg.road_cost()
+    connect_reward = mg.connected_ration()
+
+    interior_parcels_num = len(mg.interior_parcels)
+    connecting_steps = mg._get_full_connected_road_num()
+    
+    total_road_cost = mg.total_cost()
+    
+    angleReward = mg.AngleReward()
+   
+
+    #print ("name",name)
+    #print ("culdesacReward",culdesacReward)
+    # print ("travel_distance_POI",travel_distance_POI)  
+    #print("connect_reward", connect_reward)
+    # print(face2face_avg,total_road_cost)
+
+    # print ("travel_distance",travel_distance)
+    # print ("travel_distance_POI",travel_distance_POI)
+    #print ("road_cost",road_cost)
+    
+    
+    #culdesacReward = 0
+
+
+    finalReward = connect_reward +  road_cost + culdesacReward
+    #finalReward = connect_reward  + travel_distance + travel_distance_POI + road_cost  # + culdesacReward    # for complete roadnetwork  
+    #print ("finalReward",finalReward)
+    #print ("total_road_cost",total_road_cost)
+    #print ("-----------------------")
+    #print ("name",name, "connect_reward",connect_reward,"culdesacReward",culdesacReward,"culdesacNum",mg.culdesacNum,"finalReward",finalReward)
+
+    return finalReward, {
+
+        'connect_reward': connect_reward,
+        'travel_distance_reward': travel_distance,
+        #'travel_distance_POI_reward': travel_distance_POI,   # New
+        'road_cost_reward': road_cost,
+
+        'interior_parcels_num':interior_parcels_num,
+        'connecting_steps':connecting_steps,
+        'f2f_dis_avg': mg.f2f_avg,        # original is 0
+        'total_road_cost': total_road_cost,
+
+        'travel_distance_weight':travel_distance_weight,
+        'road_cost_weight':road_cost_weight,
+
+        'f2POI_dis_avg':mg.f2POI_avg,        # New
+        'culdesacReward':culdesacReward,        # New
+        # 'f2POI_avg_EachCat_mean':mg.f2POI_avg_EachCat_mean        # New
 
     }
 
@@ -449,7 +542,9 @@ class RoadEnv:
         }
         return self._get_obs(), self.FAILURE_REWARD, True, info
 
-    def step_SAVE(self, action: List,
+
+    #### use this one find complete road
+    def step(self, action: List,
              logger: logging.Logger) -> Tuple[List, float, bool, Dict]:
         """
         Run one timestep of the environment's dynamics. When end of episode
@@ -499,10 +594,10 @@ class RoadEnv:
                 self._full_connected_steps += 1
 
 
-                if (self._full_connected_steps + self._connecting_steps >              ##### original
-                        self._total_road_steps * self.build_ration):
+                # if (self._full_connected_steps + self._connecting_steps >              ##### original
+                #         self._total_road_steps * self.build_ration):
            
-                    self.transition_stage()
+                #     self.transition_stage()
 
 
                 # if (self._full_connected_steps + self._connecting_steps >                ##### test 2 diagonals
@@ -527,9 +622,9 @@ class RoadEnv:
                 ##########################################
                 ###### This Stop Condition: when all the parcel are connected, and finish cul-de-sac
                 ##########################################
-                # if (culdesacNum_Check==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
-                #     #print ("if (culdesacNum_Check==0  or (self._full_connected_steps....")
-                #     self.transition_stage()
+                if (culdesacNum_Check==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
+                    #print ("if (culdesacNum_Check==0  or (self._full_connected_steps....")
+                    self.transition_stage()
 
 
          
@@ -557,7 +652,7 @@ class RoadEnv:
             return self._get_obs(), reward, self._done, info
 
         elif self._stage == 'full_connected' and culdesacNum_Check != 0:                     ##### for completing network
-            # print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
+            #print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
     
             # info3 = []
             # for edge in self._mg.edge_list:
@@ -573,7 +668,8 @@ class RoadEnv:
             return self._get_obs(), reward, self._done, info
 
 
-    def step(self, action: List,
+    #### Original one
+    def step_Original(self, action: List,
                 logger: logging.Logger) -> Tuple[List, float, bool, Dict]:
             """
             Run one timestep of the environment's dynamics. When end of episode
@@ -627,6 +723,9 @@ class RoadEnv:
             # converted_list = [float(arr[0]) for arr in self._action_history]
             # print ("self._action_history",converted_list)
             return self._get_obs(), reward, self._done, info
+
+
+
 
     def reset(self):
         """
