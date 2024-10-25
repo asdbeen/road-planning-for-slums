@@ -608,9 +608,6 @@ class MyGraph(object):
                         edge_mask[i] = 1
             #print ("edge_mask",edge_mask)
 
-
-          
-
             edge_mask = np.array(edge_mask)
 
         #Avoid Selecting shortcut edge for both case
@@ -619,7 +616,10 @@ class MyGraph(object):
             if e.isShortCut:
                 edge_mask[i] = 0
 
-        #edge_mask = self._get_edge_mask()   #original
+
+        #To make sure it wont select the      
+        if 1 not in edge_mask:
+            edge_mask = self._get_edge_mask()   #original
         ############################
 
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
@@ -675,6 +675,8 @@ class MyGraph(object):
         return edge_part_feature
 
     def _get_edge_mask(self):                   # so the edge selection can start for the cul-de-sac
+    
+
         edge_mask = []
         interior_del_able = False
         for e in self.edge_list:
@@ -727,26 +729,103 @@ class MyGraph(object):
             roadNodeCollection.append(edge.nodes[0])
             roadNodeCollection.append(edge.nodes[1])
 
-  
+      
+        # print ("all road edges")
+        # info = []
+        # for edge in self.road_edges:
+        #     for node in edge.nodes:
+        #         info.append(node.x)
+        #         info.append(node.y)
 
         for i in range(len(self.edge_list)):
             e = self.edge_list[i]
+            repeatCount = 0
+            case = None
             if e not in self.road_edges:
+       
                 repeatCount = 0
+                case = None
                 if e.nodes[0].road == True and e.nodes[1].road != True:
                     repeatCount = roadNodeCollection.count(e.nodes[0])
+                    #case = "case1"
                 elif e.nodes[0].road != True and e.nodes[1].road == True:
                     repeatCount = roadNodeCollection.count(e.nodes[1])
+                    #case = "case2"
                 elif e.nodes[0].road == True and e.nodes[1].road == True:
                     if roadNodeCollection.count(e.nodes[1]) == 1 or roadNodeCollection.count(e.nodes[0]) == 1:
                         repeatCount = 1
-                if repeatCount == 1:
+                        #case = "case3"
+             
+                if repeatCount == 1:          # this is to avoid picking the L - path branch to get more cul-de-sac
                     edge_mask[i] = 1
             
+                #print ("index",i, "repeatCount",repeatCount,e in self.road_edges,"case",case)
+               
+              
+                # print ("all Edge")
+                # info = []
+                # for edge in self.edge_list:
+                #     for node in edge.nodes:
+                #         info.append(node.x)
+                #         info.append(node.y)
+
+                # print (info)
+
+
+
+            # print (info)
+            # roadIndices = []
+            # for index in range(len(self.edge_list)):
+            #     if self.edge_list[index] not in self.road_edges:
+            #         roadIndices.append(index)
+            
+            # print ("roadIndices",roadIndices)
+
+            # if e.nodes[0].onBoundary or e.nodes[1].onBoundary:
+    
+            #     edge_mask[i] = 1
+            
+
             #Avoid Selecting shortcut edge
             if e.isShortCut:
                 edge_mask[i] = 0
-        
+
+        # print ("all Edge")
+        # info = []
+        # for edge in self.edge_list:
+        #     for node in edge.nodes:
+        #         info.append(node.x)
+        #         info.append(node.y)
+        # print ("info",info)
+
+        # roadIndices = []
+        # for index in range(len(self.edge_list)):
+        #     if self.edge_list[index] in self.road_edges:
+        #         roadIndices.append(index)
+
+        # print ("roadIndices",roadIndices)
+        # print ("roadEdge",len(self.road_edges))
+
+        # if self.edge_list[337] in self.road_edges:
+            
+        #     roadIndices = []
+        #     for index in range(len(self.edge_list)):
+        #         if self.edge_list[index]  in self.road_edges:
+        #             roadIndices.append(index)
+            
+            # print ("roadIndices",roadIndices)
+
+            # print ("all Edge")
+            # info = []
+            # for edge in self.edge_list:
+            #     for node in edge.nodes:
+            #         info.append(node.x)
+            #         info.append(node.y)
+
+            # print (info)
+            # print (edge_mask)
+            
+            # print (repeatCount + self)
         # if 1 not in edge_mask:
         #     for i in range(len(self.edge_list)):
         #         e = self.edge_list[i]
@@ -760,7 +839,9 @@ class MyGraph(object):
         #print (edge_mask)
         edge_mask = np.array(edge_mask)
 
-
+        #To make sure it wont select the      
+        if 1 not in edge_mask:
+            edge_mask = self._get_edge_mask()   #original
 
         return edge_mask
     # ok
@@ -1415,19 +1496,19 @@ class MyGraph(object):
 # REWARD FUNCTIONS
 ############################
     def save_step_data(self):    # For now it only save the last one
-        
-        if "road_planning" in cwd:  # for ssh remote terminal
-            path = os.path.join(cwd, 'data', "data.csv")
-        else:
-            path = os.path.join(cwd, "road_planning", 'data', "data.csv")
+        pass
         # if "road_planning" in cwd:  # for ssh remote terminal
-        #     path = os.path.join(cwd, 'data', f"data_{self.save_step_dataCount}.csv")
+        #     path = os.path.join(cwd, 'data', "data.csv")
         # else:
-        #     path = os.path.join(cwd, "road_planning", 'data', f"data_{self.save_step_dataCount}.csv")
+        #     path = os.path.join(cwd, "road_planning", 'data', "data.csv")
+        # # if "road_planning" in cwd:  # for ssh remote terminal
+        # #     path = os.path.join(cwd, 'data', f"data_{self.save_step_dataCount}.csv")
+        # # else:
+        # #     path = os.path.join(cwd, "road_planning", 'data', f"data_{self.save_step_dataCount}.csv")
 
-        #data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])  original
-        data=pd.DataFrame(data=[self.POI_A_data,self.POI_B_data,self.POI_C_data,self.POI_Mean_data])
-        data.to_csv(path,encoding='gbk')
+        # #data=pd.DataFrame(data=[self.parcels_data,self.f2f_data,self.cost_data])  original
+        # data=pd.DataFrame(data=[self.POI_A_data,self.POI_B_data,self.POI_C_data,self.POI_Mean_data])
+        # data.to_csv(path,encoding='gbk')
         # self.save_step_dataCount +=1
         # print (self.save_step_dataCount)
 
@@ -2187,6 +2268,87 @@ class MyGraph(object):
             culdesacReward = 1
         return  culdesacReward  
 
+    def InexplicitCuldesacReward(self) -> float:
+        newEdge = self.road_edges[-1]
+
+        repeatCount = 0
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])
+
+        if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
+            inexplicitCuldesacReward = 0
+      
+        else:
+            if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) == 1:
+                notCuldesacRoadNode = newEdge.nodes[0]
+                culdesacRoadNode = newEdge.nodes[1]
+            elif roadNodeCollection.count(newEdge.nodes[0]) == 1 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
+                notCuldesacRoadNode = newEdge.nodes[1]
+                culdesacRoadNode = newEdge.nodes[0]
+            
+
+
+            min_nodes = float('inf')
+            min_Path = None
+            min_target = None
+       
+
+            copyG = self.G.copy()
+     
+
+            copyG.remove_edge(culdesacRoadNode,notCuldesacRoadNode)
+   
+            allRoadNodes = self.road_nodes
+            nodes_within_3_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 3]
+            allRoadNodes = [item for item in allRoadNodes if item in nodes_within_3_hops]
+
+            # 遍历nodelist，找到到每个节点的最短路径
+            for target in allRoadNodes:
+                if target == culdesacRoadNode or target == notCuldesacRoadNode: 
+
+                    continue
+                # 使用 NetworkX 的 shortest_path_length 找到最短路径长度
+                try:
+                    path = nx.shortest_path(copyG, source=culdesacRoadNode, target=target)
+                except:
+                    roadIndices = []
+                    for index in range(len(self.edge_list)):
+                        if self.edge_list[index] in self.road_edges:
+                            roadIndices.append(index)
+                    
+                    print ("roadIndices",roadIndices)
+                    print ("culdesacRoadNode",culdesacRoadNode)
+                    print ("target",target)   
+
+                else:
+                    path = nx.shortest_path(copyG, source=culdesacRoadNode, target=target)
+                # 比较并更新经过节点最少的路径
+                if len(path) < min_nodes:
+                    min_nodes = len(path)
+                    min_Path = path
+                    min_target = target
+
+                
+            # roadIndices = []
+            # for index in range(len(self.edge_list)):
+            #     if self.edge_list[index] in self.road_edges:
+            #         roadIndices.append(index)
+            
+            #print ("roadIndices",roadIndices)
+    
+            min_nodes = min_nodes-1
+
+            if min_nodes >=3:   # default 3
+                inexplicitCuldesacReward = -1
+            else:
+                inexplicitCuldesacReward = - min_nodes/3
+
+        return inexplicitCuldesacReward
+
+
+
     def AngleReward(self):
         newEdge = self.road_edges[-1]
         connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
@@ -2234,6 +2396,8 @@ class MyGraph(object):
         minAngle = min(angles)
         minAngle_remap = (minAngle - 0) / (180 - 0) * (1 - 0) + 0
 
+        minAngle = -minAngle
+        minAngle_remap = -minAngle_remap
         return minAngle,minAngle_remap
     
 ############################

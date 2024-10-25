@@ -223,9 +223,14 @@ def reward_info_function(mg: MyGraph, name: Text,
 
     if name == 'connecting':
         travel_distance_POI = 0
-        culdesacReward = mg.CuldesacReward()
-        culdesacReward = 0   # so it wont affect in stage 1
-        
+     
+        road_cost = road_cost_weight * mg.road_cost()
+        connect_reward = mg.connected_ration()
+
+
+        culdesacReward = 0   # so it wont affect in stage 1 
+        inexplicitCuldesacReward = 0  # so it wont affect in stage 1 
+        angleReward = 0     # so it wont affect in stage 1 
 
     elif name == 'full_connected':
 
@@ -233,34 +238,40 @@ def reward_info_function(mg: MyGraph, name: Text,
         ####################################### 
         ### Do culdesac related computation
         ####################################### 
+        connect_reward = 0          # so it wont affect in stage 2
+
+        road_cost = road_cost_weight * mg.road_cost()
         culdesacReward = mg.CuldesacReward()
 
-    road_cost = road_cost_weight * mg.road_cost()
-    connect_reward = mg.connected_ration()
+        inexplicitCuldesacReward =  mg.InexplicitCuldesacReward()
+        angleReward = mg.AngleReward()[1] 
+ 
 
     interior_parcels_num = len(mg.interior_parcels)
     connecting_steps = mg._get_full_connected_road_num()
-    
     total_road_cost = mg.total_cost()
     
-    angleReward = mg.AngleReward()
+    
    
 
     #print ("name",name)
-    #print ("culdesacReward",culdesacReward)
+    # print ("culdesacReward",culdesacReward)
+    # print ("connect_reward",connect_reward)
+    # print ("road_cost",road_cost)
     # print ("travel_distance_POI",travel_distance_POI)  
     #print("connect_reward", connect_reward)
     # print(face2face_avg,total_road_cost)
 
     # print ("travel_distance",travel_distance)
     # print ("travel_distance_POI",travel_distance_POI)
-    #print ("road_cost",road_cost)
+    # print ("road_cost",road_cost)
+    # print ("angleReward",angleReward)
     
     
     #culdesacReward = 0
 
 
-    finalReward = connect_reward +  road_cost + culdesacReward
+    finalReward = connect_reward +  road_cost + culdesacReward + inexplicitCuldesacReward + angleReward
     #finalReward = connect_reward  + travel_distance + travel_distance_POI + road_cost  # + culdesacReward    # for complete roadnetwork  
     #print ("finalReward",finalReward)
     #print ("total_road_cost",total_road_cost)
