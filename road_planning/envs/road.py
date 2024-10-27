@@ -222,16 +222,31 @@ def reward_info_function(mg: MyGraph, name: Text,
     travel_distance = travel_distance_weight * mg.travel_distance()
 
     if name == 'connecting':
+        # travel_distance_POI = 0
+        
+        # road_cost = road_cost_weight * mg.road_cost()
+        # connect_reward = mg.connected_ration()
+
+        # culdesacReward = mg.CuldesacReward()
+        # #culdesacReward = 0   # so it wont affect in stage 1 
+        # inexplicitCuldesacReward = 0  # so it wont affect in stage 1 
+        # angleReward = 0     # so it wont affect in stage 1 
+
+        # # originalAngle = mg.AngleReward_OriginalAngle()
+        # # if originalAngle>=45:
+        # #     connect_reward = 0
         travel_distance_POI = 0
      
         road_cost = road_cost_weight * mg.road_cost()
         connect_reward = mg.connected_ration()
 
-
+        culdesacReward = mg.CuldesacReward()
         culdesacReward = 0   # so it wont affect in stage 1 
         inexplicitCuldesacReward = 0  # so it wont affect in stage 1 
         angleReward = 0     # so it wont affect in stage 1 
+        # print ("connect_reward",connect_reward)
 
+        
     elif name == 'full_connected':
 
    

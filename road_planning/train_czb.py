@@ -28,7 +28,7 @@ slum_name = 'tengah_1'
 #slum_name = "tengah_1"
 #slum_name = "punggol_1"
 train_file_num = '1'
-iteration = '4'
+iteration = '0'
 
 
 ######################################################################

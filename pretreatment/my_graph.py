@@ -539,6 +539,7 @@ class MyGraph(object):
         self._cal_edge_face_index()                      # Pair the faces that share with one edge
 
     def get_obs(self):
+        print ("get_obs")
         numerical = self._get_numerical()
         node_feature = np.concatenate(
             [[self._get_node_feature(n) for n in self.node_list]], axis=1)          # [[1 x (numNodeFeature x numNode)]]
@@ -550,11 +551,11 @@ class MyGraph(object):
 
         ############################
         ####### new Adaption #######
-     
+        print ("_get_edge_mask",self.culdesacNum)
         if self.culdesacNum == 0:                                                                        
             edge_mask = self._get_edge_mask()
         else:
-    
+            
             # info2 = []
             # for edge in self.edge_list:
             #     if edge not in self.road_edges:
@@ -575,8 +576,8 @@ class MyGraph(object):
             # print (info3)
 
             edge_mask = [0 for edge in self.edge_list]
-            originalRoadEdges = [e for e in self.edge_list if e.isRoad]
-            newAddedRoad = [e for e in self.road_edges if e not in originalRoadEdges]
+            #originalRoadEdges = [e for e in self.edge_list if e.isRoad]
+            newAddedRoad = [e for e in self.road_edges if e not in self.originalRoadEdges]
 
             # print ("---originalRoadEdges--")
             # info8 = []
@@ -591,7 +592,14 @@ class MyGraph(object):
             new_roadNodeCollection = []
             for edge in newAddedRoad:
                 new_roadNodeCollection.append(edge.nodes[0])
-                new_roadNodeCollection.append(edge.nodes[1])  
+                new_roadNodeCollection.append(edge.nodes[1])    # This new road node collection excludes the nodes on boundary
+
+
+            old_roadNodeCollection = []
+            for edge in self.originalRoadEdges:
+                old_roadNodeCollection.append(edge.nodes[0])
+                old_roadNodeCollection.append(edge.nodes[1])
+
 
             # print ("--newAddedRoad---")
             # info5 = []
@@ -604,22 +612,30 @@ class MyGraph(object):
             for i in range(len(self.edge_list)):
                 e = self.edge_list[i]
                 if e not in self.road_edges:
-                    if e.nodes[0] in new_roadNodeCollection or e.nodes[1] in new_roadNodeCollection:
+                    if e.nodes[0] in new_roadNodeCollection or e.nodes[1] in new_roadNodeCollection:  # case 1, grow from mid of cul-de-sac or end of cul-de-sac
                         edge_mask[i] = 1
+                    elif e.nodes[0] in new_roadNodeCollection and e.nodes[1] in old_roadNodeCollection:
+                        edge_mask[i] = 1
+                    elif e.nodes[1] in new_roadNodeCollection and e.nodes[0] in old_roadNodeCollection:
+                        edge_mask[i] = 1   
+         
             #print ("edge_mask",edge_mask)
 
-            edge_mask = np.array(edge_mask)
+
+            #To make sure it wont select the existing road edge     
+            if 1 not in edge_mask:
+                edge_mask = self._get_edge_mask()   #original
+            
 
         #Avoid Selecting shortcut edge for both case
         for i in range(len(self.edge_list)):
             e = self.edge_list[i]
             if e.isShortCut:
                 edge_mask[i] = 0
+        print ("edge_mask",edge_mask)
+        edge_mask = np.array(edge_mask)
 
-
-        #To make sure it wont select the      
-        if 1 not in edge_mask:
-            edge_mask = self._get_edge_mask()   #original
+        
         ############################
 
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
@@ -837,11 +853,14 @@ class MyGraph(object):
         #             if repeatCount == 1:
         #                 edge_mask[i] = 1
         #print (edge_mask)
+
+        #To make sure it wont select the existing road edge     
+            if 1 not in edge_mask:
+                edge_mask = self._get_edge_mask()   #original
+
         edge_mask = np.array(edge_mask)
 
-        #To make sure it wont select the      
-        if 1 not in edge_mask:
-            edge_mask = self._get_edge_mask()   #original
+           
 
         return edge_mask
     # ok
@@ -1565,7 +1584,7 @@ class MyGraph(object):
             #print ("case1","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
             return -1/self.max_del_interior_parcels
         else:
-            #print ("case2","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
+            print ("case2","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
             return self.del_parcel_num / self.max_del_interior_parcels
 
     def td_dict_init(self): 
@@ -2399,7 +2418,57 @@ class MyGraph(object):
         minAngle = -minAngle
         minAngle_remap = -minAngle_remap
         return minAngle,minAngle_remap
-    
+
+
+    def AngleReward_OriginalAngle(self):
+        newEdge = self.road_edges[-1]
+        connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
+        minAngle = None
+        angles = []
+        for oldEdge in connectedEdges:
+            if oldEdge == newEdge:
+                continue
+           
+            if oldEdge.nodes[0] == newEdge.nodes[0]:
+                mutualPt = newEdge.nodes[0]
+                nonMutualPt_New = newEdge.nodes[1]
+                nonMutualPt_Old = oldEdge.nodes[1]
+
+            elif oldEdge.nodes[1] == newEdge.nodes[0]:
+                mutualPt = newEdge.nodes[0]
+                nonMutualPt_New = newEdge.nodes[1]
+                nonMutualPt_Old = oldEdge.nodes[0]
+
+            elif oldEdge.nodes[0] == newEdge.nodes[1]:
+                mutualPt = newEdge.nodes[1]
+                nonMutualPt_New = newEdge.nodes[0]
+                nonMutualPt_Old = oldEdge.nodes[1]
+
+            elif oldEdge.nodes[1] == newEdge.nodes[1]:
+                mutualPt = newEdge.nodes[1]
+                nonMutualPt_New = newEdge.nodes[0]
+                nonMutualPt_Old = oldEdge.nodes[0]  
+
+            vec0 = [nonMutualPt_New.x -mutualPt.x, nonMutualPt_New.y - mutualPt.y]
+            vec1 = [mutualPt.x - nonMutualPt_Old.x, mutualPt.y - nonMutualPt_Old.y]
+
+            # 向量的点积
+            dot_product = vec0[0] * vec1[0] + vec0[1] * vec1[1]
+
+            length_vec0 = math.sqrt(vec0[0]**2 + vec0[1]**2)
+            length_vec1 = math.sqrt(vec1[0]**2 + vec1[1]**2)
+
+
+            angle_radians = math.acos(dot_product / (length_vec0 * length_vec1))
+            angle_degrees = math.degrees(angle_radians)
+
+            angles.append(angle_degrees)
+
+        minAngle = min(angles)
+
+
+        return minAngle
+
 ############################
 # REWARD FUNCTIONS _ NEW FOR POI _ MultiCat
 ############################
