@@ -1392,6 +1392,7 @@ class MyGraph(object):
     
     # ok 
     def add_road_segment(self, edge: MyEdge,POIVersionTag = False):
+
         """ Updates properties of graph to make edge a road. """
         edge = self.G[edge.nodes[0]][edge.nodes[1]]['myedge']
         # self.myw = self.G[edge.nodes[0]][edge.nodes[1]]['weight']
@@ -1439,6 +1440,14 @@ class MyGraph(object):
         self.road_nodes = rn
         self.road_nodes_idx = rn_idx
         self.build_road_num += 1
+
+        ### This is a new adaption so that it allows to add the seperated road and count the adjacent parcels accessible
+        for parcel in self.interior_parcels:
+            if edge.nodes[0] in parcel.nodes and edge.nodes[1] in parcel.nodes:  # and  or  make differneces
+                parcel.enclaveaccessible = True
+            else:
+                parcel.enclaveaccessible = False
+
         self.interior_parcels_update()
         
         
@@ -1958,14 +1967,16 @@ class MyGraph(object):
 
     # ok             
     def interior_parcels_update(self):
-
+        print ("interior_parcels_update")
         parcels = len(self.interior_parcels)
         # print ("parcels",parcels)
         self.interior_parcels=[]
         for f in self.inner_facelist:
             if self.td_dict_face[self.outerface][f] == 10000:
-                    self.interior_parcels.append(f)
+                    if f.enclaveaccessible == False:
+                        self.interior_parcels.append(f)
                     # print ("add F", f,self.td_dict_face[self.outerface][f])
+                    
 
         for e in self.myedges():
             e.interior = False
@@ -2250,7 +2261,7 @@ class MyGraph(object):
         single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
         num_single_neighbor_nodes = len(single_neighbor_nodes)
 
-        #print ("single_neighbor_nodes",single_neighbor_nodes)
+        print ("single_neighbor_nodes",single_neighbor_nodes)
         info = []
         for node in single_neighbor_nodes:
             info.append(node.x)
