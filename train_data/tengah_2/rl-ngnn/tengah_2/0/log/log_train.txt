@@ -1,0 +1,381 @@
+[2024-10-27 18:01:18,114] data_dir:data/tengah_2
+[2024-10-27 18:01:18,114] id: tengah_2
+[2024-10-27 18:01:18,114] seed: 0
+[2024-10-27 18:01:18,114] objectives_plan: 
+[2024-10-27 18:01:18,114] init_plan: 
+[2024-10-27 18:01:18,114] env_specs: {}
+[2024-10-27 18:01:18,114] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.01}
+[2024-10-27 18:01:18,114] obs_specs: {}
+[2024-10-27 18:01:18,114] agent_specs: {'batch_stage': False}
+[2024-10-27 18:01:18,114] gamma: 0.9
+[2024-10-27 18:01:18,114] tau: 0.0
+[2024-10-27 18:01:18,114] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:01:18,114] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:01:18,114] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:01:18,114] lr: 0.0004
+[2024-10-27 18:01:18,114] weightdecay: 0.0
+[2024-10-27 18:01:18,114] eps: 1e-05
+[2024-10-27 18:01:18,114] value_pred_coef: 0.5
+[2024-10-27 18:01:18,114] entropy_coef: 0.01
+[2024-10-27 18:01:18,114] clip_epsilon: 0.2
+[2024-10-27 18:01:18,114] max_num_iterations: 1
+[2024-10-27 18:01:18,114] num_episodes_per_iteration: 1200
+[2024-10-27 18:01:18,114] max_sequence_length: 33
+[2024-10-27 18:01:18,114] num_optim_epoch: 4
+[2024-10-27 18:01:18,114] mini_batch_size: 1024
+[2024-10-27 18:01:18,114] save_model_interval: 1
+[2024-10-27 18:01:19,068] 0	T_sample 0.05	T_update 0.32	T_eval 0.15	ETA 0:00:00	train_R_eps -0.33	eval_R_eps -0.46	tengah_2	
+[2024-10-27 18:01:19,072] save best checkpoint with rewards -0.46!
+[2024-10-27 18:01:48,277] data_dir:data/tengah_2
+[2024-10-27 18:01:48,277] id: tengah_2
+[2024-10-27 18:01:48,277] seed: 0
+[2024-10-27 18:01:48,277] objectives_plan: 
+[2024-10-27 18:01:48,277] init_plan: 
+[2024-10-27 18:01:48,277] env_specs: {}
+[2024-10-27 18:01:48,277] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.02}
+[2024-10-27 18:01:48,277] obs_specs: {}
+[2024-10-27 18:01:48,277] agent_specs: {'batch_stage': False}
+[2024-10-27 18:01:48,277] gamma: 0.9
+[2024-10-27 18:01:48,277] tau: 0.0
+[2024-10-27 18:01:48,277] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:01:48,277] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:01:48,277] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:01:48,277] lr: 0.0004
+[2024-10-27 18:01:48,277] weightdecay: 0.0
+[2024-10-27 18:01:48,277] eps: 1e-05
+[2024-10-27 18:01:48,277] value_pred_coef: 0.5
+[2024-10-27 18:01:48,277] entropy_coef: 0.01
+[2024-10-27 18:01:48,277] clip_epsilon: 0.2
+[2024-10-27 18:01:48,277] max_num_iterations: 1
+[2024-10-27 18:01:48,277] num_episodes_per_iteration: 1200
+[2024-10-27 18:01:48,277] max_sequence_length: 33
+[2024-10-27 18:01:48,277] num_optim_epoch: 4
+[2024-10-27 18:01:48,277] mini_batch_size: 1024
+[2024-10-27 18:01:48,277] save_model_interval: 1
+[2024-10-27 18:01:49,352] 0	T_sample 0.08	T_update 0.31	T_eval 0.25	ETA 0:00:00	train_R_eps -0.74	eval_R_eps -0.89	tengah_2	
+[2024-10-27 18:01:49,356] save best checkpoint with rewards -0.89!
+[2024-10-27 18:04:50,839] data_dir:data/tengah_2
+[2024-10-27 18:04:50,839] id: tengah_2
+[2024-10-27 18:04:50,839] seed: 0
+[2024-10-27 18:04:50,839] objectives_plan: 
+[2024-10-27 18:04:50,839] init_plan: 
+[2024-10-27 18:04:50,839] env_specs: {}
+[2024-10-27 18:04:50,839] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.02}
+[2024-10-27 18:04:50,839] obs_specs: {}
+[2024-10-27 18:04:50,839] agent_specs: {'batch_stage': False}
+[2024-10-27 18:04:50,839] gamma: 0.9
+[2024-10-27 18:04:50,839] tau: 0.0
+[2024-10-27 18:04:50,839] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:04:50,839] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:04:50,839] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:04:50,839] lr: 0.0004
+[2024-10-27 18:04:50,839] weightdecay: 0.0
+[2024-10-27 18:04:50,839] eps: 1e-05
+[2024-10-27 18:04:50,839] value_pred_coef: 0.5
+[2024-10-27 18:04:50,839] entropy_coef: 0.01
+[2024-10-27 18:04:50,839] clip_epsilon: 0.2
+[2024-10-27 18:04:50,839] max_num_iterations: 1
+[2024-10-27 18:04:50,839] num_episodes_per_iteration: 1200
+[2024-10-27 18:04:50,839] max_sequence_length: 33
+[2024-10-27 18:04:50,839] num_optim_epoch: 4
+[2024-10-27 18:04:50,839] mini_batch_size: 1024
+[2024-10-27 18:04:50,839] save_model_interval: 1
+[2024-10-27 18:04:51,943] 0	T_sample 0.08	T_update 0.34	T_eval 0.25	ETA 0:00:00	train_R_eps -0.74	eval_R_eps -0.89	tengah_2	
+[2024-10-27 18:04:51,947] save best checkpoint with rewards -0.89!
+[2024-10-27 18:12:24,608] data_dir:data/tengah_2
+[2024-10-27 18:12:24,608] id: tengah_2
+[2024-10-27 18:12:24,608] seed: 0
+[2024-10-27 18:12:24,608] objectives_plan: 
+[2024-10-27 18:12:24,608] init_plan: 
+[2024-10-27 18:12:24,608] env_specs: {}
+[2024-10-27 18:12:24,608] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.02}
+[2024-10-27 18:12:24,608] obs_specs: {}
+[2024-10-27 18:12:24,608] agent_specs: {'batch_stage': False}
+[2024-10-27 18:12:24,608] gamma: 0.9
+[2024-10-27 18:12:24,608] tau: 0.0
+[2024-10-27 18:12:24,608] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:12:24,608] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:12:24,608] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:12:24,608] lr: 0.0004
+[2024-10-27 18:12:24,608] weightdecay: 0.0
+[2024-10-27 18:12:24,608] eps: 1e-05
+[2024-10-27 18:12:24,608] value_pred_coef: 0.5
+[2024-10-27 18:12:24,608] entropy_coef: 0.01
+[2024-10-27 18:12:24,608] clip_epsilon: 0.2
+[2024-10-27 18:12:24,608] max_num_iterations: 1
+[2024-10-27 18:12:24,608] num_episodes_per_iteration: 1200
+[2024-10-27 18:12:24,608] max_sequence_length: 33
+[2024-10-27 18:12:24,608] num_optim_epoch: 4
+[2024-10-27 18:12:24,608] mini_batch_size: 1024
+[2024-10-27 18:12:24,608] save_model_interval: 1
+[2024-10-27 18:12:33,284] data_dir:data/tengah_2
+[2024-10-27 18:12:33,284] id: tengah_2
+[2024-10-27 18:12:33,284] seed: 0
+[2024-10-27 18:12:33,284] objectives_plan: 
+[2024-10-27 18:12:33,284] init_plan: 
+[2024-10-27 18:12:33,284] env_specs: {}
+[2024-10-27 18:12:33,284] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.02}
+[2024-10-27 18:12:33,284] obs_specs: {}
+[2024-10-27 18:12:33,284] agent_specs: {'batch_stage': False}
+[2024-10-27 18:12:33,284] gamma: 0.9
+[2024-10-27 18:12:33,284] tau: 0.0
+[2024-10-27 18:12:33,284] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:12:33,284] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:12:33,284] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:12:33,284] lr: 0.0004
+[2024-10-27 18:12:33,284] weightdecay: 0.0
+[2024-10-27 18:12:33,284] eps: 1e-05
+[2024-10-27 18:12:33,285] value_pred_coef: 0.5
+[2024-10-27 18:12:33,285] entropy_coef: 0.01
+[2024-10-27 18:12:33,285] clip_epsilon: 0.2
+[2024-10-27 18:12:33,285] max_num_iterations: 1
+[2024-10-27 18:12:33,285] num_episodes_per_iteration: 1200
+[2024-10-27 18:12:33,285] max_sequence_length: 33
+[2024-10-27 18:12:33,285] num_optim_epoch: 4
+[2024-10-27 18:12:33,285] mini_batch_size: 1024
+[2024-10-27 18:12:33,285] save_model_interval: 1
+[2024-10-27 18:14:20,399] data_dir:data/tengah_2
+[2024-10-27 18:14:20,399] id: tengah_2
+[2024-10-27 18:14:20,399] seed: 0
+[2024-10-27 18:14:20,399] objectives_plan: 
+[2024-10-27 18:14:20,399] init_plan: 
+[2024-10-27 18:14:20,399] env_specs: {}
+[2024-10-27 18:14:20,399] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.02}
+[2024-10-27 18:14:20,399] obs_specs: {}
+[2024-10-27 18:14:20,399] agent_specs: {'batch_stage': False}
+[2024-10-27 18:14:20,399] gamma: 0.9
+[2024-10-27 18:14:20,399] tau: 0.0
+[2024-10-27 18:14:20,399] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:14:20,399] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:14:20,399] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:14:20,399] lr: 0.0004
+[2024-10-27 18:14:20,399] weightdecay: 0.0
+[2024-10-27 18:14:20,399] eps: 1e-05
+[2024-10-27 18:14:20,399] value_pred_coef: 0.5
+[2024-10-27 18:14:20,399] entropy_coef: 0.01
+[2024-10-27 18:14:20,399] clip_epsilon: 0.2
+[2024-10-27 18:14:20,399] max_num_iterations: 1
+[2024-10-27 18:14:20,399] num_episodes_per_iteration: 1200
+[2024-10-27 18:14:20,399] max_sequence_length: 33
+[2024-10-27 18:14:20,399] num_optim_epoch: 4
+[2024-10-27 18:14:20,399] mini_batch_size: 1024
+[2024-10-27 18:14:20,399] save_model_interval: 1
+[2024-10-27 18:16:20,052] data_dir:data/tengah_2
+[2024-10-27 18:16:20,052] id: tengah_2
+[2024-10-27 18:16:20,052] seed: 0
+[2024-10-27 18:16:20,052] objectives_plan: 
+[2024-10-27 18:16:20,052] init_plan: 
+[2024-10-27 18:16:20,052] env_specs: {}
+[2024-10-27 18:16:20,052] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.02}
+[2024-10-27 18:16:20,052] obs_specs: {}
+[2024-10-27 18:16:20,052] agent_specs: {'batch_stage': False}
+[2024-10-27 18:16:20,052] gamma: 0.9
+[2024-10-27 18:16:20,052] tau: 0.0
+[2024-10-27 18:16:20,053] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:16:20,053] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:16:20,053] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:16:20,053] lr: 0.0004
+[2024-10-27 18:16:20,053] weightdecay: 0.0
+[2024-10-27 18:16:20,053] eps: 1e-05
+[2024-10-27 18:16:20,053] value_pred_coef: 0.5
+[2024-10-27 18:16:20,053] entropy_coef: 0.01
+[2024-10-27 18:16:20,053] clip_epsilon: 0.2
+[2024-10-27 18:16:20,053] max_num_iterations: 1
+[2024-10-27 18:16:20,053] num_episodes_per_iteration: 1200
+[2024-10-27 18:16:20,053] max_sequence_length: 33
+[2024-10-27 18:16:20,053] num_optim_epoch: 4
+[2024-10-27 18:16:20,053] mini_batch_size: 1024
+[2024-10-27 18:16:20,053] save_model_interval: 1
+[2024-10-27 18:16:21,158] 0	T_sample 0.08	T_update 0.35	T_eval 0.25	ETA 0:00:00	train_R_eps -0.74	eval_R_eps -0.89	tengah_2	
+[2024-10-27 18:16:21,162] save best checkpoint with rewards -0.89!
+[2024-10-27 18:16:41,317] data_dir:data/tengah_2
+[2024-10-27 18:16:41,317] id: tengah_2
+[2024-10-27 18:16:41,317] seed: 0
+[2024-10-27 18:16:41,317] objectives_plan: 
+[2024-10-27 18:16:41,317] init_plan: 
+[2024-10-27 18:16:41,317] env_specs: {}
+[2024-10-27 18:16:41,317] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.03}
+[2024-10-27 18:16:41,317] obs_specs: {}
+[2024-10-27 18:16:41,317] agent_specs: {'batch_stage': False}
+[2024-10-27 18:16:41,317] gamma: 0.9
+[2024-10-27 18:16:41,317] tau: 0.0
+[2024-10-27 18:16:41,317] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:16:41,317] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:16:41,317] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:16:41,317] lr: 0.0004
+[2024-10-27 18:16:41,317] weightdecay: 0.0
+[2024-10-27 18:16:41,317] eps: 1e-05
+[2024-10-27 18:16:41,317] value_pred_coef: 0.5
+[2024-10-27 18:16:41,317] entropy_coef: 0.01
+[2024-10-27 18:16:41,317] clip_epsilon: 0.2
+[2024-10-27 18:16:41,317] max_num_iterations: 1
+[2024-10-27 18:16:41,317] num_episodes_per_iteration: 1200
+[2024-10-27 18:16:41,317] max_sequence_length: 33
+[2024-10-27 18:16:41,317] num_optim_epoch: 4
+[2024-10-27 18:16:41,317] mini_batch_size: 1024
+[2024-10-27 18:16:41,317] save_model_interval: 1
+[2024-10-27 18:16:42,555] 0	T_sample 0.12	T_update 0.33	T_eval 0.34	ETA 0:00:00	train_R_eps -1.14	eval_R_eps -1.43	tengah_2	
+[2024-10-27 18:16:42,559] save best checkpoint with rewards -1.43!
+[2024-10-27 18:19:48,060] data_dir:data/tengah_2
+[2024-10-27 18:19:48,060] id: tengah_2
+[2024-10-27 18:19:48,060] seed: 0
+[2024-10-27 18:19:48,060] objectives_plan: 
+[2024-10-27 18:19:48,060] init_plan: 
+[2024-10-27 18:19:48,060] env_specs: {}
+[2024-10-27 18:19:48,060] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.03}
+[2024-10-27 18:19:48,060] obs_specs: {}
+[2024-10-27 18:19:48,060] agent_specs: {'batch_stage': False}
+[2024-10-27 18:19:48,060] gamma: 0.9
+[2024-10-27 18:19:48,060] tau: 0.0
+[2024-10-27 18:19:48,060] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:19:48,060] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:19:48,060] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:19:48,060] lr: 0.0004
+[2024-10-27 18:19:48,060] weightdecay: 0.0
+[2024-10-27 18:19:48,060] eps: 1e-05
+[2024-10-27 18:19:48,060] value_pred_coef: 0.5
+[2024-10-27 18:19:48,060] entropy_coef: 0.01
+[2024-10-27 18:19:48,060] clip_epsilon: 0.2
+[2024-10-27 18:19:48,060] max_num_iterations: 1
+[2024-10-27 18:19:48,060] num_episodes_per_iteration: 1200
+[2024-10-27 18:19:48,060] max_sequence_length: 33
+[2024-10-27 18:19:48,060] num_optim_epoch: 4
+[2024-10-27 18:19:48,060] mini_batch_size: 1024
+[2024-10-27 18:19:48,060] save_model_interval: 1
+[2024-10-27 18:19:49,284] 0	T_sample 0.12	T_update 0.32	T_eval 0.35	ETA 0:00:00	train_R_eps -1.14	eval_R_eps -1.43	tengah_2	
+[2024-10-27 18:19:49,288] save best checkpoint with rewards -1.43!
+[2024-10-27 18:24:10,435] data_dir:data/tengah_2
+[2024-10-27 18:24:10,435] id: tengah_2
+[2024-10-27 18:24:10,435] seed: 0
+[2024-10-27 18:24:10,435] objectives_plan: 
+[2024-10-27 18:24:10,435] init_plan: 
+[2024-10-27 18:24:10,435] env_specs: {}
+[2024-10-27 18:24:10,435] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.3}
+[2024-10-27 18:24:10,435] obs_specs: {}
+[2024-10-27 18:24:10,435] agent_specs: {'batch_stage': False}
+[2024-10-27 18:24:10,435] gamma: 0.9
+[2024-10-27 18:24:10,435] tau: 0.0
+[2024-10-27 18:24:10,435] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-10-27 18:24:10,435] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-10-27 18:24:10,435] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-10-27 18:24:10,435] lr: 0.0004
+[2024-10-27 18:24:10,435] weightdecay: 0.0
+[2024-10-27 18:24:10,435] eps: 1e-05
+[2024-10-27 18:24:10,435] value_pred_coef: 0.5
+[2024-10-27 18:24:10,435] entropy_coef: 0.01
+[2024-10-27 18:24:10,435] clip_epsilon: 0.2
+[2024-10-27 18:24:10,435] max_num_iterations: 100
+[2024-10-27 18:24:10,435] num_episodes_per_iteration: 1200
+[2024-10-27 18:24:10,435] max_sequence_length: 33
+[2024-10-27 18:24:10,435] num_optim_epoch: 4
+[2024-10-27 18:24:10,435] mini_batch_size: 1024
+[2024-10-27 18:24:10,435] save_model_interval: 1
+[2024-10-27 18:24:17,336] 0	T_sample 1.69	T_update 0.38	T_eval 4.40	ETA 0:10:40	train_R_eps -12.23	eval_R_eps -10.90	tengah_2	
+[2024-10-27 18:24:17,340] save best checkpoint with rewards -10.90!
+[2024-10-27 18:24:23,899] 1	T_sample 1.83	T_update 0.06	T_eval 4.66	ETA 0:10:42	train_R_eps -11.93	eval_R_eps -10.62	tengah_2	
+[2024-10-27 18:24:23,903] save best checkpoint with rewards -10.62!
+[2024-10-27 18:24:30,243] 2	T_sample 1.71	T_update 0.13	T_eval 4.49	ETA 0:10:14	train_R_eps -12.15	eval_R_eps -10.49	tengah_2	
+[2024-10-27 18:24:30,247] save best checkpoint with rewards -10.49!
+[2024-10-27 18:24:36,229] 3	T_sample 1.81	T_update 0.08	T_eval 4.08	ETA 0:09:34	train_R_eps -12.05	eval_R_eps -10.54	tengah_2	
+[2024-10-27 18:24:41,902] 4	T_sample 1.58	T_update 0.08	T_eval 4.02	ETA 0:08:59	train_R_eps -11.72	eval_R_eps -10.65	tengah_2	
+[2024-10-27 18:24:47,767] 5	T_sample 1.83	T_update 0.10	T_eval 3.94	ETA 0:09:11	train_R_eps -11.87	eval_R_eps -10.65	tengah_2	
+[2024-10-27 18:24:53,833] 6	T_sample 2.01	T_update 0.06	T_eval 3.98	ETA 0:09:24	train_R_eps -11.73	eval_R_eps -10.59	tengah_2	
+[2024-10-27 18:24:59,511] 7	T_sample 1.60	T_update 0.07	T_eval 4.01	ETA 0:08:42	train_R_eps -11.66	eval_R_eps -10.59	tengah_2	
+[2024-10-27 18:25:05,375] 8	T_sample 1.76	T_update 0.06	T_eval 4.04	ETA 0:08:53	train_R_eps -11.51	eval_R_eps -10.51	tengah_2	
+[2024-10-27 18:25:11,613] 9	T_sample 2.03	T_update 0.10	T_eval 4.10	ETA 0:09:21	train_R_eps -12.01	eval_R_eps -10.51	tengah_2	
+[2024-10-27 18:25:17,720] 10	T_sample 1.76	T_update 0.07	T_eval 4.27	ETA 0:09:03	train_R_eps -11.47	eval_R_eps -10.04	tengah_2	
+[2024-10-27 18:25:17,724] save best checkpoint with rewards -10.04!
+[2024-10-27 18:25:23,953] 11	T_sample 1.82	T_update 0.06	T_eval 4.33	ETA 0:09:08	train_R_eps -11.58	eval_R_eps -10.04	tengah_2	
+[2024-10-27 18:25:29,967] 12	T_sample 1.63	T_update 0.07	T_eval 4.32	ETA 0:08:43	train_R_eps -11.98	eval_R_eps -10.04	tengah_2	
+[2024-10-27 18:25:36,229] 13	T_sample 1.87	T_update 0.07	T_eval 4.33	ETA 0:08:58	train_R_eps -11.49	eval_R_eps -10.04	tengah_2	
+[2024-10-27 18:25:42,635] 14	T_sample 1.97	T_update 0.06	T_eval 4.36	ETA 0:09:04	train_R_eps -12.08	eval_R_eps -9.99	tengah_2	
+[2024-10-27 18:25:42,639] save best checkpoint with rewards -9.99!
+[2024-10-27 18:25:48,835] 15	T_sample 1.70	T_update 0.08	T_eval 4.40	ETA 0:08:40	train_R_eps -12.05	eval_R_eps -9.99	tengah_2	
+[2024-10-27 18:25:55,021] 16	T_sample 1.74	T_update 0.09	T_eval 4.35	ETA 0:08:33	train_R_eps -11.56	eval_R_eps -9.99	tengah_2	
+[2024-10-27 18:26:01,088] 17	T_sample 1.82	T_update 0.09	T_eval 4.16	ETA 0:08:17	train_R_eps -12.26	eval_R_eps -10.18	tengah_2	
+[2024-10-27 18:26:07,081] 18	T_sample 1.74	T_update 0.07	T_eval 4.15	ETA 0:08:02	train_R_eps -11.78	eval_R_eps -10.18	tengah_2	
+[2024-10-27 18:26:13,309] 19	T_sample 1.96	T_update 0.06	T_eval 4.20	ETA 0:08:18	train_R_eps -11.94	eval_R_eps -10.06	tengah_2	
+[2024-10-27 18:26:19,495] 20	T_sample 1.84	T_update 0.07	T_eval 4.27	ETA 0:08:08	train_R_eps -11.57	eval_R_eps -10.06	tengah_2	
+[2024-10-27 18:26:25,439] 21	T_sample 1.79	T_update 0.06	T_eval 4.09	ETA 0:07:43	train_R_eps -11.94	eval_R_eps -10.39	tengah_2	
+[2024-10-27 18:26:31,446] 22	T_sample 1.84	T_update 0.06	T_eval 4.10	ETA 0:07:42	train_R_eps -11.65	eval_R_eps -10.40	tengah_2	
+[2024-10-27 18:26:37,441] 23	T_sample 1.84	T_update 0.11	T_eval 4.04	ETA 0:07:35	train_R_eps -11.79	eval_R_eps -10.28	tengah_2	
+[2024-10-27 18:26:43,127] 24	T_sample 1.64	T_update 0.06	T_eval 3.98	ETA 0:07:06	train_R_eps -11.95	eval_R_eps -10.28	tengah_2	
+[2024-10-27 18:26:49,037] 25	T_sample 1.79	T_update 0.07	T_eval 4.04	ETA 0:07:17	train_R_eps -12.13	eval_R_eps -10.43	tengah_2	
+[2024-10-27 18:26:54,854] 26	T_sample 1.97	T_update 0.07	T_eval 3.78	ETA 0:07:04	train_R_eps -11.74	eval_R_eps -10.41	tengah_2	
+[2024-10-27 18:27:00,596] 27	T_sample 1.79	T_update 0.08	T_eval 3.87	ETA 0:06:53	train_R_eps -11.83	eval_R_eps -10.54	tengah_2	
+[2024-10-27 18:27:06,604] 28	T_sample 2.13	T_update 0.07	T_eval 3.80	ETA 0:07:06	train_R_eps -12.24	eval_R_eps -10.54	tengah_2	
+[2024-10-27 18:27:12,260] 29	T_sample 1.85	T_update 0.06	T_eval 3.74	ETA 0:06:36	train_R_eps -11.66	eval_R_eps -10.53	tengah_2	
+[2024-10-27 18:27:17,721] 30	T_sample 1.67	T_update 0.06	T_eval 3.73	ETA 0:06:16	train_R_eps -12.15	eval_R_eps -10.53	tengah_2	
+[2024-10-27 18:27:23,343] 31	T_sample 1.82	T_update 0.06	T_eval 3.73	ETA 0:06:22	train_R_eps -11.65	eval_R_eps -10.53	tengah_2	
+[2024-10-27 18:27:28,911] 32	T_sample 1.76	T_update 0.06	T_eval 3.74	ETA 0:06:13	train_R_eps -12.04	eval_R_eps -10.53	tengah_2	
+[2024-10-27 18:27:34,353] 33	T_sample 1.75	T_update 0.06	T_eval 3.62	ETA 0:05:59	train_R_eps -12.22	eval_R_eps -10.65	tengah_2	
+[2024-10-27 18:27:39,792] 34	T_sample 1.75	T_update 0.08	T_eval 3.61	ETA 0:05:53	train_R_eps -11.59	eval_R_eps -10.65	tengah_2	
+[2024-10-27 18:27:45,384] 35	T_sample 2.02	T_update 0.06	T_eval 3.51	ETA 0:05:58	train_R_eps -11.57	eval_R_eps -10.98	tengah_2	
+[2024-10-27 18:27:50,899] 36	T_sample 1.96	T_update 0.08	T_eval 3.47	ETA 0:05:47	train_R_eps -11.84	eval_R_eps -10.98	tengah_2	
+[2024-10-27 18:27:56,118] 37	T_sample 1.66	T_update 0.08	T_eval 3.47	ETA 0:05:23	train_R_eps -11.79	eval_R_eps -10.98	tengah_2	
+[2024-10-27 18:28:01,380] 38	T_sample 1.76	T_update 0.07	T_eval 3.43	ETA 0:05:21	train_R_eps -11.37	eval_R_eps -11.32	tengah_2	
+[2024-10-27 18:28:06,899] 39	T_sample 1.99	T_update 0.07	T_eval 3.46	ETA 0:05:31	train_R_eps -11.94	eval_R_eps -11.32	tengah_2	
+[2024-10-27 18:28:12,160] 40	T_sample 1.67	T_update 0.06	T_eval 3.53	ETA 0:05:10	train_R_eps -11.69	eval_R_eps -11.32	tengah_2	
+[2024-10-27 18:28:17,324] 41	T_sample 1.64	T_update 0.06	T_eval 3.46	ETA 0:04:59	train_R_eps -11.79	eval_R_eps -11.32	tengah_2	
+[2024-10-27 18:28:22,841] 42	T_sample 1.96	T_update 0.10	T_eval 3.45	ETA 0:05:14	train_R_eps -11.77	eval_R_eps -11.32	tengah_2	
+[2024-10-27 18:28:28,209] 43	T_sample 1.84	T_update 0.06	T_eval 3.46	ETA 0:05:00	train_R_eps -11.58	eval_R_eps -11.43	tengah_2	
+[2024-10-27 18:28:33,408] 44	T_sample 1.67	T_update 0.07	T_eval 3.45	ETA 0:04:46	train_R_eps -11.55	eval_R_eps -11.43	tengah_2	
+[2024-10-27 18:28:38,611] 45	T_sample 1.58	T_update 0.06	T_eval 3.55	ETA 0:04:41	train_R_eps -11.46	eval_R_eps -11.49	tengah_2	
+[2024-10-27 18:28:43,883] 46	T_sample 1.73	T_update 0.07	T_eval 3.47	ETA 0:04:39	train_R_eps -11.96	eval_R_eps -11.47	tengah_2	
+[2024-10-27 18:28:49,218] 47	T_sample 1.79	T_update 0.07	T_eval 3.47	ETA 0:04:37	train_R_eps -11.63	eval_R_eps -11.66	tengah_2	
+[2024-10-27 18:28:54,335] 48	T_sample 1.57	T_update 0.07	T_eval 3.47	ETA 0:04:21	train_R_eps -11.64	eval_R_eps -11.66	tengah_2	
+[2024-10-27 18:28:59,670] 49	T_sample 1.74	T_update 0.07	T_eval 3.52	ETA 0:04:27	train_R_eps -11.58	eval_R_eps -11.47	tengah_2	
+[2024-10-27 18:29:04,898] 50	T_sample 1.58	T_update 0.08	T_eval 3.56	ETA 0:04:16	train_R_eps -11.62	eval_R_eps -11.47	tengah_2	
+[2024-10-27 18:29:10,151] 51	T_sample 1.74	T_update 0.06	T_eval 3.44	ETA 0:04:12	train_R_eps -11.27	eval_R_eps -11.57	tengah_2	
+[2024-10-27 18:29:15,340] 52	T_sample 1.67	T_update 0.06	T_eval 3.46	ETA 0:04:04	train_R_eps -11.65	eval_R_eps -11.57	tengah_2	
+[2024-10-27 18:29:20,493] 53	T_sample 1.69	T_update 0.07	T_eval 3.39	ETA 0:03:57	train_R_eps -11.40	eval_R_eps -11.60	tengah_2	
+[2024-10-27 18:29:25,509] 54	T_sample 1.57	T_update 0.06	T_eval 3.38	ETA 0:03:46	train_R_eps -11.68	eval_R_eps -11.60	tengah_2	
+[2024-10-27 18:29:30,555] 55	T_sample 1.58	T_update 0.06	T_eval 3.40	ETA 0:03:42	train_R_eps -11.39	eval_R_eps -11.53	tengah_2	
+[2024-10-27 18:29:35,861] 56	T_sample 1.82	T_update 0.10	T_eval 3.38	ETA 0:03:48	train_R_eps -12.05	eval_R_eps -11.50	tengah_2	
+[2024-10-27 18:29:41,227] 57	T_sample 1.93	T_update 0.07	T_eval 3.36	ETA 0:03:45	train_R_eps -11.42	eval_R_eps -11.52	tengah_2	
+[2024-10-27 18:29:46,433] 58	T_sample 1.73	T_update 0.06	T_eval 3.40	ETA 0:03:33	train_R_eps -11.59	eval_R_eps -11.21	tengah_2	
+[2024-10-27 18:29:51,441] 59	T_sample 1.58	T_update 0.07	T_eval 3.36	ETA 0:03:20	train_R_eps -11.60	eval_R_eps -11.08	tengah_2	
+[2024-10-27 18:29:56,547] 60	T_sample 1.68	T_update 0.07	T_eval 3.36	ETA 0:03:19	train_R_eps -11.61	eval_R_eps -11.06	tengah_2	
+[2024-10-27 18:30:01,573] 61	T_sample 1.60	T_update 0.06	T_eval 3.36	ETA 0:03:11	train_R_eps -11.71	eval_R_eps -11.07	tengah_2	
+[2024-10-27 18:30:06,747] 62	T_sample 1.71	T_update 0.06	T_eval 3.39	ETA 0:03:11	train_R_eps -10.75	eval_R_eps -11.07	tengah_2	
+[2024-10-27 18:30:11,879] 63	T_sample 1.60	T_update 0.07	T_eval 3.46	ETA 0:03:05	train_R_eps -11.56	eval_R_eps -10.99	tengah_2	
+[2024-10-27 18:30:17,019] 64	T_sample 1.64	T_update 0.06	T_eval 3.43	ETA 0:03:00	train_R_eps -11.36	eval_R_eps -11.04	tengah_2	
+[2024-10-27 18:30:22,099] 65	T_sample 1.60	T_update 0.06	T_eval 3.41	ETA 0:02:53	train_R_eps -11.35	eval_R_eps -11.11	tengah_2	
+[2024-10-27 18:30:27,219] 66	T_sample 1.67	T_update 0.09	T_eval 3.36	ETA 0:02:49	train_R_eps -11.56	eval_R_eps -11.18	tengah_2	
+[2024-10-27 18:30:32,515] 67	T_sample 1.78	T_update 0.07	T_eval 3.45	ETA 0:02:49	train_R_eps -11.76	eval_R_eps -11.74	tengah_2	
+[2024-10-27 18:30:37,673] 68	T_sample 1.65	T_update 0.07	T_eval 3.43	ETA 0:02:40	train_R_eps -11.74	eval_R_eps -11.24	tengah_2	
+[2024-10-27 18:30:42,818] 69	T_sample 1.68	T_update 0.07	T_eval 3.39	ETA 0:02:34	train_R_eps -11.53	eval_R_eps -11.81	tengah_2	
+[2024-10-27 18:30:48,078] 70	T_sample 1.74	T_update 0.08	T_eval 3.43	ETA 0:02:32	train_R_eps -11.57	eval_R_eps -11.54	tengah_2	
+[2024-10-27 18:30:53,271] 71	T_sample 1.61	T_update 0.06	T_eval 3.52	ETA 0:02:25	train_R_eps -11.53	eval_R_eps -10.91	tengah_2	
+[2024-10-27 18:30:58,683] 72	T_sample 1.81	T_update 0.07	T_eval 3.54	ETA 0:02:26	train_R_eps -12.53	eval_R_eps -11.58	tengah_2	
+[2024-10-27 18:31:03,785] 73	T_sample 1.60	T_update 0.07	T_eval 3.43	ETA 0:02:13	train_R_eps -12.30	eval_R_eps -11.33	tengah_2	
+[2024-10-27 18:31:08,883] 74	T_sample 1.47	T_update 0.07	T_eval 3.56	ETA 0:02:07	train_R_eps -11.20	eval_R_eps -10.94	tengah_2	
+[2024-10-27 18:31:14,103] 75	T_sample 1.45	T_update 0.06	T_eval 3.70	ETA 0:02:05	train_R_eps -11.86	eval_R_eps -11.25	tengah_2	
+[2024-10-27 18:31:19,520] 76	T_sample 1.71	T_update 0.09	T_eval 3.62	ETA 0:02:04	train_R_eps -11.15	eval_R_eps -11.02	tengah_2	
+[2024-10-27 18:31:24,972] 77	T_sample 1.85	T_update 0.07	T_eval 3.52	ETA 0:02:00	train_R_eps -11.67	eval_R_eps -10.36	tengah_2	
+[2024-10-27 18:31:30,177] 78	T_sample 1.60	T_update 0.07	T_eval 3.53	ETA 0:01:49	train_R_eps -11.97	eval_R_eps -10.36	tengah_2	
+[2024-10-27 18:31:35,488] 79	T_sample 1.85	T_update 0.07	T_eval 3.38	ETA 0:01:46	train_R_eps -11.49	eval_R_eps -10.13	tengah_2	
+[2024-10-27 18:31:40,744] 80	T_sample 1.72	T_update 0.07	T_eval 3.46	ETA 0:01:40	train_R_eps -12.16	eval_R_eps -10.47	tengah_2	
+[2024-10-27 18:31:46,228] 81	T_sample 1.75	T_update 0.09	T_eval 3.64	ETA 0:01:39	train_R_eps -11.24	eval_R_eps -10.93	tengah_2	
+[2024-10-27 18:31:51,285] 82	T_sample 1.71	T_update 0.07	T_eval 3.27	ETA 0:01:26	train_R_eps -11.87	eval_R_eps -9.99	tengah_2	
+[2024-10-27 18:31:51,289] save best checkpoint with rewards -9.99!
+[2024-10-27 18:31:56,333] 83	T_sample 1.68	T_update 0.06	T_eval 3.29	ETA 0:01:21	train_R_eps -11.80	eval_R_eps -9.62	tengah_2	
+[2024-10-27 18:31:56,337] save best checkpoint with rewards -9.62!
+[2024-10-27 18:32:01,538] 84	T_sample 1.83	T_update 0.07	T_eval 3.29	ETA 0:01:18	train_R_eps -11.16	eval_R_eps -9.99	tengah_2	
+[2024-10-27 18:32:06,713] 85	T_sample 1.85	T_update 0.06	T_eval 3.25	ETA 0:01:12	train_R_eps -11.49	eval_R_eps -9.96	tengah_2	
+[2024-10-27 18:32:11,843] 86	T_sample 1.80	T_update 0.06	T_eval 3.27	ETA 0:01:07	train_R_eps -11.38	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:11,846] save best checkpoint with rewards -9.59!
+[2024-10-27 18:32:16,851] 87	T_sample 1.65	T_update 0.07	T_eval 3.27	ETA 0:01:00	train_R_eps -12.15	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:21,861] 88	T_sample 1.66	T_update 0.07	T_eval 3.28	ETA 0:00:55	train_R_eps -11.39	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:27,156] 89	T_sample 1.91	T_update 0.09	T_eval 3.29	ETA 0:00:53	train_R_eps -11.50	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:32,273] 90	T_sample 1.76	T_update 0.07	T_eval 3.29	ETA 0:00:46	train_R_eps -11.40	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:32,277] save best checkpoint with rewards -9.59!
+[2024-10-27 18:32:37,379] 91	T_sample 1.73	T_update 0.07	T_eval 3.30	ETA 0:00:41	train_R_eps -11.21	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:42,538] 92	T_sample 1.81	T_update 0.06	T_eval 3.28	ETA 0:00:36	train_R_eps -11.74	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:47,574] 93	T_sample 1.68	T_update 0.06	T_eval 3.28	ETA 0:00:30	train_R_eps -11.43	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:52,789] 94	T_sample 1.90	T_update 0.08	T_eval 3.23	ETA 0:00:26	train_R_eps -11.09	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:32:57,823] 95	T_sample 1.68	T_update 0.07	T_eval 3.27	ETA 0:00:20	train_R_eps -11.76	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:33:02,949] 96	T_sample 1.80	T_update 0.07	T_eval 3.25	ETA 0:00:15	train_R_eps -11.97	eval_R_eps -9.59	tengah_2	
+[2024-10-27 18:33:08,231] 97	T_sample 1.78	T_update 0.06	T_eval 3.44	ETA 0:00:11	train_R_eps -11.31	eval_R_eps -10.17	tengah_2	
+[2024-10-27 18:33:13,478] 98	T_sample 1.69	T_update 0.09	T_eval 3.46	ETA 0:00:05	train_R_eps -12.42	eval_R_eps -10.17	tengah_2	
+[2024-10-27 18:33:18,667] 99	T_sample 1.64	T_update 0.07	T_eval 3.47	ETA 0:00:00	train_R_eps -11.38	eval_R_eps -10.17	tengah_2	

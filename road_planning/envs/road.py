@@ -68,21 +68,6 @@ def load_graph(slum):
     return mg
 
 
-###### The Original One
-# def load_graph(slum):
-#     ## Check path
-#     file_path = "data/{}.mg".format(slum)
-#     full_path = os.path.abspath(file_path)
-#     print(f"Loading graph from: {full_path}")
-
-#     with open("data/{}.mg".format(slum), 'rb') as mgfile:
-#         mg = pickle.loads(mgfile.read())
-#         mg.define_roads()
-#         mg.define_interior_parcels()
-#         mg.td_dict_init()
-#         mg.feature_init()
-#     return mg
-
 def reward_info_function_saveForVersion2(mg: MyGraph, name: Text,
                          travel_distance_weight: float,
                          road_cost_weight: float,
@@ -196,6 +181,7 @@ def reward_info_function_saveForVersion2(mg: MyGraph, name: Text,
     }
 
 
+### This is the function that is current working to select the vehicular network and make it connected 
 def reward_info_function(mg: MyGraph, name: Text,
                          travel_distance_weight: float,
                          road_cost_weight: float,
@@ -222,45 +208,34 @@ def reward_info_function(mg: MyGraph, name: Text,
     travel_distance = travel_distance_weight * mg.travel_distance()
 
     if name == 'connecting':
-        # travel_distance_POI = 0
-        
-        # road_cost = road_cost_weight * mg.road_cost()
-        # connect_reward = mg.connected_ration()
 
-        # culdesacReward = mg.CuldesacReward()
-        # #culdesacReward = 0   # so it wont affect in stage 1 
-        # inexplicitCuldesacReward = 0  # so it wont affect in stage 1 
-        # angleReward = 0     # so it wont affect in stage 1 
+        travel_distance_POI = 0                                             # it is not the focus in the "connecting" stage
+        road_cost = road_cost_weight * mg.road_cost()                       # The default weight is 0.8 now 
+        connect_reward = mg.connected_ration()                              # orginal
+        culdesacReward = mg.CuldesacReward() *10                            # weight is emphasized
+        implicitCuldesacReward =  mg.implicitCuldesacReward()               # implicit culdesac reward    
+        angleReward = mg.AngleReward()[1]                                   # angle     
 
-        # # originalAngle = mg.AngleReward_OriginalAngle()
-        # # if originalAngle>=45:
-        # #     connect_reward = 0
-        travel_distance_POI = 0
-     
-        road_cost = road_cost_weight * mg.road_cost()
-        connect_reward = mg.connected_ration()
+        ####  A strict condition to prioritize the angle reward, if the angle is greater than 45, then the connect reward will be 0
+        # originalAngle = mg.AngleReward_OriginalAngle()
+        # connect_reward = 0 if angleReward>=45 else connect_reward
 
-        culdesacReward = mg.CuldesacReward()
-        culdesacReward = 0   # so it wont affect in stage 1 
-        inexplicitCuldesacReward = 0  # so it wont affect in stage 1 
-        angleReward = 0     # so it wont affect in stage 1 
-        # print ("connect_reward",connect_reward)
+        print ("In reward_info_function:", "name:",name,"connect_reward:",connect_reward,"culdesacReward:",culdesacReward,"implicitCuldesacReward:",implicitCuldesacReward,"angleReward:",angleReward)
 
         
     elif name == 'full_connected':
-
-   
-        ####################################### 
-        ### Do culdesac related computation
-        ####################################### 
-        connect_reward = 0          # so it wont affect in stage 2
-
-        road_cost = road_cost_weight * mg.road_cost()
-        culdesacReward = mg.CuldesacReward()
-
-        inexplicitCuldesacReward =  mg.InexplicitCuldesacReward()
-        angleReward = mg.AngleReward()[1] 
+        connect_reward = 0                                                  # so it wont affect the 'full_connected' stage
+        road_cost = road_cost_weight * mg.road_cost()                       # The default weight is 0.8 now 
+        culdesacReward = mg.CuldesacReward() *10                            # weight is emphasized      
+        implicitCuldesacReward =  mg.implicitCuldesacReward()               # implicit culdesac reward  
+        angleReward = mg.AngleReward()[1]                                   # angle 
  
+
+
+    elif name == 'POI_improvement':
+        pass 
+
+
 
     interior_parcels_num = len(mg.interior_parcels)
     connecting_steps = mg._get_full_connected_road_num()
@@ -286,12 +261,11 @@ def reward_info_function(mg: MyGraph, name: Text,
     #culdesacReward = 0
 
 
-    finalReward = connect_reward +  road_cost + culdesacReward + inexplicitCuldesacReward + angleReward
+    finalReward = connect_reward +  road_cost + culdesacReward + implicitCuldesacReward + angleReward
     #finalReward = connect_reward  + travel_distance + travel_distance_POI + road_cost  # + culdesacReward    # for complete roadnetwork  
     #print ("finalReward",finalReward)
     #print ("total_road_cost",total_road_cost)
     #print ("-----------------------")
-    #print ("name",name, "connect_reward",connect_reward,"culdesacReward",culdesacReward,"culdesacNum",mg.culdesacNum,"finalReward",finalReward)
 
     return finalReward, {
 
@@ -396,8 +370,12 @@ class RoadEnv:
             return self._reward_info_fn(self._mg, 'connecting')
         elif self._stage == 'full_connected':
             return self._reward_info_fn(self._mg, 'full_connected')
-        elif self._stage == 'done':
-            return self._reward_info_fn(self._mg, 'full_connected')
+        
+        elif self._stage == 'POI_improvement':
+            return self._reward_info_fn(self._mg, 'POI_improvement')          #  NEW, WIP
+
+        elif self._stage == 'done':                                           #  NEW, WIP  
+            return self._reward_info_fn(self._mg, 'full_connected')             
         else:
             raise ValueError('Invalid Stage')
 
@@ -541,6 +519,7 @@ class RoadEnv:
         self._mg.add_all_road()
 
     def transition_stage(self):
+        print ("transition_stage_current",self._stage)
         #print ("transition_stage")
         """
         Transition to the next stage.
@@ -552,6 +531,8 @@ class RoadEnv:
             self._stage = 'done'
         else:
             raise ValueError('Unknown stage: {}'.format(self._stage))
+        
+        print ("transition_stage_after",self._stage)
         
     def save_step_data(self):
         self._mg.save_step_data()
@@ -591,12 +572,7 @@ class RoadEnv:
             done (bool): whether the episode has ended, in which case further step() calls will return undefined results
             info (dict): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)
         """
-        # print ("in step,self._stage :",self._stage)
-        
-        # print ("in step,self._total_road_steps * self.build_ration:",self._total_road_steps * self.build_ration)
-        # print ("in step,self._full_connected_steps:",self._full_connected_steps)
-        # print ("in step,self._connecting_steps:",self._connecting_steps)
-        # print ("self.stage2edges ",len(self._mg.stage2edges ))
+
 
         if self._done:
             raise RuntimeError('Action taken after episode is done.')
@@ -604,81 +580,57 @@ class RoadEnv:
         else:
             if self._stage == 'connecting':
                 self._action_history.append(action)
-                self.build_road(action,POIVersionTag = False)  ########
+                self.build_road(action,POIVersionTag = False)  
 
                 self._connecting_steps += 1
-                if self._connecting_steps >= math.floor(
-                        self._total_road_steps *
-                        self.build_ration) or self._full_connected():
+                if self._connecting_steps >= math.floor(self._total_road_steps *self.build_ration):    ###### Stop Condition: If it is still in the "connecting" stage, but step reach the maximum road steps ######  
+                    
+                    self._done = True                                                                  ###### Stage Transition: It will transit to "Done" ######
+                    self._stage = 'done'                            
+                    
+                if self._full_connected():                                                             ###### Stage Transition: If it is still in the "connecting" stage, but all the parcels are connected ######
                     self.transition_stage()
 
-            elif self._stage == 'full_connected':    #### this might add 1 more edge than the ration result
+
+            ###### This might add 1 more edge than the ration result
+            elif self._stage == 'full_connected':                
                 self._action_history.append(action)
-                
-                self.build_road(action,POIVersionTag = False)   #######
+                self.build_road(action,POIVersionTag = False)   
 
                 self._full_connected_steps += 1
 
 
-                # if (self._full_connected_steps + self._connecting_steps >              ##### original
-                #         self._total_road_steps * self.build_ration):
-           
-                #     self.transition_stage()
-
-
-                # if (self._full_connected_steps + self._connecting_steps >                ##### test 2 diagonals
-                #         9):     
-                #             self.transition_stage()
-
-                # if (self._mg.culdesacNum==0  ):
-                #     self.transition_stage()
-
-                # print ("asd")
-                # print ("step---road_edges--")
-                # info3 = []
-                # for edge in self._mg.edge_list:
-                #     if edge  in self._mg.road_edges:
-                #         for node in edge.nodes:
-                #             info3.append(node.x)
-                #             info3.append(node.y)
-
-                # print (info3)
-                culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
-                #print ("culdesacNum_Check",culdesacNum_Check)
-                ##########################################
+                ########################################################################################
                 ###### This Stop Condition: when all the parcel are connected, and finish cul-de-sac
-                ##########################################
-                if (culdesacNum_Check==0  or (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration)) :            ##### for completing network
-                    #print ("if (culdesacNum_Check==0  or (self._full_connected_steps....")
-                    self.transition_stage()
+                ########################################################################################
+                if (self._mg.CheckCuldesacNum_NotAssign()==0) :                                                                 ###### Stage Transition: It will transit to "Done" ###### 
+                    self.transition_stage()             
 
-
+                if  (self._full_connected_steps + self._connecting_steps > self._total_road_steps * self.build_ration):         ###### Stop Condition: If it is still in the "connecting" stage, but total step reach the maximum road steps ######  
+                    self._done = True                                                                                           ###### Stage Transition: It will transit to "Done" ######      
+                    self._stage = 'done'
+             
          
-
-
-            # print ("in step:", "total_cost",self._mg.total_cost(),self._stage)
-            # print ("in step:",'f2POI_dis_avg',self._mg.f2f_avg)
             reward, info = self.get_reward_info()
             if self._stage == 'done':
                 self.save_step_data()
 
 
-        # print ("reward",reward)
-
+        
         # converted_list = [float(arr[0]) for arr in self._action_history]
         # print ("self._action_history",converted_list)
 
         culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
         if self._stage == 'connecting':
-            #print ("if self._stage == 'connecting'")
+            print ("IN STEP FUNCTION: self._stage == connecting")
             return self._get_obs(), reward, self._done, info
 
         elif self._stage == 'full_connected' and culdesacNum_Check == 0:
-            #print ("if self._stage == 'connecting_ else'",)
+            print ("IN STEP FUNCTION: self._stage == full_connected and culdesacNum_Check == 0")
             return self._get_obs(), reward, self._done, info
 
-        elif self._stage == 'full_connected' and culdesacNum_Check != 0:                     ##### for completing network
-            #print ("if self._stage == 'connecting_ else'",self._stage,culdesacNum_Check)
+        elif self._stage == 'full_connected' and culdesacNum_Check != 0:                                                        ##### for completing network
+            print ("IN STEP FUNCTION: self._stage == full_connected and culdesacNum_Check != 0")
     
             # info3 = []
             # for edge in self._mg.edge_list:
@@ -752,7 +704,6 @@ class RoadEnv:
 
 
 
-
     def reset(self):
         """
         Resets the state of the environment and returns an initial observation.
@@ -768,37 +719,6 @@ class RoadEnv:
 
         return self._get_obs()
 
-    # @staticmethod
-    # def filter_land_use_road(gdf: GeoDataFrame) -> GeoDataFrame:
-    #     """
-    #     Filter out the land use and road features.
-    #     """
-    #     land_use_road_gdf = copy.deepcopy(
-    #         gdf[(gdf['existence'] == True)
-    #             & (gdf['type'] != city_config.OUTSIDE) &
-    #             (gdf['type'] != city_config.BOUNDARY) &
-    #             (gdf['type'] != city_config.INTERSECTION)])
-    #     return land_use_road_gdf
-
-    # @staticmethod
-    # def filter_road_boundary(gdf: GeoDataFrame) -> GeoDataFrame:
-    #     """
-    #     Filter out the road and boundary features.
-    #     """
-    #     road_boundary_gdf = copy.deepcopy(
-    #         gdf[(gdf['existence'] == True)
-    #             & ((gdf['type'] == city_config.ROAD)
-    #                | (gdf['type'] == city_config.BOUNDARY))])
-    #     return road_boundary_gdf
-
-    # @staticmethod
-    # def _add_legend_to_gdf(gdf: GeoDataFrame) -> GeoDataFrame:
-    #     """
-    #     Add legend to the gdf.
-    #     """
-    #     gdf['legend'] = gdf['type'].apply(
-    #         lambda x: city_config.LAND_USE_ID_MAP_INV[x])
-    #     return gdf
 
     def plot_and_save_gdf(self,
                           save_fig: bool = False,
@@ -826,24 +746,4 @@ class RoadEnv:
         
         self.plot_and_save_gdf(save_fig, path, show)
 
-    # def load_plan(self, gdf: GeoDataFrame) -> None:
-    #     """
-    #     Load a city plan.
-    #     """
-    #     self._plc.load_plan(gdf)
 
-    # def score_plan(self, verbose=True) -> Tuple[float, Dict]:
-    #     """
-    #     Score the city plan.
-    #     """
-    #     reward, info = self._get_all_reward_info()
-    #     if verbose:
-    #         print(f'reward: {reward}')
-    #         pprint(info, indent=4, sort_dicts=False)
-    #     return reward, info
-
-    # def get_init_plan(self) -> Dict:
-    #     """
-    #     Get the gdf of the city plan.
-    #     """
-    #     return self._plc.get_init_plan()
