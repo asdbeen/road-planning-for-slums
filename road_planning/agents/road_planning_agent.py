@@ -423,7 +423,7 @@ class RoadPlanningAgent(AgentPPO):
         
         num_samples = self.cfg.num_episodes_per_iteration * self.cfg.max_sequence_length
         print ("optimize_policy_ start sample")    
-        print ("self.env._mg.road_edges",len(self.env._mg.road_edges))
+        # print ("self.env._mg.road_edges",len(self.env._mg.road_edges))
         if self.cfg.train_file_num != 1:
             for i in range (len(self.multi_envs)):     # shift the environment
                 self.env = self.multi_envs[i]    
@@ -445,7 +445,7 @@ class RoadPlanningAgent(AgentPPO):
 
     
         print ("optimize_policy_ start update_params")  
-        print ("self.env._mg.road_edges",len(self.env._mg.road_edges))
+        # print ("self.env._mg.road_edges",len(self.env._mg.road_edges))
         self.update_params(batch, iteration)
 
         

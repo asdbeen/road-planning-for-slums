@@ -560,61 +560,17 @@ class MyGraph(object):
         if self.culdesacNum == 0:                                                                        
             edge_mask = self._get_edge_mask()
         else:
-            edge_mask = [0 for edge in self.edge_list]
-            #originalRoadEdges = [e for e in self.edge_list if e.isRoad]
-            newAddedRoad = [e for e in self.road_edges if e not in self.originalRoadEdges]
-
-            new_roadNodeCollection = []
-            for edge in newAddedRoad:
-                new_roadNodeCollection.append(edge.nodes[0])
-                new_roadNodeCollection.append(edge.nodes[1])    # This new road node collection excludes the nodes on boundary
-
-
-            old_roadNodeCollection = []
-            for edge in self.originalRoadEdges:
-                old_roadNodeCollection.append(edge.nodes[0])
-                old_roadNodeCollection.append(edge.nodes[1])
-
-
-            # print ("--newAddedRoad---")
-            # info5 = []
-            # for node in new_roadNodeCollection:
-            #     info5.append(node.x)
-            #     info5.append(node.y)
-            
-            # print (info5)
-
-            for i in range(len(self.edge_list)):
-                e = self.edge_list[i]
-                if e not in self.road_edges:
-                    if e.nodes[0] in new_roadNodeCollection or e.nodes[1] in new_roadNodeCollection:  # case 1, grow from mid of cul-de-sac or end of cul-de-sac
-                        edge_mask[i] = 1
-                    elif e.nodes[0] in new_roadNodeCollection and e.nodes[1] in old_roadNodeCollection:
-                        edge_mask[i] = 1
-                    elif e.nodes[1] in new_roadNodeCollection and e.nodes[0] in old_roadNodeCollection:
-                        edge_mask[i] = 1   
-         
+            edge_mask = self._get_edge_mask_from_new_road(False)
             #print ("edge_mask",edge_mask)
 
 
-            #To make sure it wont select the existing road edge     
-            if 1 not in edge_mask:
-                edge_mask = self._get_edge_mask()   #original
-            
-
-        #Avoid Selecting shortcut edge for both case
-        for i in range(len(self.edge_list)):
-            e = self.edge_list[i]
-            if e.isShortCut:
-                edge_mask[i] = 0
-        # print ("edge_mask",edge_mask)
         edge_mask = np.array(edge_mask)
 
         
         ############################
-
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
 
+    # For this, the task is to quickly get it connected. So exclude the edge of mid connection
     def get_obs_stage2_culdesac(self):
         
         numerical = self._get_numerical()
@@ -625,7 +581,8 @@ class MyGraph(object):
         edge_part_feature = self._get_edge_part_feature()
         # edge_part_feature = np.zeros_like(edge_part_feature)
         edge_index = self.edge_index
-        edge_mask = self._get_edge_mask_stage2_culdesac()
+        edge_mask = self._get_edge_mask_from_new_road(True)
+        # print ("get_obs_stage2_culdesac",edge_mask)
 
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
 
@@ -697,54 +654,100 @@ class MyGraph(object):
 
         return edge_mask
 
-
-
-
-    def _get_edge_mask_stage2_culdesac(self):                   # so the edge selection can start for the cul-de-sac
+    def _get_edge_mask_from_new_road(self,excludeMidConnection):
         edge_mask = [0 for edge in self.edge_list]
+        #originalRoadEdges = [e for e in self.edge_list if e.isRoad]
+        newAddedRoad = [e for e in self.road_edges if e not in self.originalRoadEdges]
 
-        roadNodeCollection = []
-        for edge in self.road_edges:
-            roadNodeCollection.append(edge.nodes[0])
-            roadNodeCollection.append(edge.nodes[1])
+        new_roadNodeCollection = []
+        for edge in newAddedRoad:
+            new_roadNodeCollection.append(edge.nodes[0])
+            new_roadNodeCollection.append(edge.nodes[1])    # This new road node collection excludes the nodes on boundary
+
+
+        old_roadNodeCollection = []
+        for edge in self.originalRoadEdges:
+            old_roadNodeCollection.append(edge.nodes[0])
+            old_roadNodeCollection.append(edge.nodes[1])
 
         for i in range(len(self.edge_list)):
             e = self.edge_list[i]
-            repeatCount = 0
-            case = None
             if e not in self.road_edges:
-       
-                repeatCount = 0
-                case = None
-                if e.nodes[0].road == True and e.nodes[1].road != True:
-                    repeatCount = roadNodeCollection.count(e.nodes[0])
-                    #case = "case1"
-                elif e.nodes[0].road != True and e.nodes[1].road == True:
-                    repeatCount = roadNodeCollection.count(e.nodes[1])
-                    #case = "case2"
-                elif e.nodes[0].road == True and e.nodes[1].road == True:
-                    if roadNodeCollection.count(e.nodes[1]) == 1 or roadNodeCollection.count(e.nodes[0]) == 1:
-                        repeatCount = 1
-                        #case = "case3"
-             
-                if repeatCount == 1:          # this is to avoid picking the L - path branch to get more cul-de-sac
+                if e.nodes[0] in new_roadNodeCollection or e.nodes[1] in new_roadNodeCollection: # case 1, select from mid of cul-de-sac or end of cul-de-sac
                     edge_mask[i] = 1
+                elif e.nodes[0] in new_roadNodeCollection and e.nodes[1] in old_roadNodeCollection: # case 2, select a edge in between the new road edge and the old road edge
+                    edge_mask[i] = 1
+                elif e.nodes[1] in new_roadNodeCollection and e.nodes[0] in old_roadNodeCollection: # case 2, select a edge in between the new road edge and the old road edge
+                    edge_mask[i] = 1   
 
-
-            #Avoid Selecting shortcut edge
+                if excludeMidConnection == True:
+                    if new_roadNodeCollection.count(e.nodes[1]) >=2 and new_roadNodeCollection.count(e.nodes[0]) !=1:
+                        edge_mask[i] = 0
+                    elif new_roadNodeCollection.count(e.nodes[0]) >=2 and new_roadNodeCollection.count(e.nodes[1]) !=1:
+                        edge_mask[i] = 0
+                    # if i == 63:
+                    #     print (new_roadNodeCollection.count(e.nodes[1])),new_roadNodeCollection.count(e.nodes[0])
+        #Avoid Selecting shortcut edge for both case
+        for i in range(len(self.edge_list)):
+            e = self.edge_list[i]
             if e.isShortCut:
                 edge_mask[i] = 0
 
-  
-
         #To make sure it wont select the existing road edge     
         if 1 not in edge_mask:
+            print ("if 1 not in edge_mask:")
             edge_mask = self._get_edge_mask()   #original
 
-        edge_mask = np.array(edge_mask)
+        return edge_mask
+
+
+    # def _get_edge_mask_stage2_culdesac(self):                   # so the edge selection can start for the cul-de-sac
+    #     edge_mask = [0 for edge in self.edge_list]
+
+    #     roadNodeCollection = []
+    #     for edge in self.road_edges:
+    #         roadNodeCollection.append(edge.nodes[0])
+    #         roadNodeCollection.append(edge.nodes[1])
+
+    #     for i in range(len(self.edge_list)):
+    #         e = self.edge_list[i]
+    #         repeatCount = 0
+    #         case = None
+    #         if e not in self.road_edges:
+       
+    #             repeatCount = 0
+    #             case = None
+    #             if e.nodes[0].road == True and e.nodes[1].road != True:
+    #                 repeatCount = roadNodeCollection.count(e.nodes[0])
+    #                 #case = "case1"
+    #             elif e.nodes[0].road != True and e.nodes[1].road == True:
+    #                 repeatCount = roadNodeCollection.count(e.nodes[1])
+    #                 #case = "case2"
+    #             elif e.nodes[0].road == True and e.nodes[1].road == True:
+    #                 if roadNodeCollection.count(e.nodes[1]) == 1 or roadNodeCollection.count(e.nodes[0]) == 1:
+    #                     repeatCount = 1
+    #                     #case = "case3"
+             
+    #             if repeatCount == 1:          # this is to avoid picking the L - path branch to get more cul-de-sac
+    #                 edge_mask[i] = 1
+
+
+    #     #Avoid Selecting shortcut edge for both case
+    #     for i in range(len(self.edge_list)):
+    #         e = self.edge_list[i]
+    #         if e.isShortCut:
+    #             edge_mask[i] = 0
+
+    #     #To make sure it wont select the existing road edge     
+    #     if 1 not in edge_mask:
+    #         edge_mask = self._get_edge_mask()   #original
+
+    #     edge_mask = np.array(edge_mask)
 
      
-        return edge_mask
+    #     return edge_mask
+    
+    
     # ok
     def _get_edge_face_interior(self):
         edge_face_interior=[]
@@ -1274,7 +1277,7 @@ class MyGraph(object):
     
     # ok 
     def add_road_segment(self, edge: MyEdge,POIVersionTag = False):
-        print ("add_road_segment",edge)
+        # print ("add_road_segment",edge)
         """ Updates properties of graph to make edge a road. """
         edge = self.G[edge.nodes[0]][edge.nodes[1]]['myedge']
         # self.myw = self.G[edge.nodes[0]][edge.nodes[1]]['weight']
@@ -1475,7 +1478,7 @@ class MyGraph(object):
             #print ("case1","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
             return -1/self.max_del_interior_parcels
         else:
-            print ("case2","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
+            # print ("case2","self.del_parcel_num",self.del_parcel_num,"self.max_del_interior_parcels",self.max_del_interior_parcels )
             return self.del_parcel_num / self.max_del_interior_parcels
 
     def td_dict_init(self): 
@@ -1849,7 +1852,7 @@ class MyGraph(object):
 
     # ok             
     def interior_parcels_update_original(self):
-        print ("interior_parcels_update")
+        #print ("interior_parcels_update")
         parcels = len(self.interior_parcels)
         # print ("parcels",parcels)
         self.interior_parcels=[]
@@ -1896,7 +1899,7 @@ class MyGraph(object):
     
     
     def interior_parcels_update(self):
-        print ("interior_parcels_update")
+        # print ("interior_parcels_update")
         parcels = len(self.interior_parcels)
         # print ("parcels",parcels)
         old_interior_parcels = self.interior_parcels
@@ -2180,6 +2183,38 @@ class MyGraph(object):
      
             return  (before-now)/(before-self.f2POI_avg_EachCat_min_mean)
         
+    def CheckNewRoadEdgeCase(self):
+        caseTag = None
+        newRoadEdge = self.road_edges[-1]
+
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])
+
+        if roadNodeCollection.count(newRoadEdge.nodes[0]) >= 2 and roadNodeCollection.count(newRoadEdge.nodes[1]) >= 2:
+            culdesacRoadNode = None
+            notCuldesacRoadNode = None
+            caseTag = "case3"
+        else:
+            if roadNodeCollection.count(newRoadEdge.nodes[0]) >= 2 and roadNodeCollection.count(newRoadEdge.nodes[1]) == 1:
+                notCuldesacRoadNode = newRoadEdge.nodes[0]
+                culdesacRoadNode = newRoadEdge.nodes[1]
+                if roadNodeCollection.count(newRoadEdge.nodes[0]) == 2:
+                    caseTag = "case1"
+                elif roadNodeCollection.count(newRoadEdge.nodes[0]) > 2:
+                    caseTag = "case2"
+
+            elif roadNodeCollection.count(newRoadEdge.nodes[0]) == 1 and roadNodeCollection.count(newRoadEdge.nodes[1]) >= 2:
+                notCuldesacRoadNode = newRoadEdge.nodes[1]
+                culdesacRoadNode = newRoadEdge.nodes[0]
+                if roadNodeCollection.count(newRoadEdge.nodes[1]) == 2:
+                    caseTag = "case1"
+                elif roadNodeCollection.count(newRoadEdge.nodes[1]) > 2:
+                    caseTag = "case2"
+
+        return caseTag
+
 
     def CheckCuldesacNum(self):
         roadG = MyGraph()
@@ -2227,8 +2262,8 @@ class MyGraph(object):
             culdesacReward = 1
         return  culdesacReward  
 
-    def implicitCuldesacReward(self) -> float:
-        newEdge = self.road_edges[-1]
+    def ImplicitCuldesacReward_Negative(self,threhold=2) -> float:
+        newEdge = self.road_edges[-1]         # it is added in the road network     
 
         repeatCount = 0
         roadNodeCollection = []
@@ -2237,7 +2272,7 @@ class MyGraph(object):
             roadNodeCollection.append(edge.nodes[1])
 
         if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
-            implicitCuldesacReward = 0
+            ImplicitCuldesacReward = 0
       
         else:
             if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) == 1:
@@ -2246,9 +2281,7 @@ class MyGraph(object):
             elif roadNodeCollection.count(newEdge.nodes[0]) == 1 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
                 notCuldesacRoadNode = newEdge.nodes[1]
                 culdesacRoadNode = newEdge.nodes[0]
-            
-
-
+        
             min_nodes = float('inf')
             min_Path = None
             min_target = None
@@ -2266,7 +2299,6 @@ class MyGraph(object):
             # 遍历nodelist，找到到每个节点的最短路径
             for target in allRoadNodes:
                 if target == culdesacRoadNode or target == notCuldesacRoadNode: 
-
                     continue
                 # 使用 NetworkX 的 shortest_path_length 找到最短路径长度
                 try:
@@ -2299,14 +2331,98 @@ class MyGraph(object):
     
             min_nodes = min_nodes-1
 
-            if min_nodes >=3:   # default 3
-                implicitCuldesacReward = -1
+            if min_nodes >=threhold:   
+                ImplicitCuldesacReward = -1
             else:
-                implicitCuldesacReward = - min_nodes/3
+                ImplicitCuldesacReward = - min_nodes/threhold
 
-        return implicitCuldesacReward
+        return ImplicitCuldesacReward
 
+    def ImplicitCuldesacReward(self,culdesacReward,threhold=2) -> float:
+        
+        if culdesacReward >0:
+            ImplicitCuldesacReward = 0
+        elif culdesacReward < 0:
+            ImplicitCuldesacReward = 0
+        elif culdesacReward == 0:
+            newEdge = self.road_edges[-1]         # it is added in the road network     
 
+            repeatCount = 0
+            roadNodeCollection = []
+            for edge in self.road_edges:
+                roadNodeCollection.append(edge.nodes[0])
+                roadNodeCollection.append(edge.nodes[1])
+
+            if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
+                ImplicitCuldesacReward = 0
+        
+            else:
+                if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) == 1:
+                    notCuldesacRoadNode = newEdge.nodes[0]
+                    culdesacRoadNode = newEdge.nodes[1]
+                elif roadNodeCollection.count(newEdge.nodes[0]) == 1 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
+                    notCuldesacRoadNode = newEdge.nodes[1]
+                    culdesacRoadNode = newEdge.nodes[0]
+            
+                min_nodes = float('inf')
+                min_Path = None
+                min_target = None
+        
+
+                copyG = self.G.copy()
+        
+
+                copyG.remove_edge(culdesacRoadNode,notCuldesacRoadNode)
+    
+                allRoadNodes = self.road_nodes
+                nodes_within_3_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 3]
+                
+                
+                allRoadNodes = [item for item in allRoadNodes if item in nodes_within_3_hops]
+
+                # 遍历nodelist，找到到每个节点的最短路径
+                for target in allRoadNodes:
+                    if target == culdesacRoadNode or target == notCuldesacRoadNode: 
+                        continue
+                    # 使用 NetworkX 的 shortest_path_length 找到最短路径长度
+                    try:
+                        path = nx.shortest_path(copyG, source=culdesacRoadNode, target=target)
+                    except:
+                        roadIndices = []
+                        for index in range(len(self.edge_list)):
+                            if self.edge_list[index] in self.road_edges:
+                                roadIndices.append(index)
+                        
+                        print ("roadIndices",roadIndices)
+                        print ("culdesacRoadNode",culdesacRoadNode)
+                        print ("target",target)   
+
+                    else:
+                        path = nx.shortest_path(copyG, source=culdesacRoadNode, target=target)
+                    # 比较并更新经过节点最少的路径
+                    if len(path) < min_nodes:
+                        min_nodes = len(path)
+                        min_Path = path
+                        min_target = target
+
+                    
+                # roadIndices = []
+                # for index in range(len(self.edge_list)):
+                #     if self.edge_list[index] in self.road_edges:
+                #         roadIndices.append(index)
+                
+                #print ("roadIndices",roadIndices)
+
+                if min_nodes != float('inf'):
+                    min_nodes = min_nodes-1
+                    if min_nodes >=threhold:   
+                        ImplicitCuldesacReward = 0
+                    else:
+                        ImplicitCuldesacReward =  1/min_nodes
+                else:
+                    ImplicitCuldesacReward = 0
+
+        return ImplicitCuldesacReward
 
     def AngleReward(self):
         newEdge = self.road_edges[-1]
@@ -2357,7 +2473,7 @@ class MyGraph(object):
 
         minAngle = -minAngle
         minAngle_remap = -minAngle_remap
-        print ("minAngle",minAngle)
+        # print ("minAngle",minAngle)
         return minAngle,minAngle_remap
 
 
@@ -2409,6 +2525,108 @@ class MyGraph(object):
 
 
         return minAngle
+
+
+    def ImplicitConnectReward_Negative(self,threhold=2):
+        newEdge = self.road_edges[-1]    # it is added in the road network   
+
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])       
+
+        if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:      # 2 is using this edge as connection, more than 2 might be a T connection
+            implicitConnectReward = -1                  # more than nodes far away     it  does not help, but this can be offset by the culdesac reward
+
+        else:
+            internalNodeCollection = []
+            for parcel in self.interior_parcels:
+                for node in parcel.nodes:
+                    internalNodeCollection.append(node)
+
+            if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) == 1:
+                notCuldesacRoadNode = newEdge.nodes[0]
+                culdesacRoadNode = newEdge.nodes[1]
+            elif roadNodeCollection.count(newEdge.nodes[0]) == 1 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
+                notCuldesacRoadNode = newEdge.nodes[1]
+                culdesacRoadNode = newEdge.nodes[0]
+
+            copyG = self.G.copy()
+            copyG.remove_edge(culdesacRoadNode,notCuldesacRoadNode)
+
+            nodes_within_1_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 1]
+            nodes_within_2_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 2]
+            # nodes_within_3_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 3]
+
+            internalNodeCount = internalNodeCollection.count(culdesacRoadNode)  # it should be in 0,1 or 2
+
+            if internalNodeCount == 2 :                                         # the notCuldesacRoadNode is shared by 2 interior parcels
+                implicitConnectReward = - 1/5
+            elif internalNodeCount == 1:                                        # the notCuldesacRoadNode is shared by 1 interior parcel
+                implicitConnectReward = - 2/5
+            elif internalNodeCount == 0:                                        # the notCuldesacRoadNode is not shared by any interior parcel
+                if len(list(set(nodes_within_1_hops) & set(internalNodeCollection)))  > 0:    # 1 node far away
+                    implicitConnectReward = - 3/5
+                elif len(list(set(nodes_within_2_hops) & set(internalNodeCollection)))  > 0:   # 2 node far away
+                    implicitConnectReward = -4/5
+                else:
+                    implicitConnectReward = -1                                  # more than nodes far away
+
+        return implicitConnectReward
+
+    
+    def ImplicitConnectReward(self,connectionReward,threhold=2):
+
+        if connectionReward < 0:    
+            implicitConnectReward = 0
+        else:
+            newEdge = self.road_edges[-1]    # it is added in the road network   
+
+            roadNodeCollection = []
+            for edge in self.road_edges:
+                roadNodeCollection.append(edge.nodes[0])
+                roadNodeCollection.append(edge.nodes[1])       
+
+            if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:      # 2 is using this edge as connection, more than 2 might be a T connection
+                implicitConnectReward = 0                  # the positive reward has been given in ConnectReward 
+
+            else:
+                internalNodeCollection = []
+                for parcel in self.interior_parcels:
+                    for node in parcel.nodes:
+                        internalNodeCollection.append(node)
+
+                if roadNodeCollection.count(newEdge.nodes[0]) >= 2 and roadNodeCollection.count(newEdge.nodes[1]) == 1:
+                    notCuldesacRoadNode = newEdge.nodes[0]
+                    culdesacRoadNode = newEdge.nodes[1]
+                elif roadNodeCollection.count(newEdge.nodes[0]) == 1 and roadNodeCollection.count(newEdge.nodes[1]) >= 2:
+                    notCuldesacRoadNode = newEdge.nodes[1]
+                    culdesacRoadNode = newEdge.nodes[0]
+
+                copyG = self.G.copy()
+                copyG.remove_edge(culdesacRoadNode,notCuldesacRoadNode)
+
+                nodes_within_1_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 1]
+                # nodes_within_2_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 2]
+                # nodes_within_3_hops = [node for node, length in nx.single_source_shortest_path_length(copyG, culdesacRoadNode).items() if length <= 3]
+
+                internalNodeCount = internalNodeCollection.count(culdesacRoadNode)  # it should be in 0,1 or 2
+
+                if internalNodeCount == 2 :                                         # the notCuldesacRoadNode is shared by 2 interior parcels
+                    implicitConnectReward = 1                                       # Becuase in connection reward it is -1/2, so in this case in total it becomes 1/2
+                elif internalNodeCount == 1:                                        # the notCuldesacRoadNode is shared by 1 interior parcel
+                    implicitConnectReward = 3/4                                     # Becuase in connection reward it is -1/2, so in this case in total it becomes 1/4
+                elif internalNodeCount == 0:                                        # the notCuldesacRoadNode is not shared by any interior parcel
+                    if len(list(set(nodes_within_1_hops) & set(internalNodeCollection)))  > 0:    # 1 node far away
+                        implicitConnectReward = 5/8
+                    # elif len(list(set(nodes_within_2_hops) & set(internalNodeCollection)))  > 0:   # 2 node far away
+                    #     implicitConnectReward = 1/5
+                    else:
+                        implicitConnectReward = 0                                  # more than nodes far away
+
+        return implicitConnectReward
+
+
 
 ############################
 # REWARD FUNCTIONS _ NEW FOR POI _ MultiCat
