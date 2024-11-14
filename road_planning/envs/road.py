@@ -182,7 +182,7 @@ def reward_info_function_saveForVersion2(mg: MyGraph, name: Text,
 
 
 ### This is the function that is current working to select the vehicular network and make it connected 
-def reward_info_function_succeedfortangha2(mg: MyGraph, name: Text,
+def reward_info_function_succeedfortangha2(mg: MyGraph, name: Text,  #s
                          travel_distance_weight: float,
                          road_cost_weight: float,
                          travel_distance_POI_weight: float=0.5,
@@ -204,7 +204,7 @@ def reward_info_function_succeedfortangha2(mg: MyGraph, name: Text,
     """
 
 
-
+    implicitConnectReward = 0
     travel_distance = travel_distance_weight * mg.travel_distance()
 
     if name == 'connecting':
@@ -213,21 +213,21 @@ def reward_info_function_succeedfortangha2(mg: MyGraph, name: Text,
         road_cost = road_cost_weight * mg.road_cost()                       # The default weight is 0.8 now 
         connect_reward = mg.connected_ration()                              # orginal
         culdesacReward = mg.CuldesacReward() *10                            # weight is emphasized
-        implicitCuldesacReward =  mg.implicitCuldesacReward()               # implicit culdesac reward    
+        implicitCuldesacReward =  mg.ImplicitCuldesacReward(culdesacReward)               # implicit culdesac reward    
         angleReward = mg.AngleReward()[1]                                   # angle     
 
         ####  A strict condition to prioritize the angle reward, if the angle is greater than 45, then the connect reward will be 0
         # originalAngle = mg.AngleReward_OriginalAngle()
         # connect_reward = 0 if angleReward>=45 else connect_reward
 
-        print ("In reward_info_function:", "name:",name,"connect_reward:",connect_reward,"implicitCuldesacReward",implicitCuldesacReward,"culdesacReward:",culdesacReward,"implicitCuldesacReward:",implicitCuldesacReward,"angleReward:",angleReward)
+        #print ("In reward_info_function:", "name:",name,"connect_reward:",connect_reward,"implicitCuldesacReward",implicitCuldesacReward,"culdesacReward:",culdesacReward,"implicitCuldesacReward:",implicitCuldesacReward,"angleReward:",angleReward)
 
         
     elif name == 'full_connected':
         connect_reward = 0                                                  # so it wont affect the 'full_connected' stage
         road_cost = road_cost_weight * mg.road_cost()                       # The default weight is 0.8 now 
         culdesacReward = mg.CuldesacReward() *10                            # weight is emphasized      
-        implicitCuldesacReward =  mg.implicitCuldesacReward()               # implicit culdesac reward  
+        implicitCuldesacReward =  mg.ImplicitCuldesacReward(culdesacReward)               # implicit culdesac reward  
         angleReward = mg.AngleReward()[1]                                   # angle 
  
 
@@ -312,8 +312,8 @@ def reward_info_function(mg: MyGraph, name: Text,
         Info dictionary.
     """
 
-
-
+    hitBoundaryReward = 0
+    singleParcleRingRoadPunishment = 0
     travel_distance = travel_distance_weight * mg.travel_distance()
 
     if name == 'connecting':
@@ -329,7 +329,10 @@ def reward_info_function(mg: MyGraph, name: Text,
         angleReward = mg.AngleReward()[1]                                   # angle   
 
         connect_reward = mg.connected_ration()                              # orginal
-        implicitConnectReward = mg.ImplicitConnectReward(connect_reward)                  # implicit connect reward
+        if connect_reward == 0:
+            implicitConnectReward = mg.ImplicitConnectReward(connect_reward)                  # implicit connect reward
+        else:
+            implicitConnectReward = 0
 
         culdesacReward = mg.CuldesacReward()                               # weight is not emphasized, offset the case in ImplicitConnectReward
         implicitCuldesacReward =  mg.ImplicitCuldesacReward(culdesacReward)              # implicit culdesac reward    
@@ -340,14 +343,27 @@ def reward_info_function(mg: MyGraph, name: Text,
 
         ####  A strict condition to prioritize the angle reward, if the angle is greater than 45, then the connect reward will be 0
         originalAngle = mg.AngleReward_OriginalAngle()
-        # connect_reward = 0 if originalAngle>=45 else connect_reward
-
+        connect_reward = 0 if originalAngle>=45 else connect_reward
+        implicitConnectReward = 0 if originalAngle>=45 else implicitConnectReward
+        ####  Dont encourage the cul-de-sac fixed by big angle turning 
         if caseTag == "case1":
+            
             culdesacReward = 0 if originalAngle>=45 else culdesacReward
             implicitCuldesacReward = 0 if originalAngle>=45 else implicitCuldesacReward      
+            # print ("case1",originalAngle,culdesacReward,implicitCuldesacReward)
+        if caseTag == "case3":
+            # check if one side of edge hit boundary, give extra reward
+            newRoadEdge = mg.road_edges[-1]
+            if newRoadEdge.nodes[0].onBoundary or newRoadEdge.nodes[1].onBoundary:
+                if originalAngle<=45:
+                    hitBoundaryReward = 1
 
-        print ("In reward_info_function:", "name:",name,"connect_reward:",connect_reward,"implicitConnectReward",implicitConnectReward,"culdesacReward:",culdesacReward,"ImplicitCuldesacReward:",implicitCuldesacReward,"angleReward:",angleReward,"case:",caseTag)
-        print ("In reward_info_function:", "road_cost:",road_cost,"angleReward:",angleReward)
+
+        ####  Small Ring Road Punishment ####
+        singleParcleRingRoadPunishment = mg.SingleParcleRingRoadPunishment()*10   # New
+        #singleParcleRingRoadPunishment = 0
+        # print ("In reward_info_function:", "name:",name,"connect_reward:",connect_reward,"implicitConnectReward",implicitConnectReward,"culdesacReward:",culdesacReward,"ImplicitCuldesacReward:",implicitCuldesacReward,"angleReward:",angleReward,"case:",caseTag)
+        # print ("In reward_info_function:", "road_cost:",road_cost,"angleReward:",angleReward)
 
         
     elif name == 'full_connected':
@@ -358,11 +374,13 @@ def reward_info_function(mg: MyGraph, name: Text,
         connect_reward = 0                                                  # so it wont affect the 'full_connected' stage
         implicitConnectReward = 0                           
 
-        culdesacReward = mg.CuldesacReward() *10                            # weight is emphasized      
+        culdesacReward = mg.CuldesacReward() *1                            # weight is emphasized      
         implicitCuldesacReward =  mg.ImplicitCuldesacReward(culdesacReward) # implicit culdesac reward  
 
- 
-
+        ####  Small Ring Road Punishment ####
+        originalAngle = mg.AngleReward_OriginalAngle()
+        singleParcleRingRoadPunishment = mg.SingleParcleRingRoadPunishment()*10   # New
+        #singleParcleRingRoadPunishment = 0
 
     elif name == 'POI_improvement':
         pass 
@@ -392,8 +410,8 @@ def reward_info_function(mg: MyGraph, name: Text,
     
     #culdesacReward = 0
 
-
-    finalReward = connect_reward + implicitConnectReward + road_cost + culdesacReward + implicitCuldesacReward + angleReward
+    #implicitCuldesacReward
+    finalReward = connect_reward + implicitConnectReward + road_cost + culdesacReward + implicitCuldesacReward + angleReward + singleParcleRingRoadPunishment + hitBoundaryReward
     #finalReward = connect_reward  + travel_distance + travel_distance_POI + road_cost  # + culdesacReward    # for complete roadnetwork  
     #print ("finalReward",finalReward)
     #print ("total_road_cost",total_road_cost)
@@ -745,11 +763,13 @@ class RoadEnv:
 
         
         converted_list = [float(arr) for arr in self._action_history]
-        print ("self._action_history",converted_list)
-
+        # print ("self._action_history",converted_list)
+        # if len(converted_list) > 3:
+        #     if converted_list[-2] == 54.0:
+        #         print (converted_list +"asda")
         # culdesacNum_Check = self._mg.CheckCuldesacNum_NotAssign()
         if self._stage == 'connecting':
-            print ("IN STEP FUNCTION: self._stage == connecting")
+            # print ("IN STEP FUNCTION: self._stage == connecting")
             return self._get_obs(), reward, self._done, info
 
         # elif self._stage == 'full_connected' and culdesacNum_Check == 0:                                                      ##### This wont happen again, let's check

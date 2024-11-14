@@ -21,9 +21,9 @@ else:
 ######################################################################
 #############################  Set up  ###############################
 ######################################################################
-slum_name = 'tengah_1'
+slum_name = 'Toa_Payoh_1_Center'
 
-iteration = '0'
+iteration = '77'
 
 ######################################################################
 #########################  Original Code #############################
@@ -100,8 +100,8 @@ def main_loop(_):
 
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/best.p"
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/iteration_0024.p"
-    checkpoint = 20
-    specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/tengah_1/rl-ngnn/tengah_1/0/models/iteration_0021.p"
+    checkpoint = 77
+    specificCheckPointPath = "/home/chenzebin/road-planning-for-slums/train_data/Toa_Payoh_1_Center/rl-ngnn/Toa_Payoh_1_Center/0/models/iteration_0077.p"
     #specificCheckPointPath = "/Users/chenzebin/Documents/GitHub/road-planning-for-slums/train_data/punggol/rl-ngnn/punggol/0/models/run2/iteration_0001.p"
     
     """create agent"""

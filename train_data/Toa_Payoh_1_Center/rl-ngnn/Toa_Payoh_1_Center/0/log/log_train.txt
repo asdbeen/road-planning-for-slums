@@ -1,0 +1,239 @@
+[2024-11-14 16:36:51,981] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 16:36:51,981] id: Toa_Payoh_1_Center
+[2024-11-14 16:36:51,981] seed: 0
+[2024-11-14 16:36:51,981] objectives_plan: 
+[2024-11-14 16:36:51,981] init_plan: 
+[2024-11-14 16:36:51,981] env_specs: {}
+[2024-11-14 16:36:51,981] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 16:36:51,981] obs_specs: {}
+[2024-11-14 16:36:51,981] agent_specs: {'batch_stage': False}
+[2024-11-14 16:36:51,981] gamma: 0.9
+[2024-11-14 16:36:51,981] tau: 0.0
+[2024-11-14 16:36:51,981] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 16:36:51,981] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 16:36:51,981] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 16:36:51,981] lr: 0.0004
+[2024-11-14 16:36:51,981] weightdecay: 0.0
+[2024-11-14 16:36:51,981] eps: 1e-05
+[2024-11-14 16:36:51,981] value_pred_coef: 0.5
+[2024-11-14 16:36:51,981] entropy_coef: 0.01
+[2024-11-14 16:36:51,981] clip_epsilon: 0.2
+[2024-11-14 16:36:51,981] max_num_iterations: 100
+[2024-11-14 16:36:51,981] num_episodes_per_iteration: 1200
+[2024-11-14 16:36:51,981] max_sequence_length: 33
+[2024-11-14 16:36:51,981] num_optim_epoch: 4
+[2024-11-14 16:36:51,981] mini_batch_size: 1024
+[2024-11-14 16:36:51,981] save_model_interval: 1
+[2024-11-14 16:37:43,507] 0	T_sample 35.52	T_update 0.82	T_eval 14.75	ETA 1:24:17	train_R_eps -8.60	eval_R_eps -9.56	Toa_Payoh_1_Center	
+[2024-11-14 16:37:43,511] save best checkpoint with rewards -9.56!
+[2024-11-14 16:38:33,196] 1	T_sample 35.40	T_update 0.50	T_eval 13.77	ETA 1:21:07	train_R_eps -8.55	eval_R_eps -9.46	Toa_Payoh_1_Center	
+[2024-11-14 16:38:33,200] save best checkpoint with rewards -9.46!
+[2024-11-14 16:39:25,447] 2	T_sample 37.06	T_update 0.47	T_eval 14.70	ETA 1:24:26	train_R_eps -8.62	eval_R_eps -9.23	Toa_Payoh_1_Center	
+[2024-11-14 16:39:25,451] save best checkpoint with rewards -9.23!
+[2024-11-14 16:40:17,308] 3	T_sample 36.44	T_update 0.50	T_eval 14.90	ETA 1:22:57	train_R_eps -8.73	eval_R_eps -9.04	Toa_Payoh_1_Center	
+[2024-11-14 16:40:17,312] save best checkpoint with rewards -9.04!
+[2024-11-14 16:41:09,561] 4	T_sample 36.72	T_update 0.47	T_eval 15.04	ETA 1:22:42	train_R_eps -8.71	eval_R_eps -8.96	Toa_Payoh_1_Center	
+[2024-11-14 16:41:09,566] save best checkpoint with rewards -8.96!
+[2024-11-14 16:43:24,827] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 16:43:24,827] id: Toa_Payoh_1_Center
+[2024-11-14 16:43:24,828] seed: 0
+[2024-11-14 16:43:24,828] objectives_plan: 
+[2024-11-14 16:43:24,828] init_plan: 
+[2024-11-14 16:43:24,828] env_specs: {}
+[2024-11-14 16:43:24,828] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 16:43:24,828] obs_specs: {}
+[2024-11-14 16:43:24,828] agent_specs: {'batch_stage': False}
+[2024-11-14 16:43:24,828] gamma: 0.9
+[2024-11-14 16:43:24,828] tau: 0.0
+[2024-11-14 16:43:24,828] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 16:43:24,828] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 16:43:24,828] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 16:43:24,828] lr: 0.0004
+[2024-11-14 16:43:24,828] weightdecay: 0.0
+[2024-11-14 16:43:24,828] eps: 1e-05
+[2024-11-14 16:43:24,828] value_pred_coef: 0.5
+[2024-11-14 16:43:24,828] entropy_coef: 0.01
+[2024-11-14 16:43:24,828] clip_epsilon: 0.2
+[2024-11-14 16:43:24,828] max_num_iterations: 100
+[2024-11-14 16:43:24,828] num_episodes_per_iteration: 1200
+[2024-11-14 16:43:24,828] max_sequence_length: 33
+[2024-11-14 16:43:24,828] num_optim_epoch: 4
+[2024-11-14 16:43:24,828] mini_batch_size: 1024
+[2024-11-14 16:43:24,828] save_model_interval: 1
+[2024-11-14 16:44:13,895] 0	T_sample 35.39	T_update 0.82	T_eval 12.38	ETA 1:20:10	train_R_eps -8.60	eval_R_eps -9.33	Toa_Payoh_1_Center	
+[2024-11-14 16:44:13,899] save best checkpoint with rewards -9.33!
+[2024-11-14 16:45:01,872] 1	T_sample 35.07	T_update 0.54	T_eval 12.35	ETA 1:18:20	train_R_eps -8.52	eval_R_eps -9.37	Toa_Payoh_1_Center	
+[2024-11-14 16:45:51,298] 2	T_sample 36.37	T_update 0.51	T_eval 12.53	ETA 1:19:53	train_R_eps -8.76	eval_R_eps -9.24	Toa_Payoh_1_Center	
+[2024-11-14 16:45:51,302] save best checkpoint with rewards -9.24!
+[2024-11-14 16:46:41,159] 3	T_sample 36.91	T_update 0.49	T_eval 12.44	ETA 1:19:45	train_R_eps -8.75	eval_R_eps -9.13	Toa_Payoh_1_Center	
+[2024-11-14 16:46:41,163] save best checkpoint with rewards -9.13!
+[2024-11-14 16:47:31,419] 4	T_sample 37.03	T_update 0.47	T_eval 12.74	ETA 1:19:33	train_R_eps -8.68	eval_R_eps -9.02	Toa_Payoh_1_Center	
+[2024-11-14 16:47:31,423] save best checkpoint with rewards -9.02!
+[2024-11-14 16:48:20,478] 5	T_sample 35.88	T_update 0.49	T_eval 12.67	ETA 1:16:49	train_R_eps -8.60	eval_R_eps -9.00	Toa_Payoh_1_Center	
+[2024-11-14 16:48:20,482] save best checkpoint with rewards -9.00!
+[2024-11-14 16:49:09,038] 6	T_sample 35.63	T_update 0.55	T_eval 12.36	ETA 1:15:14	train_R_eps -8.58	eval_R_eps -9.08	Toa_Payoh_1_Center	
+[2024-11-14 16:49:59,578] 7	T_sample 37.34	T_update 0.48	T_eval 12.70	ETA 1:17:28	train_R_eps -8.69	eval_R_eps -9.00	Toa_Payoh_1_Center	
+[2024-11-14 16:50:49,142] 8	T_sample 36.53	T_update 0.48	T_eval 12.54	ETA 1:15:09	train_R_eps -8.78	eval_R_eps -9.11	Toa_Payoh_1_Center	
+[2024-11-14 16:51:21,233] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 16:51:21,233] id: Toa_Payoh_1_Center
+[2024-11-14 16:51:21,233] seed: 0
+[2024-11-14 16:51:21,233] objectives_plan: 
+[2024-11-14 16:51:21,233] init_plan: 
+[2024-11-14 16:51:21,233] env_specs: {}
+[2024-11-14 16:51:21,233] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 16:51:21,233] obs_specs: {}
+[2024-11-14 16:51:21,233] agent_specs: {'batch_stage': False}
+[2024-11-14 16:51:21,233] gamma: 0.9
+[2024-11-14 16:51:21,233] tau: 0.0
+[2024-11-14 16:51:21,233] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 16:51:21,233] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 16:51:21,233] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 16:51:21,233] lr: 0.0004
+[2024-11-14 16:51:21,233] weightdecay: 0.0
+[2024-11-14 16:51:21,233] eps: 1e-05
+[2024-11-14 16:51:21,233] value_pred_coef: 0.5
+[2024-11-14 16:51:21,233] entropy_coef: 0.01
+[2024-11-14 16:51:21,233] clip_epsilon: 0.2
+[2024-11-14 16:51:21,233] max_num_iterations: 100
+[2024-11-14 16:51:21,233] num_episodes_per_iteration: 1200
+[2024-11-14 16:51:21,233] max_sequence_length: 33
+[2024-11-14 16:51:21,233] num_optim_epoch: 4
+[2024-11-14 16:51:21,233] mini_batch_size: 1024
+[2024-11-14 16:51:21,233] save_model_interval: 1
+[2024-11-14 16:51:39,534] 9	T_sample 37.09	T_update 0.49	T_eval 12.79	ETA 1:15:34	train_R_eps -8.70	eval_R_eps -8.74	Toa_Payoh_1_Center	
+[2024-11-14 16:51:39,538] save best checkpoint with rewards -8.74!
+[2024-11-14 16:52:11,214] 0	T_sample 36.19	T_update 0.80	T_eval 12.52	ETA 1:21:41	train_R_eps -8.60	eval_R_eps -9.33	Toa_Payoh_1_Center	
+[2024-11-14 16:52:11,218] save best checkpoint with rewards -9.33!
+[2024-11-14 16:52:29,515] 10	T_sample 36.43	T_update 0.53	T_eval 13.00	ETA 1:14:06	train_R_eps -8.78	eval_R_eps -8.75	Toa_Payoh_1_Center	
+[2024-11-14 16:53:00,702] 1	T_sample 36.35	T_update 0.56	T_eval 12.55	ETA 1:20:48	train_R_eps -8.52	eval_R_eps -9.37	Toa_Payoh_1_Center	
+[2024-11-14 16:53:21,573] 11	T_sample 38.84	T_update 0.60	T_eval 12.60	ETA 1:16:20	train_R_eps -8.46	eval_R_eps -9.01	Toa_Payoh_1_Center	
+[2024-11-14 16:53:41,741] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 16:53:41,742] id: Toa_Payoh_1_Center
+[2024-11-14 16:53:41,742] seed: 0
+[2024-11-14 16:53:41,742] objectives_plan: 
+[2024-11-14 16:53:41,742] init_plan: 
+[2024-11-14 16:53:41,742] env_specs: {}
+[2024-11-14 16:53:41,742] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 16:53:41,742] obs_specs: {}
+[2024-11-14 16:53:41,742] agent_specs: {'batch_stage': False}
+[2024-11-14 16:53:41,742] gamma: 0.9
+[2024-11-14 16:53:41,742] tau: 0.0
+[2024-11-14 16:53:41,742] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 16:53:41,742] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 16:53:41,742] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 16:53:41,742] lr: 0.0004
+[2024-11-14 16:53:41,742] weightdecay: 0.0
+[2024-11-14 16:53:41,742] eps: 1e-05
+[2024-11-14 16:53:41,742] value_pred_coef: 0.5
+[2024-11-14 16:53:41,742] entropy_coef: 0.01
+[2024-11-14 16:53:41,742] clip_epsilon: 0.2
+[2024-11-14 16:53:41,742] max_num_iterations: 100
+[2024-11-14 16:53:41,742] num_episodes_per_iteration: 1200
+[2024-11-14 16:53:41,742] max_sequence_length: 33
+[2024-11-14 16:53:41,742] num_optim_epoch: 4
+[2024-11-14 16:53:41,742] mini_batch_size: 1024
+[2024-11-14 16:53:41,742] save_model_interval: 1
+[2024-11-14 16:54:31,987] 0	T_sample 35.11	T_update 0.82	T_eval 13.86	ETA 1:22:09	train_R_eps -8.60	eval_R_eps -9.52	Toa_Payoh_1_Center	
+[2024-11-14 16:54:31,994] save best checkpoint with rewards -9.52!
+[2024-11-14 16:55:20,589] 1	T_sample 34.54	T_update 0.47	T_eval 13.57	ETA 1:19:21	train_R_eps -8.53	eval_R_eps -9.45	Toa_Payoh_1_Center	
+[2024-11-14 16:55:20,593] save best checkpoint with rewards -9.45!
+[2024-11-14 16:55:53,755] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 16:55:53,755] id: Toa_Payoh_1_Center
+[2024-11-14 16:55:53,755] seed: 0
+[2024-11-14 16:55:53,755] objectives_plan: 
+[2024-11-14 16:55:53,755] init_plan: 
+[2024-11-14 16:55:53,755] env_specs: {}
+[2024-11-14 16:55:53,755] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 16:55:53,755] obs_specs: {}
+[2024-11-14 16:55:53,755] agent_specs: {'batch_stage': False}
+[2024-11-14 16:55:53,755] gamma: 0.9
+[2024-11-14 16:55:53,755] tau: 0.0
+[2024-11-14 16:55:53,755] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 16:55:53,755] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 16:55:53,755] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 16:55:53,755] lr: 0.0004
+[2024-11-14 16:55:53,755] weightdecay: 0.0
+[2024-11-14 16:55:53,755] eps: 1e-05
+[2024-11-14 16:55:53,755] value_pred_coef: 0.5
+[2024-11-14 16:55:53,755] entropy_coef: 0.01
+[2024-11-14 16:55:53,755] clip_epsilon: 0.2
+[2024-11-14 16:55:53,755] max_num_iterations: 100
+[2024-11-14 16:55:53,755] num_episodes_per_iteration: 1200
+[2024-11-14 16:55:53,755] max_sequence_length: 33
+[2024-11-14 16:55:53,755] num_optim_epoch: 4
+[2024-11-14 16:55:53,755] mini_batch_size: 1024
+[2024-11-14 16:55:53,755] save_model_interval: 1
+[2024-11-14 16:56:43,714] 0	T_sample 34.94	T_update 0.82	T_eval 13.75	ETA 1:21:41	train_R_eps -8.60	eval_R_eps -9.36	Toa_Payoh_1_Center	
+[2024-11-14 16:56:43,718] save best checkpoint with rewards -9.36!
+[2024-11-14 16:57:33,443] 1	T_sample 34.53	T_update 0.47	T_eval 14.70	ETA 1:21:11	train_R_eps -8.53	eval_R_eps -9.60	Toa_Payoh_1_Center	
+[2024-11-14 16:58:24,471] 2	T_sample 35.62	T_update 0.47	T_eval 14.92	ETA 1:22:28	train_R_eps -8.75	eval_R_eps -9.38	Toa_Payoh_1_Center	
+[2024-11-14 17:02:33,892] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 17:02:33,892] id: Toa_Payoh_1_Center
+[2024-11-14 17:02:33,892] seed: 0
+[2024-11-14 17:02:33,892] objectives_plan: 
+[2024-11-14 17:02:33,892] init_plan: 
+[2024-11-14 17:02:33,892] env_specs: {}
+[2024-11-14 17:02:33,892] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 17:02:33,892] obs_specs: {}
+[2024-11-14 17:02:33,892] agent_specs: {'batch_stage': False}
+[2024-11-14 17:02:33,892] gamma: 0.9
+[2024-11-14 17:02:33,892] tau: 0.0
+[2024-11-14 17:02:33,892] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 17:02:33,892] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 17:02:33,892] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 17:02:33,892] lr: 0.0004
+[2024-11-14 17:02:33,892] weightdecay: 0.0
+[2024-11-14 17:02:33,892] eps: 1e-05
+[2024-11-14 17:02:33,892] value_pred_coef: 0.5
+[2024-11-14 17:02:33,892] entropy_coef: 0.01
+[2024-11-14 17:02:33,892] clip_epsilon: 0.2
+[2024-11-14 17:02:33,892] max_num_iterations: 100
+[2024-11-14 17:02:33,892] num_episodes_per_iteration: 1200
+[2024-11-14 17:02:33,892] max_sequence_length: 33
+[2024-11-14 17:02:33,892] num_optim_epoch: 4
+[2024-11-14 17:02:33,892] mini_batch_size: 1024
+[2024-11-14 17:02:33,892] save_model_interval: 1
+[2024-11-14 17:03:57,132] data_dir:data/Toa_Payoh_1_Center
+[2024-11-14 17:03:57,132] id: Toa_Payoh_1_Center
+[2024-11-14 17:03:57,132] seed: 0
+[2024-11-14 17:03:57,132] objectives_plan: 
+[2024-11-14 17:03:57,132] init_plan: 
+[2024-11-14 17:03:57,132] env_specs: {}
+[2024-11-14 17:03:57,133] reward_specs: {'dis_weight': 0.5, 'cost_weight': 0.5, 'build_ration': 0.5}
+[2024-11-14 17:03:57,133] obs_specs: {}
+[2024-11-14 17:03:57,133] agent_specs: {'batch_stage': False}
+[2024-11-14 17:03:57,133] gamma: 0.9
+[2024-11-14 17:03:57,133] tau: 0.0
+[2024-11-14 17:03:57,133] state_encoder_specs: {'state_encoder_hidden_size': [16, 4], 'gcn_node_dim': 16, 'num_gcn_layers': 2, 'num_edge_fc_layers': 1, 'max_num_nodes': 1000, 'max_num_edges': 3000, 'num_attention_heads': 1}
+[2024-11-14 17:03:57,133] policy_specs: {'policy_land_use_head_hidden_size': [32, 1], 'policy_road_head_hidden_size': [32, 1]}
+[2024-11-14 17:03:57,133] value_specs: {'value_head_hidden_size': [32, 32, 1]}
+[2024-11-14 17:03:57,133] lr: 0.0004
+[2024-11-14 17:03:57,133] weightdecay: 0.0
+[2024-11-14 17:03:57,133] eps: 1e-05
+[2024-11-14 17:03:57,133] value_pred_coef: 0.5
+[2024-11-14 17:03:57,133] entropy_coef: 0.01
+[2024-11-14 17:03:57,133] clip_epsilon: 0.2
+[2024-11-14 17:03:57,133] max_num_iterations: 100
+[2024-11-14 17:03:57,133] num_episodes_per_iteration: 1200
+[2024-11-14 17:03:57,133] max_sequence_length: 33
+[2024-11-14 17:03:57,133] num_optim_epoch: 4
+[2024-11-14 17:03:57,133] mini_batch_size: 1024
+[2024-11-14 17:03:57,133] save_model_interval: 1
+[2024-11-14 17:04:46,691] 0	T_sample 35.68	T_update 0.85	T_eval 12.56	ETA 1:21:01	train_R_eps -8.60	eval_R_eps -9.37	Toa_Payoh_1_Center	
+[2024-11-14 17:04:46,696] save best checkpoint with rewards -9.37!
+[2024-11-14 17:05:35,176] 1	T_sample 35.47	T_update 0.47	T_eval 12.52	ETA 1:19:09	train_R_eps -8.52	eval_R_eps -9.29	Toa_Payoh_1_Center	
+[2024-11-14 17:05:35,180] save best checkpoint with rewards -9.29!
+[2024-11-14 17:06:24,668] 2	T_sample 36.17	T_update 0.48	T_eval 12.82	ETA 1:19:59	train_R_eps -8.76	eval_R_eps -9.15	Toa_Payoh_1_Center	
+[2024-11-14 17:06:24,671] save best checkpoint with rewards -9.15!
+[2024-11-14 17:07:15,281] 3	T_sample 37.27	T_update 0.49	T_eval 12.83	ETA 1:20:57	train_R_eps -8.75	eval_R_eps -9.13	Toa_Payoh_1_Center	
+[2024-11-14 17:07:15,285] save best checkpoint with rewards -9.13!
+[2024-11-14 17:08:05,880] 4	T_sample 37.31	T_update 0.47	T_eval 12.79	ETA 1:20:05	train_R_eps -8.68	eval_R_eps -8.95	Toa_Payoh_1_Center	
+[2024-11-14 17:08:05,884] save best checkpoint with rewards -8.95!
+[2024-11-14 17:08:55,260] 5	T_sample 36.18	T_update 0.47	T_eval 12.71	ETA 1:17:20	train_R_eps -8.60	eval_R_eps -8.99	Toa_Payoh_1_Center	
+[2024-11-14 17:09:44,383] 6	T_sample 35.98	T_update 0.48	T_eval 12.65	ETA 1:16:07	train_R_eps -8.58	eval_R_eps -9.00	Toa_Payoh_1_Center	
+[2024-11-14 17:10:34,860] 7	T_sample 37.24	T_update 0.54	T_eval 12.68	ETA 1:17:22	train_R_eps -8.69	eval_R_eps -8.99	Toa_Payoh_1_Center	
+[2024-11-14 17:11:24,560] 8	T_sample 36.50	T_update 0.48	T_eval 12.71	ETA 1:15:21	train_R_eps -8.78	eval_R_eps -8.98	Toa_Payoh_1_Center	
+[2024-11-14 17:12:14,748] 9	T_sample 37.07	T_update 0.48	T_eval 12.62	ETA 1:15:15	train_R_eps -8.71	eval_R_eps -9.01	Toa_Payoh_1_Center	
+[2024-11-14 17:13:04,216] 10	T_sample 36.12	T_update 0.47	T_eval 12.86	ETA 1:13:21	train_R_eps -8.78	eval_R_eps -8.88	Toa_Payoh_1_Center	
+[2024-11-14 17:13:04,220] save best checkpoint with rewards -8.88!
+[2024-11-14 17:13:55,053] 11	T_sample 37.46	T_update 0.52	T_eval 12.83	ETA 1:14:32	train_R_eps -8.48	eval_R_eps -8.96	Toa_Payoh_1_Center	

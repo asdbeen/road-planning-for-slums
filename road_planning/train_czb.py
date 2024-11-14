@@ -23,12 +23,18 @@ else:
 ######################################################################
 #############################  Set up  ###############################
 ######################################################################
-slum_name = 'tengah_2_multiAccess'
+#slum_name = 'Harare_Center'
+#slum_name = 'India_Center'
+# slum_name = 'CapeTown2_Center'
+#slum_name = 'tengah_2_multiAccess'
 #slum_name = 'tengah_2'
 #slum_name = "tengah_1"
 #slum_name = "punggol_1"
+
+slum_name = 'AMK_1'
+slum_name = 'Toa_Payoh_1_Center'
 train_file_num = '1'
-iteration = '840'
+iteration = '0'
 
 
 ######################################################################

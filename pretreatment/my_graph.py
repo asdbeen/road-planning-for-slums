@@ -630,8 +630,8 @@ class MyGraph(object):
     # edge not in road network: it could be 2  (intersected) or 1 (not intersected),  is there is 2, prioritize 2
     # in code running, this will select the edge at the mid of two connected road edges or edges connected with cul-de-sac
     ####################
-    def _get_edge_mask(self):                   
-
+    def _get_edge_mask(self):    
+        print ("normal _get_edge_mask!!!!!!!!!!!!!!")               
         edge_mask = []
         interior_del_able = False
         for e in self.edge_list:
@@ -648,6 +648,7 @@ class MyGraph(object):
                 edge_mask.append(0)
 
         if interior_del_able:
+            print ("normal _get_edge_mask!!!!!!!!!!!!!!  if interior_del_able")    
             index_equ2 = np.argwhere(np.array(edge_mask) == 2)
             edge_mask = np.zeros(len(edge_mask))
             edge_mask[index_equ2] = 1
@@ -655,6 +656,7 @@ class MyGraph(object):
         return edge_mask
 
     def _get_edge_mask_from_new_road(self,excludeMidConnection):
+        # print ("!!!!!!! _get_edge_mask_from_new_road!!!!!!!!!")
         edge_mask = [0 for edge in self.edge_list]
         #originalRoadEdges = [e for e in self.edge_list if e.isRoad]
         newAddedRoad = [e for e in self.road_edges if e not in self.originalRoadEdges]
@@ -670,6 +672,8 @@ class MyGraph(object):
             old_roadNodeCollection.append(edge.nodes[0])
             old_roadNodeCollection.append(edge.nodes[1])
 
+        all_roadNodeCollection = new_roadNodeCollection + old_roadNodeCollection
+        
         for i in range(len(self.edge_list)):
             e = self.edge_list[i]
             if e not in self.road_edges:
@@ -680,11 +684,27 @@ class MyGraph(object):
                 elif e.nodes[1] in new_roadNodeCollection and e.nodes[0] in old_roadNodeCollection: # case 2, select a edge in between the new road edge and the old road edge
                     edge_mask[i] = 1   
 
+                
+
+                # exclude wasted connection
+                if all_roadNodeCollection.count(e.nodes[1]) >=2 and all_roadNodeCollection.count(e.nodes[0]) >=2:
+                    edge_mask[i] = 0  
+                    
+
                 if excludeMidConnection == True:
-                    if new_roadNodeCollection.count(e.nodes[1]) >=2 and new_roadNodeCollection.count(e.nodes[0]) !=1:
+                    # if self.edge_list.index(e) == 326:
+                    #     print ("asd1111",e.nodes[1] in new_roadNodeCollection,e.nodes[0] in new_roadNodeCollection,edge_mask[i])
+                    
+                    if all_roadNodeCollection.count(e.nodes[1]) >=2 and all_roadNodeCollection.count(e.nodes[0]) !=1:
                         edge_mask[i] = 0
-                    elif new_roadNodeCollection.count(e.nodes[0]) >=2 and new_roadNodeCollection.count(e.nodes[1]) !=1:
+                    elif all_roadNodeCollection.count(e.nodes[0]) >=2 and all_roadNodeCollection.count(e.nodes[1]) !=1:
                         edge_mask[i] = 0
+
+                    # if self.edge_list.index(e) == 326:
+                    #     print ("asd2222",e.nodes[1] in new_roadNodeCollection,e.nodes[0] in new_roadNodeCollection,edge_mask[i])
+                    #     print ("asd2222",new_roadNodeCollection.count(e.nodes[0]),new_roadNodeCollection.count(e.nodes[1]))
+                    #     print (e.nodes[0],e.nodes[1])
+
                     # if i == 63:
                     #     print (new_roadNodeCollection.count(e.nodes[1])),new_roadNodeCollection.count(e.nodes[0])
         #Avoid Selecting shortcut edge for both case
@@ -695,9 +715,50 @@ class MyGraph(object):
 
         #To make sure it wont select the existing road edge     
         if 1 not in edge_mask:
-            print ("if 1 not in edge_mask:")
-            edge_mask = self._get_edge_mask()   #original
+            print ("if 1 not in edge_mask!!!!!!!!!")
+            # print ("culdesac num",self.culdesacNum)
+            # print ("Debug")
+            roadG = MyGraph()
+            for idx in range(len(self.road_edges)):
+                e = self.road_edges[idx]
+                roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
 
+            single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
+            #print (single_neighbor_nodes,single_neighbor_nodes)
+
+
+
+            edge_mask = self._get_edge_mask()   #original
+            # info = []
+            # for edge in self.edge_list:
+            #     for node in edge.nodes:
+            #         info.append(node.x)
+            #         info.append(node.y)
+
+            # print ("info",info)
+            # roadEdgeIndices = []
+            # for roadEdge in self.road_edges:
+            #     roadEdgeIndices.append(self.edge_list.index(roadEdge))
+            # print ("roadEdgeIndices",roadEdgeIndices)
+            # print ("edge_mask",edge_mask.tolist())
+
+
+
+        # if excludeMidConnection == True:
+        #     info = []
+        #     # for edge in self.edge_list:
+        #     #     for node in edge.nodes:
+        #     #         info.append(node.x)
+        #     #         info.append(node.y)
+
+        #     #print ("info",info)
+        #     roadEdgeIndices = []
+        #     for roadEdge in self.road_edges:
+        #         roadEdgeIndices.append(self.edge_list.index(roadEdge))
+        #     print ("roadEdgeIndices",roadEdgeIndices)
+        #     print ("edge_mask",edge_mask)
+            
+        # print ("edge_mask",edge_mask)
         return edge_mask
 
 
@@ -2424,33 +2485,105 @@ class MyGraph(object):
 
         return ImplicitCuldesacReward
 
-    def AngleReward(self):
-        newEdge = self.road_edges[-1]
-        connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
-        minAngle = None
+    def SingleParcleRingRoadPunishment_affected_byRingRoad_NotInUse(self,angleCost_Original):
+        print ("SingleParcleRingRoadPunishment",angleCost_Original)
+        singleParcleRingRoadPunishment = 0
+        singleRingRoadTag = False
+
+        # Select the last edge and second last edge
+        newlyAddedEdge = self.road_edges[-1]
+        secondLastNewlyAddedEdge = self.road_edges[-2]
+        # Related parcels
+        edgeIndex = self.edge_list.index(newlyAddedEdge)
+        relatedParcels = self.edge_face_index[edgeIndex]
+
+        print ("relatedParcels",relatedParcels)
+        for parcel in relatedParcels:
+            singleRingRoadTag = all((edge in self.road_edges) == True for edge in parcel.edges)
+
+        print ("singleRingRoadTag",singleRingRoadTag)
+        if singleRingRoadTag == False:
+            return singleParcleRingRoadPunishment
+        
+        else:
+            if angleCost_Original < 45:
+                return singleParcleRingRoadPunishment
+            
+            else:
+                # find those possible edges that are connected the second last edge
+                possibleEdges = [] 
+                for edge in self.edge_list:
+                    if edge not in self.road_edges:
+                        if edge.nodes[0] == secondLastNewlyAddedEdge.nodes[0] or edge.nodes[1] == secondLastNewlyAddedEdge.nodes[0] or edge.nodes[0] == secondLastNewlyAddedEdge.nodes[1] or edge.nodes[1] == secondLastNewlyAddedEdge.nodes[1]:
+                            possibleEdges.append(edge)
+                possibleEdges.append(newlyAddedEdge)
+
+                possibleAngles = self.GetComparisionAngle(secondLastNewlyAddedEdge,possibleEdges)
+                lessThan45Tag = any(angle < 45 for angle in possibleAngles)
+                print ("lessThan45Tag",lessThan45Tag)
+                if lessThan45Tag == True:
+                    singleParcleRingRoadPunishment = -1
+                    print ("nagetive singleParcleRingRoadPunishment")
+                else:
+                    singleParcleRingRoadPunishment = 0
+        
+            return singleParcleRingRoadPunishment
+
+    def SingleParcleRingRoadPunishment(self):
+
+        singleParcleRingRoadPunishment = 0
+        singleRingRoadTag = False
+
+        # Select the last edge and second last edge
+        newlyAddedEdge = self.road_edges[-1]
+        secondLastNewlyAddedEdge = self.road_edges[-2]
+        # Related parcels
+        edgeIndex = self.edge_list.index(newlyAddedEdge)
+        relatedParcels = self.edge_face_index[edgeIndex]
+
+        for parcel in relatedParcels:
+            singleRingRoadTag = all((edge in self.road_edges) == True for edge in parcel.edges)
+            if singleRingRoadTag == True:
+                break
+        # print ("newlyAddedEdge",newlyAddedEdge)
+        # print ("relatedParcels",relatedParcels)
+        # for parcel in relatedParcels:
+        #     temp = [edge in self.road_edges for edge in parcel.edges]
+        #     print ("temp",temp)
+        #     print (all((edge in self.road_edges) == True for edge in parcel.edges))
+        # print ("SingleParcleRingRoadPunishment,singleRingRoadTag",singleRingRoadTag)
+        if singleRingRoadTag == False:
+            return singleParcleRingRoadPunishment
+        
+        else:
+            singleParcleRingRoadPunishment = -1
+            # print ("nagetive singleParcleRingRoadPunishment")
+            return singleParcleRingRoadPunishment
+
+    def GetComparisionAngle(self, thisEdge, connectedEdges):
         angles = []
         for oldEdge in connectedEdges:
-            if oldEdge == newEdge:
+            if oldEdge == thisEdge:
                 continue
            
-            if oldEdge.nodes[0] == newEdge.nodes[0]:
-                mutualPt = newEdge.nodes[0]
-                nonMutualPt_New = newEdge.nodes[1]
+            if oldEdge.nodes[0] == thisEdge.nodes[0]:
+                mutualPt = thisEdge.nodes[0]
+                nonMutualPt_New = thisEdge.nodes[1]
                 nonMutualPt_Old = oldEdge.nodes[1]
 
-            elif oldEdge.nodes[1] == newEdge.nodes[0]:
-                mutualPt = newEdge.nodes[0]
-                nonMutualPt_New = newEdge.nodes[1]
+            elif oldEdge.nodes[1] == thisEdge.nodes[0]:
+                mutualPt = thisEdge.nodes[0]
+                nonMutualPt_New = thisEdge.nodes[1]
                 nonMutualPt_Old = oldEdge.nodes[0]
 
-            elif oldEdge.nodes[0] == newEdge.nodes[1]:
-                mutualPt = newEdge.nodes[1]
-                nonMutualPt_New = newEdge.nodes[0]
+            elif oldEdge.nodes[0] == thisEdge.nodes[1]:
+                mutualPt = thisEdge.nodes[1]
+                nonMutualPt_New = thisEdge.nodes[0]
                 nonMutualPt_Old = oldEdge.nodes[1]
 
-            elif oldEdge.nodes[1] == newEdge.nodes[1]:
-                mutualPt = newEdge.nodes[1]
-                nonMutualPt_New = newEdge.nodes[0]
+            elif oldEdge.nodes[1] == thisEdge.nodes[1]:
+                mutualPt = thisEdge.nodes[1]
+                nonMutualPt_New = thisEdge.nodes[0]
                 nonMutualPt_Old = oldEdge.nodes[0]  
 
             vec0 = [nonMutualPt_New.x -mutualPt.x, nonMutualPt_New.y - mutualPt.y]
@@ -2467,6 +2600,14 @@ class MyGraph(object):
             angle_degrees = math.degrees(angle_radians)
 
             angles.append(angle_degrees)
+        return angles
+
+    def AngleReward(self):
+        newEdge = self.road_edges[-1]
+        connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
+        minAngle = None
+        angles = self.GetComparisionAngle(newEdge,connectedEdges)
+        
 
         minAngle = min(angles)
         minAngle_remap = (minAngle - 0) / (180 - 0) * (1 - 0) + 0
@@ -2481,49 +2622,8 @@ class MyGraph(object):
         newEdge = self.road_edges[-1]
         connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
         minAngle = None
-        angles = []
-        for oldEdge in connectedEdges:
-            if oldEdge == newEdge:
-                continue
-           
-            if oldEdge.nodes[0] == newEdge.nodes[0]:
-                mutualPt = newEdge.nodes[0]
-                nonMutualPt_New = newEdge.nodes[1]
-                nonMutualPt_Old = oldEdge.nodes[1]
-
-            elif oldEdge.nodes[1] == newEdge.nodes[0]:
-                mutualPt = newEdge.nodes[0]
-                nonMutualPt_New = newEdge.nodes[1]
-                nonMutualPt_Old = oldEdge.nodes[0]
-
-            elif oldEdge.nodes[0] == newEdge.nodes[1]:
-                mutualPt = newEdge.nodes[1]
-                nonMutualPt_New = newEdge.nodes[0]
-                nonMutualPt_Old = oldEdge.nodes[1]
-
-            elif oldEdge.nodes[1] == newEdge.nodes[1]:
-                mutualPt = newEdge.nodes[1]
-                nonMutualPt_New = newEdge.nodes[0]
-                nonMutualPt_Old = oldEdge.nodes[0]  
-
-            vec0 = [nonMutualPt_New.x -mutualPt.x, nonMutualPt_New.y - mutualPt.y]
-            vec1 = [mutualPt.x - nonMutualPt_Old.x, mutualPt.y - nonMutualPt_Old.y]
-
-            # 向量的点积
-            dot_product = vec0[0] * vec1[0] + vec0[1] * vec1[1]
-
-            length_vec0 = math.sqrt(vec0[0]**2 + vec0[1]**2)
-            length_vec1 = math.sqrt(vec1[0]**2 + vec1[1]**2)
-
-
-            angle_radians = math.acos(dot_product / (length_vec0 * length_vec1))
-            angle_degrees = math.degrees(angle_radians)
-
-            angles.append(angle_degrees)
-
+        angles = self.GetComparisionAngle(newEdge,connectedEdges)
         minAngle = min(angles)
-
-
         return minAngle
 
 
@@ -2612,7 +2712,7 @@ class MyGraph(object):
 
                 internalNodeCount = internalNodeCollection.count(culdesacRoadNode)  # it should be in 0,1 or 2
 
-                if internalNodeCount == 2 :                                         # the notCuldesacRoadNode is shared by 2 interior parcels
+                if internalNodeCount >= 2 :                                         # the notCuldesacRoadNode is shared by 2 interior parcels
                     implicitConnectReward = 1                                       # Becuase in connection reward it is -1/2, so in this case in total it becomes 1/2
                 elif internalNodeCount == 1:                                        # the notCuldesacRoadNode is shared by 1 interior parcel
                     implicitConnectReward = 3/4                                     # Becuase in connection reward it is -1/2, so in this case in total it becomes 1/4
@@ -2624,6 +2724,7 @@ class MyGraph(object):
                     else:
                         implicitConnectReward = 0                                  # more than nodes far away
 
+   
         return implicitConnectReward
 
 
@@ -2988,7 +3089,7 @@ class MyGraph(object):
 
             edge_colors = [
                 'blue' if e in self.road_edges and e not in self.stage2edges 
-                else 'orange' if e in self.stage2edges 
+                else 'purple' if e in self.stage2edges     # it was orange
                 else 'red' if e.interior 
                 else 'green'
                 for e in self.myedges()
@@ -3067,7 +3168,7 @@ class MyGraph(object):
 
             edge_colors = [
                 'blue' if e in self.road_edges and e not in self.stage2edges 
-                else 'orange' if e in self.stage2edges 
+                else 'purple' if e in self.stage2edges    # it was orange
                 else 'red' if e.interior 
                 else 'green'
                 for e in self.myedges()
