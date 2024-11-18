@@ -34,7 +34,7 @@ else:
 slum_name = 'AMK_1'
 slum_name = 'Toa_Payoh_1_Center'
 train_file_num = '1'
-iteration = '0'
+iteration = '4'
 
 
 ######################################################################

@@ -543,8 +543,48 @@ class MyGraph(object):
     # If there is no culdesac, it will this will select the edge at the mid of two connected road edges or edges connected with cul-de-sac
     # Else, it will select the edge that is connected with the new road edge from the cul-de-sac side
     # There is an insurance to make sure it wont select the existing road edge
-     
+
     def get_obs(self):
+        numerical = self._get_numerical()
+        node_feature = np.concatenate(
+            [[self._get_node_feature(n) for n in self.node_list]], axis=1)          # [[1 x (numNodeFeature x numNode)]]
+        # node_feature = np.zeros_like(node_feature)
+
+        edge_part_feature = self._get_edge_part_feature()
+        # edge_part_feature = np.zeros_like(edge_part_feature)
+        edge_index = self.edge_index
+
+        ############################
+        ####### new Adaption #######
+        edge_mask = self.Combinded_Selection_Rule_First()
+            #print ("edge_mask",edge_mask)
+
+
+        edge_mask = np.array(edge_mask)
+
+        
+        ############################
+        return numerical, node_feature, edge_part_feature, edge_index, edge_mask
+
+    # For this, the task is to quickly get it connected. So exclude the edge of mid connection
+    def get_obs_stage2_culdesac(self):
+        
+        numerical = self._get_numerical()
+        node_feature = np.concatenate(
+            [[self._get_node_feature(n) for n in self.node_list]], axis=1)          # [[1 x (numNodeFeature x numNode)]]
+        # node_feature = np.zeros_like(node_feature)
+
+        edge_part_feature = self._get_edge_part_feature()
+        # edge_part_feature = np.zeros_like(edge_part_feature)
+        edge_index = self.edge_index
+        edge_mask = self.Combinded_Selection_Rule_Second()
+        # print ("get_obs_stage2_culdesac",edge_mask)
+
+        return numerical, node_feature, edge_part_feature, edge_index, edge_mask
+
+
+
+    def get_obs_save20241122(self):
         numerical = self._get_numerical()
         node_feature = np.concatenate(
             [[self._get_node_feature(n) for n in self.node_list]], axis=1)          # [[1 x (numNodeFeature x numNode)]]
@@ -571,7 +611,7 @@ class MyGraph(object):
         return numerical, node_feature, edge_part_feature, edge_index, edge_mask
 
     # For this, the task is to quickly get it connected. So exclude the edge of mid connection
-    def get_obs_stage2_culdesac(self):
+    def get_obs_stage2_culdesac_save20241122(self):
         
         numerical = self._get_numerical()
         node_feature = np.concatenate(
@@ -718,12 +758,12 @@ class MyGraph(object):
             print ("if 1 not in edge_mask!!!!!!!!!")
             # print ("culdesac num",self.culdesacNum)
             # print ("Debug")
-            roadG = MyGraph()
-            for idx in range(len(self.road_edges)):
-                e = self.road_edges[idx]
-                roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
+            # roadG = MyGraph()
+            # for idx in range(len(self.road_edges)):
+            #     e = self.road_edges[idx]
+            #     roadG.add_edge(self.road_edges[idx],weight=self.G[e.nodes[0]][e.nodes[1]]['weight'])
 
-            single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
+            # single_neighbor_nodes = [node for node in roadG.G.nodes() if len(list(roadG.G.neighbors(node))) == 1]
             #print (single_neighbor_nodes,single_neighbor_nodes)
 
 
@@ -808,7 +848,125 @@ class MyGraph(object):
      
     #     return edge_mask
     
-    
+    ##########
+    # Strict rule:  Staright first
+    ##########
+
+    def Collect_T_Junction_Edge(self):    # For now exclude the edges that are connected a "variance == 5" vertex
+        T_junction_edges = []
+
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])
+        
+        nonRoadEdges = []
+        for edge in self.edge_list:
+            if edge not in self.road_edges:
+                nonRoadEdges.append(edge)
+
+        for edge in nonRoadEdges:
+            if roadNodeCollection.count(edge.nodes[0]) >=3:  # 
+                if self.G.degree(edge.nodes[0]) == 4:
+                    T_junction_edges.append(edge)
+
+            if roadNodeCollection.count(edge.nodes[1]) >=3:
+                if self.G.degree(edge.nodes[1]) == 4:
+                    T_junction_edges.append(edge)
+
+        # if this point 
+        return T_junction_edges
+
+
+    def Combinded_Selection_Rule_First(self):
+        edge_mask = [0 for edge in self.edge_list]
+        # # Check_T_Junction_Edge
+        # T_junction_edges = self.Collect_T_Junction_Edge()
+        # T_junction_edges =[] # !!!!!!!!!!!!!!!!!!dont consider it first
+        # if len(T_junction_edges) != 0:
+        #     # print ("Case1: prioritize T-junctions")
+        #     for edge in T_junction_edges:
+        #         edge_mask[self.edge_list.index(edge)] = 1
+        # # Check_Culdesac_Edge
+        # else:
+        culdesacEdges = self.CollectCuldesacEdges()
+        if len(culdesacEdges) != 0:
+            # check if there is any edge that the connection angle < 45 degree
+            culdesacEdge_SmoothConnections = []
+            for edge in culdesacEdges:
+                minAngle, minAngleEdge, angles,connectedEdges  = self.AngleOfConnections(edge)
+                if minAngle < 45:
+                    culdesacEdge_SmoothConnections.append(minAngleEdge)
+                pass
+            #print ("connectedEdges",[self.edge_list.index(edge) for edge in connectedEdges])        
+            if len(culdesacEdge_SmoothConnections) != 0:
+                #print ("Case2: there are connection to cul-de-sac egdes and the angle is less than 45 degree")
+                for edge in culdesacEdge_SmoothConnections:
+                    edge_mask[self.edge_list.index(edge)] = 1
+                #print (edge_mask)
+            else:  # go for creating T-junctions in new roads
+                newAddedRoad = [e for e in self.road_edges if e not in self.originalRoadEdges]
+                new_roadNodeCollection = []
+                for edge in newAddedRoad:
+                    new_roadNodeCollection.append(edge.nodes[0])
+                    new_roadNodeCollection.append(edge.nodes[1])    # This new road node collection excludes the nodes on boundary
+
+                new_T_junction_edges = []
+                for edge in self.edge_list:
+                    if edge not in self.road_edges:
+                        if new_roadNodeCollection.count(edge.nodes[0]) ==2 or new_roadNodeCollection.count(edge.nodes[1]) ==2:
+                            new_T_junction_edges.append(edge)
+
+        
+                currentCandidates = connectedEdges + new_T_junction_edges
+                if len(currentCandidates) != 0:
+                    currentCandidates_TouchInternalParcel = []
+                    internalNodeCollection = []
+                    for parcel in self.interior_parcels:
+                        for node in parcel.nodes:
+                            internalNodeCollection.append(node)
+
+                    for edge in currentCandidates:
+                        internalNodeCount = internalNodeCollection.count(edge.nodes[0]) + internalNodeCollection.count(edge.nodes[1])
+                        if internalNodeCount!=0:    
+                            currentCandidates_TouchInternalParcel.append(edge)
+                    
+                    if len(currentCandidates_TouchInternalParcel) != 0:
+                        finalSelection = currentCandidates_TouchInternalParcel
+                    else:
+                        finalSelection = currentCandidates
+                    #print ("Case3: creating new T-junctions between new roads")
+                    for edge in finalSelection:
+                        edge_mask[self.edge_list.index(edge)] = 1
+                
+                else:
+                    #print ("Case4: going back to the original rule, finding edges that are connected to boundary")
+                    edge_mask = self._get_edge_mask()   #original
+        #Avoid Selecting shortcut edge for both case
+        # WIP
+        #       
+        elif len(culdesacEdges) == 0:
+            edge_mask = self._get_edge_mask()   #original
+            #print ("Case5: going back to the original rule, finding edges that are connected to boundary")
+           
+        return edge_mask
+
+    def Combinded_Selection_Rule_Second(self):
+        edge_mask = [0 for edge in self.edge_list]
+        culdesacEdges = self.CollectCuldesacEdges()
+
+        if len(culdesacEdges) != 0:
+            # check if there is any edge that the connection angle < 45 degree
+            culdesacEdge_SmoothConnections = []
+            for edge in culdesacEdges:
+                minAngle, minAngleEdge, angles, connectedEdges= self.AngleOfConnections(edge)
+                culdesacEdge_SmoothConnections.append(minAngleEdge)
+
+            for edge in culdesacEdge_SmoothConnections:
+                edge_mask[self.edge_list.index(edge)] = 1
+        
+        return edge_mask
+
     # ok
     def _get_edge_face_interior(self):
         edge_face_interior=[]
@@ -2276,6 +2434,14 @@ class MyGraph(object):
 
         return caseTag
 
+    def CollectCuldesacEdges(self):
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])
+        culdesacEdges = [edge for edge in self.road_edges if roadNodeCollection.count(edge.nodes[0]) == 1 or roadNodeCollection.count(edge.nodes[1]) == 1]
+        return culdesacEdges
+
 
     def CheckCuldesacNum(self):
         roadG = MyGraph()
@@ -2606,6 +2772,8 @@ class MyGraph(object):
         newEdge = self.road_edges[-1]
         connectedEdges = [edge for edge in self.road_edges if edge.nodes[0] == newEdge.nodes[0] or edge.nodes[1] == newEdge.nodes[0] or edge.nodes[0] == newEdge.nodes[1] or edge.nodes[1] == newEdge.nodes[1]]
         minAngle = None
+        # print ("newEdge",newEdge)
+        # print ("connectedEdges",connectedEdges)
         angles = self.GetComparisionAngle(newEdge,connectedEdges)
         
 
@@ -2625,6 +2793,38 @@ class MyGraph(object):
         angles = self.GetComparisionAngle(newEdge,connectedEdges)
         minAngle = min(angles)
         return minAngle
+
+    def AngleOfConnections(self,thisEdge):
+        connectedEdges = []
+
+        roadNodeCollection = []
+        for edge in self.road_edges:
+            roadNodeCollection.append(edge.nodes[0])
+            roadNodeCollection.append(edge.nodes[1])       
+
+
+        if roadNodeCollection.count(thisEdge.nodes[0]) == 1:
+            culdesacPoint = thisEdge.nodes[0]
+        
+        elif roadNodeCollection.count(thisEdge.nodes[1]) == 1:
+            culdesacPoint = thisEdge.nodes[1]
+
+
+        for edge in self.edge_list:
+            if edge not in self.road_edges:
+                if edge != thisEdge:
+                    if edge.nodes[0] == culdesacPoint or edge.nodes[1] == culdesacPoint:
+                        connectedEdges.append(edge)
+    
+        minAngle = None
+        angles = self.GetComparisionAngle(thisEdge,connectedEdges)
+        if angles!= []:
+            minAngle = min(angles)
+            minIndex = angles.index(minAngle)
+            minAngleEdge = connectedEdges[minIndex]
+            return minAngle, minAngleEdge, angles,connectedEdges
+        else:
+            return None, None, [],[]
 
 
     def ImplicitConnectReward_Negative(self,threhold=2):

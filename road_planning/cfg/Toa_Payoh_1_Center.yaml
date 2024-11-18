@@ -32,7 +32,7 @@ entropy_coef: 0.01
 clip_epsilon: 0.2
 
 
-max_num_iterations: 100 # 100
+max_num_iterations: 300 # 100
 #num_episodes_per_iteration: 500
 num_episodes_per_iteration: 1200
 #max_sequence_length: 100
