@@ -18,6 +18,8 @@ from road_planning.utils.config import Config
 import os
 import sys
 
+import pandas as pd
+import openpyxl
 def tensorfy(np_list, device=torch.device('cpu')):
     if isinstance(np_list[0], list):
         return [[torch.tensor(x).to(device) for x in y] for y in np_list]
@@ -727,42 +729,129 @@ class RoadPlanningAgent(AgentPPO):
         else:
             self.save_best_flag = False
         
-        tb_logger.add_scalar('train/train_R_eps_avg',
-                             log.avg_episode_reward + self.reward_offset,
-                             iteration)
-        tb_logger.add_scalar('train/interior_parcels_num',
-                             log.interior_parcels_num, iteration)
-        tb_logger.add_scalar('train/connecting_steps', log.connecting_steps,
-                             iteration)
-        tb_logger.add_scalar('train/f2f_dis_avg', log.face2face_avg, iteration)
-        tb_logger.add_scalar('train/total_road_cost', log.total_road_cost,
-                             iteration)
-
-        tb_logger.add_scalar('train/f2POI_dis_avg', log_eval.f2POI_dis_avg,   # new added
-                    iteration)
-        #####
-        tb_logger.add_scalar('eval/eval_R_eps_avg',
-                             log_eval.avg_episode_reward + self.reward_offset,   #avag_episode_reward
-                             iteration)
-        tb_logger.add_scalar('eval/eval_R_eps_dis',
-                             log_eval.dis_episode_reward + self.reward_offset,
-                             iteration)
-        tb_logger.add_scalar('eval/eval_R_eps_cost',
-                             log_eval.cost_episode_reward + self.reward_offset,
-                             iteration)
-
-        tb_logger.add_scalar('eval/interior_parcels_num',
-                             log_eval.interior_parcels_num, iteration)
-        tb_logger.add_scalar('eval/connecting_steps',
-                             log_eval.connecting_steps, iteration)
-        tb_logger.add_scalar('eval/f2f_dis_avg', log_eval.face2face_avg,
-                             iteration)
-        tb_logger.add_scalar('eval/total_road_cost', log_eval.total_road_cost,
-                             iteration)
-  
-        tb_logger.add_scalar('eval/f2POI_dis_avg', log_eval.f2POI_dis_avg,   # new added
-                            iteration)
         
+        ##################### OLD VERSION #####################
+        # tb_logger.add_scalar('train/train_R_eps_avg',
+        #                      log.avg_episode_reward + self.reward_offset,
+        #                      iteration)
+        # tb_logger.add_scalar('train/interior_parcels_num',
+        #                      log.interior_parcels_num, iteration)
+        # tb_logger.add_scalar('train/connecting_steps', log.connecting_steps,
+        #                      iteration)
+        # tb_logger.add_scalar('train/f2f_dis_avg', log.face2face_avg, iteration)
+        # tb_logger.add_scalar('train/total_road_cost', log.total_road_cost,
+        #                      iteration)
+
+        # tb_logger.add_scalar('train/f2POI_dis_avg', log_eval.f2POI_dis_avg,   # new added
+        #             iteration)
+        # #####
+        # tb_logger.add_scalar('eval/eval_R_eps_avg',
+        #                      log_eval.avg_episode_reward + self.reward_offset,   #avag_episode_reward
+        #                      iteration)
+        # tb_logger.add_scalar('eval/eval_R_eps_dis',
+        #                      log_eval.dis_episode_reward + self.reward_offset,
+        #                      iteration)
+        # tb_logger.add_scalar('eval/eval_R_eps_cost',
+        #                      log_eval.cost_episode_reward + self.reward_offset,
+        #                      iteration)
+
+        # tb_logger.add_scalar('eval/interior_parcels_num',
+        #                      log_eval.interior_parcels_num, iteration)
+        # tb_logger.add_scalar('eval/connecting_steps',
+        #                      log_eval.connecting_steps, iteration)
+        # tb_logger.add_scalar('eval/f2f_dis_avg', log_eval.face2face_avg,
+        #                      iteration)
+        # tb_logger.add_scalar('eval/total_road_cost', log_eval.total_road_cost,
+        #                      iteration)
+  
+        # tb_logger.add_scalar('eval/f2POI_dis_avg', log_eval.f2POI_dis_avg,   # new added
+        #                     iteration)
+        ####################################################################################
+
+        ############ NEW VERSION ###########
+        # ave reward - if batch is 1, then it is the same as the reward
+        tb_logger.add_scalar('train/train_R_accumulation_eps_avg', log.accumulated_reward,iteration)             
+        tb_logger.add_scalar('eval/eval_R_accumulation_eps_avg', log_eval.accumulated_reward,iteration) 
+     
+        # interior parcel num
+        tb_logger.add_scalar('train/interior_parcels_num',log.interior_parcels_num, iteration)
+        tb_logger.add_scalar('eval/interior_parcels_num',log_eval.interior_parcels_num, iteration)
+
+        # connecting steps
+        tb_logger.add_scalar('train/connecting_steps', log.connecting_steps,iteration)
+        tb_logger.add_scalar('eval/connecting_steps', log_eval.connecting_steps,iteration)
+        
+        # total_road_cost
+        tb_logger.add_scalar('train/total_road_cost', log.total_road_cost,iteration)
+        tb_logger.add_scalar('eval/total_road_cost', log_eval.total_road_cost,iteration)
+
+        # total_angle_cost
+        tb_logger.add_scalar('train/total_angle_cost', log.total_angle_cost,iteration)
+        tb_logger.add_scalar('eval/total_angle_cost', log_eval.total_angle_cost,iteration)
+
+        # total_hit_boundary_reward
+        tb_logger.add_scalar('train/total_hit_boundary_reward', log.total_hit_boundary_reward,iteration)
+        tb_logger.add_scalar('eval/total_hit_boundary_reward', log_eval.total_hit_boundary_reward,iteration)  
+
+        # total_explcit_connection_reward
+        tb_logger.add_scalar('train/total_explcit_connection_reward', log.total_explcit_connection_reward,iteration)
+        tb_logger.add_scalar('eval/total_explcit_connection_reward', log_eval.total_explcit_connection_reward,iteration)
+
+        # total_implcit_connection_reward
+        tb_logger.add_scalar('train/total_implcit_connection_reward', log.total_implcit_connection_reward,iteration)
+        tb_logger.add_scalar('eval/total_implcit_connection_reward', log_eval.total_implcit_connection_reward,iteration)
+
+        # total_all_connection_reward
+        tb_logger.add_scalar('train/total_all_connection_reward', log.total_all_connection_reward,iteration)
+        tb_logger.add_scalar('eval/total_all_connection_reward', log_eval.total_all_connection_reward,iteration)
+
+        # total_L_T_reward
+        tb_logger.add_scalar('train/total_L_T_reward', log.total_L_T_reward,iteration)
+        tb_logger.add_scalar('eval/total_L_T_reward', log_eval.total_L_T_reward,iteration)
+
+        # total_RingRoad_reward
+        tb_logger.add_scalar('train/total_RingRoad_reward', log.total_RingRoad_reward,iteration)
+        tb_logger.add_scalar('eval/total_RingRoad_reward', log_eval.total_RingRoad_reward,iteration)
+
+
+        def save_logs_to_excel(log, log_eval, iteration, cfg):
+            # 创建一个字典来存储数据
+            data = {
+                'iteration': [iteration],
+                'eval_accumulated_reward': [log_eval.accumulated_reward],
+                'eval_interior_parcels_num': [log_eval.interior_parcels_num],
+                'eval_connecting_steps': [log_eval.connecting_steps],
+                'eval_total_road_cost': [log_eval.total_road_cost * -1],   # negative
+                'eval_total_angle_cost': [log_eval.total_angle_cost],
+                'eval_total_hit_boundary_reward': [log_eval.total_hit_boundary_reward],
+                'eval_total_explcit_connection_reward': [log_eval.total_explcit_connection_reward],
+                'eval_total_implcit_connection_reward': [log_eval.total_implcit_connection_reward],
+                'eval_total_all_connection_reward': [log_eval.total_all_connection_reward],
+                'eval_total_L_T_reward': [log_eval.total_L_T_reward],
+                'eval_total_RingRoad_reward': [log_eval.total_RingRoad_reward],
+            }
+
+            # 将数据转换为 DataFrame
+            df = pd.DataFrame(data)
+
+            # 确保目录存在
+            os.makedirs(cfg.model_dir, exist_ok=True)
+
+            # 定义文件路径
+            file_path = os.path.join(cfg.model_dir, 'logs.xlsx')
+
+            # 检查文件是否存在
+            if os.path.exists(file_path):
+                # 如果文件存在，追加数据
+                with pd.ExcelWriter(file_path, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
+                    df.to_excel(writer, index=False, header=False, startrow=writer.sheets['Sheet1'].max_row)
+            else:
+                # 如果文件不存在，创建新文件
+                df.to_excel(file_path, index=False)
+
+        # 示例调用
+        save_logs_to_excel(log, log_eval, iteration, cfg)
+
         ####### Each category POI distance
         # tb_logger.add_scalar('EachPOIDist/f2POI_avg_EachCat_A',
         #                      self.env._mg.f2POI_avg_EachCat_A, iteration)
@@ -851,6 +940,7 @@ class RoadPlanningAgent(AgentPPO):
 
                     logger.add_plan(info_plan)
                     logger.end_episode(info_plan)
+              
                     if not episode_success:
                         self.logger.info('Plan fails during eval.')
                     else:
@@ -989,7 +1079,7 @@ class RoadPlanningAgent(AgentPPO):
 
         logger = self.logger
         logger.info(f'Infer time: {t_eval:.2f}')
-        logger.info(f'dis: {log_eval.face2face_avg}')
+        #logger.info(f'dis: {log_eval.face2face_avg}')
         logger.info(f'cost: {log_eval.total_road_cost}')
         logger.info(f'eval_0.9&0.1: {log_eval.avg_episode_reward}')
 

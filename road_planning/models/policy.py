@@ -86,14 +86,17 @@ class UrbanPlanningPolicy(nn.Module):
     def forward(self, x):
         
         state_policy_road, _, edge_mask, stage = self.shared_net(x)
-
+        # print ("forward_edge_mask",edge_mask)
 
         if stage[:, 2].sum() == 0:
-
             road_logits = self.policy_road_head(state_policy_road)
+            # print ("forward_road_logits",road_logits)
             road_paddings = torch.ones_like(edge_mask, dtype=self.agent.dtype)*(-2.**32 + 1)
+            # print ("forward_road_paddings",road_paddings)
             masked_road_logits = torch.where(edge_mask.bool(), road_logits, road_paddings)
+            # print ("forward_masked_road_logits",masked_road_logits)
             road_dist = torch.distributions.Categorical(logits=masked_road_logits)
+            # print ("forward_road_dist",road_dist)
         else:
             road_dist = None
 
@@ -196,6 +199,8 @@ class UrbanPlanningPolicy(nn.Module):
         # print ("mean_action",mean_action)
         batch_size = stage.shape[0]
         action = torch.zeros(batch_size, 1, dtype=self.agent.dtype, device=stage.device)
+        #print ("select_action_action:",action)
+   
         if mean_action:
             road_action = road_dist.probs.argmax(dim=1).to(self.agent.dtype)
             

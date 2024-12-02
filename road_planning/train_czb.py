@@ -32,9 +32,10 @@ else:
 #slum_name = "punggol_1"
 
 slum_name = 'AMK_1'
-slum_name = 'Toa_Payoh_1_Center'
+slum_name = 'Toa_Payoh_1'
+# slum_name = 'tengah_3'
 train_file_num = '1'
-iteration = '4'
+iteration = '0'
 
 
 ######################################################################
